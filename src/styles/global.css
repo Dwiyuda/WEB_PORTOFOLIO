@@ -154,6 +154,11 @@ a:hover {
   border-radius: 2px;
 }
 
+::selection {
+  background: color-mix(in srgb, var(--verified) 22%, transparent);
+  color: var(--ink);
+}
+
 /* Angka selalu monospace. Ini yang membedakan hasil pengukuran
    dari klaim pemasaran, dan alasan JetBrains Mono ada di sini. */
 .figure {
@@ -409,6 +414,69 @@ main {
     to {
       scale: 1 1;
     }
+  }
+}
+
+/* Sebagian perekrut mencetak atau menyimpan sebagai PDF. Semua gerak dan
+   kendali dibuang, warna dikembalikan ke tinta di atas putih, dan alamat
+   tautan dicetak supaya halaman tetap berguna di atas kertas. */
+@media print {
+  :root {
+    --ink: #000;
+    --paper: #fff;
+    --paper-raised: #fff;
+    --ink-soft: #333;
+    --rule: #bbb;
+    --verified: #000;
+    --before-audit: #000;
+    --section-gap: 1.5rem;
+  }
+
+  .masthead,
+  .progress,
+  .skip-link,
+  .hero__hint,
+  .switch,
+  .cmp__range,
+  .cmp__bar,
+  .hero__portrait {
+    display: none !important;
+  }
+
+  .section,
+  .section--ink {
+    background: #fff !important;
+    color: #000 !important;
+    break-inside: avoid;
+  }
+
+  .rise,
+  .rise-group > *,
+  .wipe {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .pipeline details {
+    /* Cetak seluruh isi tahap, bukan hanya yang kebetulan terbuka. */
+    display: block;
+  }
+
+  .pipeline__detail {
+    display: block !important;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    word-break: break-all;
+  }
+
+  figure,
+  .post,
+  .ledger__row {
+    break-inside: avoid;
   }
 }
 

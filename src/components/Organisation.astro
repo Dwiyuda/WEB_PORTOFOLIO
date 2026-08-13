@@ -3,9 +3,27 @@ import { Image } from "astro:assets";
 import handover from "../assets/village-handover.jpeg";
 
 // Bagian 6. Sumber: Riwayat Pengalaman Dwi Yuda.
-// Website HIMATIF ditulis "Directed", tidak pernah "Built". Kenyataannya
-// supervisi, dan poin kedua di bawah menyebutkan itu terang-terangan.
-// Bagian ini belum punya artefak. Angkanya yang menahan bagian ini berdiri.
+//
+// Bagian ini kekuatannya angka orang, bukan daftar tugas, jadi bentuknya
+// lajur: angka memimpin, keterangan mengikuti. Berbeda dari kolom menempel
+// di Pengalaman dan dari kisi bento di Pencapaian.
+//
+// Website HIMATIF ditulis "Directed", tidak pernah "Built". Catatan di bawah
+// lajur menyebutkan alasannya terang-terangan. Jangan dihapus.
+const ledger = [
+  {
+    n: "7",
+    text: "Operational divisions supervised, with 50 members under them, reporting to the chair.",
+  },
+  {
+    n: "280",
+    text: "Participants at the student induction camp, coordinated against a committee of 100.",
+  },
+  {
+    n: "50",
+    text: "Vocational students at an IT and cyber security seminar at SMK Labor, delivered with twelve volunteers.",
+  },
+];
 ---
 
 <section class="section" id="organisation" aria-labelledby="organisation-title">
@@ -13,67 +31,59 @@ import handover from "../assets/village-handover.jpeg";
     <span class="section__label">Organisation and service</span>
     <h2 id="organisation-title" class="rise">Running things I did not build</h2>
 
-    <article class="role rise">
-      <header class="role__head">
-        <h3>Vice Chairman, HIMATIF</h3>
-        <p class="figure role__meta">
-          Informatics Student Association, UIR · Feb 2024 – Apr 2025
-        </p>
-      </header>
+    <div class="lede rise">
+      <h3>Vice Chairman, HIMATIF</h3>
+      <p class="figure lede__when">
+        Informatics Student Association, UIR · Feb 2024 – Apr 2025
+      </p>
+    </div>
 
-      <ul class="role__points measure">
-        <li>
-          Supervised seven operational divisions and 50 members, reporting to
-          the chair.
-        </li>
-        <li>
-          Directed the Research and Technology division through the
-          association's Next.js profile site. I set the scope and reviewed what
-          came back. The code is theirs.
-        </li>
-        <li>
-          Ran an IT and cyber security seminar at SMK Labor for around 50
-          vocational students. Twelve volunteers delivered it with me.
-        </li>
-        <li>
-          Coordinated the student induction camp: 280 participants, 100
-          committee members.
-        </li>
-      </ul>
-    </article>
+    <dl class="ledger rise-group">
+      {
+        ledger.map((row) => (
+          <div class="ledger__row">
+            <dt class="ledger__n">{row.n}</dt>
+            <dd class="ledger__text">{row.text}</dd>
+          </div>
+        ))
+      }
+    </dl>
 
-    <article class="role rise">
-      <header class="role__head">
-        <h3>Student team member, Desa Binaan</h3>
-        <p class="figure role__meta">
-          Pulau Gadang, Kampar · Oct 2024 – Mar 2025
-        </p>
-      </header>
+    <p class="disclaim rise">
+      The association's Next.js profile site was built by the Research and
+      Technology division. I set the scope and reviewed what came back. The code
+      is theirs, and that is why this page says directed rather than built.
+    </p>
 
-      <ul class="role__points measure">
-        <li>
-          Community empowerment programme run by a UIR student team. The
-          pre-survey went out on 25 October 2024.
-        </li>
-        <li>
-          Sessions at the village hall with the village head and every member
+    <div class="lede lede--second rise">
+      <h3>Student team member, Desa Binaan</h3>
+      <p class="figure lede__when">Pulau Gadang, Kampar · Oct 2024 – Mar 2025</p>
+    </div>
+
+    <div class="service rise">
+      <div class="service__text">
+        <p>
+          A community empowerment programme run by a UIR student team. The
+          pre-survey went out on 25 October 2024, and the sessions that followed
+          were held at the village hall with the village head and every member
           of staff, on village law and on publishing budget records.
-        </li>
-        <li>
+        </p>
+        <p>
           The programme was written up afterwards and published. It is the
           article in the next section.
-        </li>
-      </ul>
+        </p>
+      </div>
 
-      <figure class="shot rise">
+      <figure class="shot">
         <Image
           src={handover}
           alt="Handover in the village meeting room. A student team member
             passes a laptop showing the new site to the village head, with four
             others standing alongside."
-          widths={[720, 1200]}
-          sizes="(min-width: 46rem) 60vw, 92vw"
+          widths={[560, 900]}
+          sizes="(min-width: 50rem) 42vw, 92vw"
           format="webp"
+          quality={62}
           loading="lazy"
         />
         <figcaption class="caption">
@@ -81,23 +91,117 @@ import handover from "../assets/village-handover.jpeg";
           permission.
         </figcaption>
       </figure>
-    </article>
+    </div>
   </div>
 </section>
 
 <style>
+  .lede {
+    margin-top: 2.75rem;
+  }
+
+  .lede--second {
+    margin-top: 3.5rem;
+    padding-top: 3.5rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .lede h3 {
+    font-size: var(--size-subhead);
+  }
+
+  .lede__when {
+    margin-top: 0.4rem;
+    color: var(--ink-soft);
+  }
+
+  /* Lajur: angka memimpin baris, keterangan menyusul. */
+  .ledger {
+    margin: 1.75rem 0 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .ledger__row {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    align-items: baseline;
+    gap: 1.25rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--rule);
+    transition: padding-left var(--t-mid) var(--ease-out);
+  }
+
+  .ledger__row:hover {
+    padding-left: 0.5rem;
+  }
+
+  .ledger__n {
+    font-family: var(--font-mono);
+    font-size: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .ledger__text {
+    margin: 0;
+    max-width: var(--measure);
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 34rem) {
+    .ledger__row {
+      grid-template-columns: 4rem minmax(0, 1fr);
+      gap: 1rem;
+    }
+  }
+
+  /* Catatan integritas. Bukan kartu, hanya teks bertakik, supaya terbaca
+     sebagai koreksi penulis atas dirinya sendiri. */
+  .disclaim {
+    max-width: var(--measure);
+    margin-top: 1.5rem;
+    padding-left: 1.25rem;
+    border-left: 1px solid var(--ink-soft);
+    font-size: var(--size-figure);
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+
+  .service {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  @media (min-width: 50rem) {
+    .service {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+  }
+
+  .service__text p + p {
+    margin-top: 1.1rem;
+  }
+
   .shot {
-    margin: 2rem 0 0;
-    max-width: 40rem;
+    margin: 0;
   }
 
   .shot img {
     width: 100%;
     border: 1px solid var(--rule);
-    border-radius: 2px;
+    transition: filter var(--t-mid) var(--ease);
+  }
+
+  .shot:hover img {
+    filter: brightness(1.04) saturate(1.05);
   }
 
   .shot figcaption {
-    margin-top: 0.6rem;
+    margin-top: 0.65rem;
   }
 </style>

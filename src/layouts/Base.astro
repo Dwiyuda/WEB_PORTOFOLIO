@@ -114,7 +114,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
         const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
         if (document.startViewTransition && !reduced) {
-          document.startViewTransition(flip);
+          // Transisi ditolak kalau ada yang sedang berjalan atau dokumen
+          // tak terlihat. Perubahan temanya tetap berlaku, jadi penolakan
+          // itu diserap di sini alih-alih jatuh ke konsol.
+          const vt = document.startViewTransition(flip);
+          vt.ready.catch(() => {});
+          vt.finished.catch(() => {});
         } else {
           flip();
         }

@@ -1,101 +1,112 @@
 ---
 import { Image } from "astro:assets";
+import labClass from "../assets/lab-class.jpeg";
 import apbdesBefore from "../assets/apbdes-before.jpg";
 import apbdesAfter from "../assets/apbdes-after.jpg";
-import labClass from "../assets/lab-class.jpeg";
 import Compare from "./Compare.astro";
 
 // Bagian 4. Sumber: Riwayat Pengalaman Dwi Yuda.
 // "undergraduates" bukan "students". "hamlets" bukan "subvillages".
 // Enam tugas akhir di bawah adalah review, bukan proyek pribadi.
+//
+// Bentuknya sengaja dibedakan dari bagian Organisasi: di sini kolom kiri
+// menempel berisi angka jabatan, kanan mengalir. Di sana berupa lajur.
 ---
 
 <section class="section" id="experience" aria-labelledby="experience-title">
-  <div class="shell">
+  <div class="shell shell--wide">
     <span class="section__label">Experience</span>
     <h2 id="experience-title" class="rise">Two jobs, both finished</h2>
 
-    <article class="role rise">
-      <header class="role__head">
-        <h3>Teaching Assistant</h3>
-        <p class="figure role__meta">
-          Universitas Islam Riau · Nov 2024 – Jun 2026
-        </p>
-      </header>
+    <article class="post rise">
+      <div class="post__meta">
+        <h3 class="post__role">Teaching Assistant</h3>
+        <p class="post__org figure">Universitas Islam Riau</p>
+        <p class="post__when figure">Nov 2024 – Jun 2026</p>
 
-      <ul class="role__points measure">
-        <li>
-          Ran lab sections for six courses over four semesters. Around 300
-          undergraduates, nine classes.
-        </li>
-        <li>
-          Wrote the Statistics and Probability practicum myself and taught it:
-          Z-test, T-test, ANOVA, confidence intervals.
-        </li>
-        <li>
-          Built the SQL lab modules on subqueries, views, and concurrency
-          control. Student queries got debugged live, mid-session.
-        </li>
-        <li>
-          Reviewed six final-year projects across object detection, time
-          series, clustering, and retrieval-augmented generation. Model setup,
-          evaluation method, written report.
-        </li>
-      </ul>
+        <dl class="spec">
+          <div><dt>Courses</dt><dd class="figure">6</dd></div>
+          <div><dt>Semesters</dt><dd class="figure">4</dd></div>
+          <div><dt>Classes</dt><dd class="figure">9</dd></div>
+          <div><dt>Undergraduates</dt><dd class="figure">~300</dd></div>
+        </dl>
+      </div>
 
-      <figure class="shot rise">
-        <Image
-          src={labClass}
-          alt="A computer lab at the end of a practicum session. Around
-            thirty-five undergraduates stand and sit between two rows of
-            monitors, facing the camera."
-          widths={[720, 1200]}
-          sizes="(min-width: 46rem) 60vw, 92vw"
-          format="webp"
-          quality={58}
-          loading="lazy"
-        />
-        <figcaption class="caption">
-          One of nine lab classes. Photograph used with permission.
-        </figcaption>
-      </figure>
+      <div class="post__body">
+        <ul class="post__points">
+          <li>
+            Ran lab sections for six courses over four semesters, from
+            Introduction to Programming through to Statistics and Probability.
+          </li>
+          <li>
+            Wrote the Statistics and Probability practicum myself and taught it:
+            Z-test, T-test, ANOVA, confidence intervals.
+          </li>
+          <li>
+            Built the SQL lab modules on subqueries, views, and concurrency
+            control. Student queries got debugged live, mid-session.
+          </li>
+          <li>
+            Reviewed six final-year projects across object detection, time
+            series, clustering, and retrieval-augmented generation. Model setup,
+            evaluation method, written report.
+          </li>
+        </ul>
+
+        <figure class="shot">
+          <Image
+            src={labClass}
+            alt="A computer lab at the end of a practicum session. Around
+              thirty-five undergraduates stand and sit between two rows of
+              monitors, facing the camera."
+            widths={[720, 1200]}
+            sizes="(min-width: 58rem) 46vw, 92vw"
+            format="webp"
+            quality={58}
+            loading="lazy"
+          />
+          <figcaption class="caption">
+            One of nine lab classes. Photograph used with permission.
+          </figcaption>
+        </figure>
+      </div>
     </article>
 
-    <article class="role rise">
-      <header class="role__head">
-        <h3>Web Development Intern</h3>
-        <p class="figure role__meta">
-          Pulau Gadang Village Government, Kampar · Mar – Aug 2025
-        </p>
-      </header>
+    <article class="post rise">
+      <div class="post__meta">
+        <h3 class="post__role">Web Development Intern</h3>
+        <p class="post__org figure">Pulau Gadang Village Government, Kampar</p>
+        <p class="post__when figure">Mar – Aug 2025</p>
 
-      <ul class="role__points measure">
-        <li>
-          Deployed OpenSID v22.10 on PHP, CodeIgniter, and MariaDB as the
-          village's official information system. The database holds 1,794
-          residents across 517 households.
-        </li>
-        <li>
-          Unlocked the User Group Management module, which OpenSID ships
-          locked. Staff could then set their own access roles instead of
-          sharing one administrator account.
-        </li>
-        <li>
-          Rebuilt the APBDes budget page to the village head's specification.
-          Three tables of raw figures became one donut chart of budget against
-          realisation.
-        </li>
-        <li>
-          Gathered requirements with village staff, then checked every figure
-          with the finance officer before writing code.
-        </li>
-        <li>
-          Kept 570 articles, 77 MSME listings, and boundary maps for 4 hamlets
-          current, on a scheduled backup.
-        </li>
-      </ul>
+        <dl class="spec">
+          <div><dt>Residents on file</dt><dd class="figure">1,794</dd></div>
+          <div><dt>Households</dt><dd class="figure">517</dd></div>
+          <div><dt>Articles kept</dt><dd class="figure">570</dd></div>
+          <div><dt>Hamlets mapped</dt><dd class="figure">4</dd></div>
+        </dl>
+      </div>
 
-      <div class="rise">
+      <div class="post__body">
+        <ul class="post__points">
+          <li>
+            Deployed OpenSID v22.10 on PHP, CodeIgniter, and MariaDB as the
+            village's official information system.
+          </li>
+          <li>
+            Unlocked the User Group Management module, which OpenSID ships
+            locked. Staff could then set their own access roles instead of
+            sharing one administrator account.
+          </li>
+          <li>
+            Gathered requirements with village staff, then checked every figure
+            with the finance officer before writing code.
+          </li>
+          <li>
+            Kept 77 MSME listings and the boundary maps current, on a scheduled
+            backup.
+          </li>
+        </ul>
+
         <Compare
           before={apbdesBefore}
           after={apbdesAfter}
@@ -107,9 +118,9 @@ import Compare from "./Compare.astro";
             listed beside it."
           beforeLabel="Before"
           afterLabel="After"
-          caption="Drag the handle. Three tables of raw figures on the left,
-            one donut chart of budget against realisation on the right. The
-            village head asked for proportion at a glance."
+          caption="Drag the handle. Three tables of raw figures on the left, one
+            donut chart of budget against realisation on the right. The village
+            head asked for proportion at a glance."
         />
       </div>
     </article>
@@ -117,18 +128,102 @@ import Compare from "./Compare.astro";
 </section>
 
 <style>
+  .post {
+    display: grid;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .post + .post {
+    margin-top: 3.5rem;
+    padding-top: 3.5rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  @media (min-width: 58rem) {
+    .post {
+      grid-template-columns: 16rem minmax(0, 1fr);
+      gap: 3.5rem;
+      align-items: start;
+    }
+
+    /* Kolom kiri menggantung selama bullet di kanan digulir, jadi angka
+       jabatan tetap terbaca saat membaca rinciannya. */
+    .post__meta {
+      position: sticky;
+      top: 5rem;
+    }
+  }
+
+  .post__role {
+    font-size: var(--size-subhead);
+    line-height: 1.25;
+  }
+
+  .post__org {
+    margin-top: 0.45rem;
+    color: var(--ink-soft);
+  }
+
+  .post__when {
+    margin-top: 0.15rem;
+    color: var(--ink-soft);
+  }
+
+  /* Lajur angka jabatan. Dibaca seperti pelat spesifikasi, bukan kartu. */
+  .spec {
+    margin: 1.5rem 0 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .spec > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .spec dt {
+    font-size: var(--size-caption);
+    color: var(--ink-soft);
+  }
+
+  .spec dd {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .post__points {
+    margin: 0;
+    padding-left: 1.1rem;
+    max-width: var(--measure);
+  }
+
+  .post__points li + li {
+    margin-top: 0.75rem;
+  }
+
+  .post__points li::marker {
+    color: var(--ink-soft);
+  }
+
   .shot {
     margin: 2rem 0 0;
-    max-width: 40rem;
   }
 
   .shot img {
     width: 100%;
     border: 1px solid var(--rule);
-    border-radius: 2px;
+    transition: filter var(--t-mid) var(--ease);
+  }
+
+  .shot:hover img {
+    filter: brightness(1.04) saturate(1.05);
   }
 
   .shot figcaption {
-    margin-top: 0.6rem;
+    margin-top: 0.65rem;
   }
 </style>

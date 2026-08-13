@@ -1,0 +1,52 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  title="Not found — Dwi Yuda"
+  description="That address does not exist on this site."
+>
+  <section class="lost shell">
+    <p class="figure lost__code">404</p>
+    <h1 class="lost__title">Nothing at this address</h1>
+    <p class="lost__note">
+      This site is a single page, so almost any path other than the root will
+      land here. Nothing is broken.
+    </p>
+    <p>
+      <a class="lost__back" href="/">Go to the start</a>
+    </p>
+  </section>
+</Base>
+
+<style>
+  .lost {
+    display: grid;
+    align-content: center;
+    min-height: 68svh;
+    padding-block: var(--section-gap);
+  }
+
+  .lost__code {
+    color: var(--ink-soft);
+    letter-spacing: 0.2em;
+  }
+
+  .lost__title {
+    margin-top: 0.75rem;
+    font-size: clamp(2rem, 1.5rem + 2.4vw, 3rem);
+  }
+
+  .lost__note {
+    max-width: 34ch;
+    margin-top: 1rem;
+    color: var(--ink-soft);
+  }
+
+  .lost__back {
+    display: inline-block;
+    margin-top: 1.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--size-figure);
+  }
+</style>

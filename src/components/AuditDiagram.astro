@@ -119,7 +119,11 @@ const chips = families.flatMap((f) =>
 
       const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (document.startViewTransition && !reduced) {
-        document.startViewTransition(apply);
+        // Penolakan transisi diserap: chip tetap berpindah, hanya tanpa
+        // animasi. Tanpa ini penolakan jatuh ke konsol sebagai error.
+        const vt = document.startViewTransition(apply);
+        vt.ready.catch(() => {});
+        vt.finished.catch(() => {});
       } else {
         apply();
       }

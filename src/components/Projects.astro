@@ -291,21 +291,27 @@ const pipeline = [
     }
   }
 
-  /* Satu-satunya tempat terakota dipakai di seluruh halaman. */
+  /* Satu-satunya tempat terakota dipakai di seluruh halaman.
+     Bukan kartu membulat berpalang: sisipan bertepi lurus dengan garis
+     terakota di atas dan label yang duduk di garis itu, seperti halaman
+     catatan yang diselipkan ke dalam laporan. */
   .audit {
-    margin-top: 2.5rem;
-    padding: 1.75rem;
-    border: 1px solid var(--rule);
-    border-left: 2px solid var(--before-audit);
-    border-radius: 2px;
-    background: var(--before-audit-wash);
+    position: relative;
+    margin-top: 3.25rem;
+    padding: 2rem 0 0;
+    border-top: 2px solid var(--before-audit);
   }
 
   .audit__label {
-    letter-spacing: 0.08em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateY(-50%);
+    padding-right: 0.85rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--before-audit);
-    margin-bottom: 1.25rem;
+    background: var(--paper);
   }
 
   .audit p + p {
@@ -313,7 +319,7 @@ const pipeline = [
   }
 
   .audit__rest {
-    margin-top: 2rem;
+    margin-top: 2.25rem;
   }
 
   .audit__figure {
@@ -322,11 +328,17 @@ const pipeline = [
     color: var(--before-audit);
   }
 
+  /* Titik balik cerita. Satu kalimat yang membatalkan kecurigaan penulis
+     sendiri, jadi diberi ruang seperti kutipan. */
   .audit__turn {
+    max-width: 22ch;
+    margin-block: 2rem;
     font-family: var(--font-display);
-    font-size: var(--size-subhead);
-    line-height: 1.4;
-    font-variation-settings: "SOFT" 30, "WONK" 1;
+    font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.15rem);
+    line-height: 1.22;
+    letter-spacing: -0.02em;
+    font-variation-settings: "SOFT" 40, "WONK" 1;
+    color: var(--ink);
   }
 
   .audit code {
