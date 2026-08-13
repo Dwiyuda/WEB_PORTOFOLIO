@@ -31,8 +31,15 @@
 
   --measure: 34rem;
   --gutter: clamp(1.25rem, 5vw, 3rem);
-  --section-gap: clamp(4rem, 9vw, 6.5rem);
+  --section-gap: clamp(5rem, 11vw, 8rem);
   --page-max: 60rem;
+  --page-wide: 74rem;
+
+  /* Gerak. Satu easing untuk semuanya supaya halaman terasa satu benda. */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 140ms;
+  --t-mid: 320ms;
 }
 
 [data-theme="dark"] {
@@ -75,6 +82,9 @@ ol[class] {
 
 html {
   -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* Ruang untuk masthead yang menempel, supaya anchor tidak tertutup. */
+  scroll-padding-top: 4.5rem;
 }
 
 body {
@@ -200,6 +210,66 @@ main {
   content: counter(section, decimal-leading-zero) " / ";
 }
 
+.shell--wide {
+  max-width: var(--page-wide);
+}
+
+/* Blok tinta selebar layar. Dipakai sekali saja, di bagian Proyek, supaya
+   halaman punya satu titik jeda alih-alih delapan bagian berwarna sama.
+   Token didefinisikan ulang di sini, jadi seluruh isinya ikut tanpa
+   satu pun aturan tambahan. */
+.section--ink {
+  --paper: #101314;
+  --paper-raised: #171b1d;
+  --ink: #e8e6e0;
+  --ink-soft: #9aa2a5;
+  --rule: #2b3133;
+  --verified: #4fbfa3;
+  --before-audit: #e08055;
+  --before-audit-wash: #e0805518;
+  background: var(--paper);
+  color: var(--ink);
+  border-top: none;
+}
+
+[data-theme="dark"] .section--ink {
+  --paper: #080a0b;
+  --rule: #24292b;
+}
+
+/* Kisi bento. Celah satu piksel di atas warna garis, jadi pemisahnya
+   berupa garis rambut, bukan jarak kosong. */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: 1px;
+  margin-top: 2.5rem;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bento > * {
+  padding: 1.5rem 1.4rem;
+  background: var(--paper);
+  transition: background var(--t-fast) var(--ease);
+}
+
+.bento > *:hover {
+  background: var(--paper-raised);
+}
+
+.bento__wide {
+  grid-column: span 2;
+}
+
+@media (max-width: 34rem) {
+  .bento__wide {
+    grid-column: span 1;
+  }
+}
+
 /* Satu jabatan atau satu peran. Dipakai di bagian Experience dan
    Organisation, jadi tinggal di sini, bukan di salah satu komponen. */
 .role__head {
@@ -246,6 +316,102 @@ main {
   top: 0.5rem;
 }
 
+/* ── Gerak ────────────────────────────────────────────────────────────
+   Seluruh gerak digerakkan posisi gulir lewat CSS, bukan JavaScript.
+   Dibungkus @supports, jadi peramban tanpa dukungan menampilkan konten
+   apa adanya, tidak pernah kosong. */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wipe-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes grow-y {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .rise {
+    animation: rise linear both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 28%;
+  }
+
+  /* Anak-anak muncul berurutan. Rentangnya digeser, bukan pakai delay,
+     karena pada linimasa gulir delay tidak punya arti. */
+  .rise-group > * {
+    animation: rise linear both;
+    animation-timeline: view();
+    animation-range: entry 2% cover 26%;
+  }
+
+  .rise-group > *:nth-child(2) {
+    animation-range: entry 6% cover 30%;
+  }
+  .rise-group > *:nth-child(3) {
+    animation-range: entry 10% cover 34%;
+  }
+  .rise-group > *:nth-child(4) {
+    animation-range: entry 14% cover 38%;
+  }
+  .rise-group > *:nth-child(n + 5) {
+    animation-range: entry 18% cover 42%;
+  }
+
+  .wipe {
+    animation: wipe-in linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 40%;
+  }
+}
+
+/* Batang kemajuan baca, menempel di atas viewport. */
+.progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  z-index: 20;
+  transform-origin: 0 50%;
+  background: var(--verified);
+  scale: 0 1;
+}
+
+@supports (animation-timeline: scroll()) {
+  .progress {
+    animation: progress-scale linear both;
+    animation-timeline: scroll(root block);
+  }
+
+  @keyframes progress-scale {
+    from {
+      scale: 0 1;
+    }
+    to {
+      scale: 1 1;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -254,5 +420,21 @@ main {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* Linimasa gulir mengabaikan durasi, jadi harus dimatikan sendiri. */
+  .rise,
+  .rise-group > *,
+  .wipe,
+  .progress {
+    animation-timeline: auto !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+
+  .progress {
+    scale: 1 1;
   }
 }

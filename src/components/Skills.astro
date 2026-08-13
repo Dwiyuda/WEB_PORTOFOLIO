@@ -47,9 +47,9 @@ const languages = [
 <section class="section" id="contact" aria-labelledby="contact-title">
   <div class="shell">
     <span class="section__label">Tools and contact</span>
-    <h2 id="contact-title">What I use, and where I used it</h2>
+    <h2 id="contact-title" class="rise">What I use, and where I used it</h2>
 
-    <div class="kit">
+    <div class="bento kit rise-group">
       {
         groups.map((g) => (
           <div class="kit__group">
@@ -111,24 +111,17 @@ const languages = [
 
 <style>
   .kit {
-    display: grid;
-    gap: 2.5rem;
-    margin-top: 2.5rem;
-  }
-
-  @media (min-width: 48rem) {
-    .kit {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2rem;
-    }
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
   }
 
   .kit__heading {
-    font-size: var(--size-figure);
-    font-family: var(--font-body);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    padding-bottom: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: var(--size-caption);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding-bottom: 0.7rem;
     border-bottom: 1px solid var(--rule);
   }
 

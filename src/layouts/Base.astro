@@ -46,10 +46,19 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
+    <div class="progress" aria-hidden="true"></div>
 
     <header class="masthead">
-      <div class="shell masthead__inner">
-        <span class="masthead__name">Dwi Yuda</span>
+      <div class="shell shell--wide masthead__inner">
+        <a class="masthead__name" href="#top">Dwi Yuda</a>
+
+        <nav class="masthead__nav" aria-label="Sections">
+          <a href="#timeline">Timeline</a>
+          <a href="#experience">Experience</a>
+          <a href="#projects">Projects</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
         <button
           type="button"
           id="theme-toggle"
@@ -103,7 +112,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
     <style>
       .masthead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
         border-bottom: 1px solid var(--rule);
+        background: color-mix(in srgb, var(--paper) 88%, transparent);
+        backdrop-filter: blur(10px);
       }
 
       .masthead__inner {
@@ -111,7 +125,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         align-items: center;
         justify-content: space-between;
         gap: 1rem;
-        padding-block: 1rem;
+        padding-block: 0.85rem;
       }
 
       .masthead__name {
@@ -120,6 +134,53 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         letter-spacing: 0.1em;
         text-transform: uppercase;
         color: var(--ink-soft);
+        text-decoration: none;
+        transition: color var(--t-fast) var(--ease);
+      }
+
+      .masthead__name:hover {
+        color: var(--ink);
+      }
+
+      .masthead__nav {
+        display: none;
+        gap: 1.5rem;
+      }
+
+      @media (min-width: 46rem) {
+        .masthead__nav {
+          display: flex;
+        }
+      }
+
+      .masthead__nav a {
+        position: relative;
+        font-size: var(--size-figure);
+        color: var(--ink-soft);
+        text-decoration: none;
+        transition: color var(--t-fast) var(--ease);
+      }
+
+      .masthead__nav a:hover {
+        color: var(--ink);
+      }
+
+      /* Garis bawah tumbuh dari kiri saat disentuh kursor. */
+      .masthead__nav a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -0.35rem;
+        height: 1px;
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: 0 50%;
+        transition: transform var(--t-mid) var(--ease-out);
+      }
+
+      .masthead__nav a:hover::after {
+        transform: scaleX(1);
       }
 
       .masthead__toggle {

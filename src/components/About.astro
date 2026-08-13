@@ -7,10 +7,10 @@
 <section class="section" id="about" aria-labelledby="about-title">
   <div class="shell">
     <span class="section__label">About</span>
-    <h2 id="about-title">Where the habit came from</h2>
+    <h2 id="about-title" class="rise">Where the habit came from</h2>
 
-    <div class="about__body measure">
-      <p>
+    <div class="about__body measure rise-group">
+      <p class="about__lead">
         I went to a pesantren for junior and senior high school. Arabic came
         from those years, and I can still hold a conversation in it, though I
         would not claim more than that. The language faded faster than the
@@ -39,7 +39,19 @@
 </section>
 
 <style>
+  .about__body {
+    margin-top: 2.5rem;
+  }
+
   .about__body p + p {
-    margin-top: 1.25rem;
+    margin-top: 1.35rem;
+  }
+
+  /* Paragraf pembuka dibesarkan supaya bagian ini tidak berbunyi sama
+     dengan blok teks lain di halaman. */
+  .about__lead {
+    font-size: clamp(1.15rem, 1.05rem + 0.4vw, 1.3rem);
+    line-height: 1.55;
+    color: var(--ink);
   }
 </style>

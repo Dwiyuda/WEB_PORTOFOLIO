@@ -1,4 +1,6 @@
 ---
+import AuditDiagram from "./AuditDiagram.astro";
+
 // Bagian 5. Sumber angka: HASIL_UJICOBA_TAMBAHAN/README.md (25 Juli 2026) dan
 // metrics_summary.json tiap folder hasil, sudah dicocokkan satu per satu.
 //
@@ -27,10 +29,10 @@ const pipeline = [
 ];
 ---
 
-<section class="section" id="projects" aria-labelledby="projects-title">
+<section class="section section--ink" id="projects" aria-labelledby="projects-title">
   <div class="shell">
     <span class="section__label">Projects</span>
-    <h2 id="projects-title">Two I can defend line by line</h2>
+    <h2 id="projects-title" class="rise">Two I can defend line by line</h2>
 
     <article class="project">
       <header class="role__head">
@@ -52,7 +54,7 @@ const pipeline = [
         instead, and shows its reasoning.
       </p>
 
-      <ol class="pipeline">
+      <ol class="pipeline rise-group">
         {
           pipeline.map((p) => (
             <li class="pipeline__step">
@@ -92,13 +94,11 @@ const pipeline = [
               >48 of 165 test images</span
             > were contaminated. That is 29.1%. On 70:15:15 it was 71 of 248.
           </p>
+        </div>
 
-          <p>
-            I rewrote the split to work on card families rather than files.
-            Every derivative of one card now lands in the same subset.
-            Contamination went to zero.
-          </p>
+        <AuditDiagram />
 
+        <div class="measure audit__rest">
           <p class="audit__turn">Then I retrained, and it was still 1.0000.</p>
 
           <p>
@@ -257,6 +257,10 @@ const pipeline = [
 
   .audit p + p {
     margin-top: 1.1rem;
+  }
+
+  .audit__rest {
+    margin-top: 2rem;
   }
 
   .audit__figure {

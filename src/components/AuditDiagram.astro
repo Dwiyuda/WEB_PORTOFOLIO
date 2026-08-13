@@ -1,0 +1,291 @@
+---
+// Diagram kebocoran tingkat kartu untuk bagian Proyek.
+//
+// Sembilan keluarga kartu sebagai contoh, bukan seluruh 1.645 citra. Tiga di
+// antaranya pecah, mendekati proporsi nyata 29,1% pada split 80:10:10.
+// Angka di bawah diagram tetap angka sebenarnya.
+//
+// Chip benar-benar dipindahkan antar kolom di DOM, lalu View Transitions API
+// yang menganimasikan perpindahannya. Tanpa dukungan API itu, keadaan tetap
+// berganti, hanya tanpa gerak.
+const families = [
+  { id: 211, before: { real: "train", fake: "train" }, after: "train" },
+  { id: 214, before: { real: "train", fake: "test" }, after: "train", leak: true },
+  { id: 219, before: { real: "train", fake: "train" }, after: "train" },
+  { id: 226, before: { real: "val", fake: "train" }, after: "val", leak: true },
+  { id: 233, before: { real: "train", fake: "train" }, after: "train" },
+  { id: 240, before: { real: "test", fake: "train" }, after: "test", leak: true },
+  { id: 247, before: { real: "test", fake: "test" }, after: "test" },
+  { id: 255, before: { real: "val", fake: "val" }, after: "val" },
+  { id: 261, before: { real: "train", fake: "train" }, after: "train" },
+];
+
+const columns = [
+  { key: "train", label: "Train" },
+  { key: "val", label: "Val" },
+  { key: "test", label: "Test" },
+];
+
+const chips = families.flatMap((f) =>
+  (["real", "fake"] as const).map((kind) => ({
+    key: `${kind}${f.id}`,
+    id: f.id,
+    kind,
+    leak: Boolean(f.leak),
+    before: f.before[kind],
+    after: f.after,
+  })),
+);
+---
+
+<figure class="audit-fig" data-state="before">
+  <div class="audit-fig__head">
+    <figcaption class="caption">
+      Nine card families, two images each. R is the genuine scan, F the forgery
+      built from it.
+    </figcaption>
+    <button type="button" class="switch" aria-pressed="false">
+      <span class="switch__dot" aria-hidden="true"></span>
+      <span class="switch__label">Rebuild the split</span>
+    </button>
+  </div>
+
+  <div class="board">
+    {
+      columns.map((col) => (
+        <div class="board__col">
+          <span class="board__head figure">{col.label}</span>
+          <div class="board__slot" data-slot={col.key}>
+            {chips
+              .filter((c) => c.before === col.key)
+              .map((c) => (
+                <span
+                  class:list={["chip", { "chip--leak": c.leak }]}
+                  data-before={c.before}
+                  data-after={c.after}
+                  style={`view-transition-name:c${c.key}`}
+                >
+                  <span class="chip__kind">{c.kind === "real" ? "R" : "F"}</span>
+                  {c.id}
+                </span>
+              ))}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <p class="readout">
+    <span class="readout__line" data-when="before">
+      <span class="readout__num readout__num--bad">48 of 165</span>
+      test images contaminated on the 80:10:10 split. That is 29.1%.
+    </span>
+    <span class="readout__line" data-when="after">
+      <span class="readout__num readout__num--good">0 of 165</span>
+      contaminated. Every derivative of one card lands in the same subset.
+    </span>
+  </p>
+
+  <p class="sr-only">
+    Before the rebuild, images made from the same physical card were shuffled
+    independently, so one card could appear in both the training set and the
+    test set. Rebuilding the split by card family put every derivative of a card
+    into a single subset, bringing contamination to zero.
+  </p>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".audit-fig").forEach((fig) => {
+    const button = fig.querySelector("button");
+    const label = fig.querySelector(".switch__label");
+    if (!button) return;
+
+    button.addEventListener("click", () => {
+      const next = fig.dataset.state === "before" ? "after" : "before";
+
+      const apply = () => {
+        fig.querySelectorAll<HTMLElement>(".chip").forEach((chip) => {
+          const target = chip.dataset[next];
+          const slot = fig.querySelector(`[data-slot="${target}"]`);
+          if (slot) slot.appendChild(chip);
+        });
+        fig.dataset.state = next;
+        button.setAttribute("aria-pressed", String(next === "after"));
+        if (label) {
+          label.textContent =
+            next === "after" ? "Show the old split" : "Rebuild the split";
+        }
+      };
+
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (document.startViewTransition && !reduced) {
+        document.startViewTransition(apply);
+      } else {
+        apply();
+      }
+    });
+  });
+</script>
+
+<style>
+  .audit-fig {
+    margin: 2.5rem 0 0;
+  }
+
+  .audit-fig__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .audit-fig__head .caption {
+    max-width: 34ch;
+  }
+
+  .switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.95rem;
+    font-family: var(--font-mono);
+    font-size: var(--size-caption);
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    cursor: pointer;
+    transition:
+      border-color var(--t-fast) var(--ease),
+      background var(--t-fast) var(--ease);
+  }
+
+  .switch:hover {
+    border-color: var(--ink-soft);
+    background: var(--paper-raised);
+  }
+
+  .switch__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--before-audit);
+    transition: background var(--t-mid) var(--ease);
+  }
+
+  .switch[aria-pressed="true"] .switch__dot {
+    background: var(--verified);
+  }
+
+  .board {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  @media (max-width: 40rem) {
+    .board {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .board__col {
+    padding: 0.9rem 0.85rem 1rem;
+    background: var(--paper);
+  }
+
+  .board__head {
+    display: block;
+    margin-bottom: 0.7rem;
+    font-size: var(--size-caption);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .board__slot {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: start;
+    gap: 0.3rem;
+    min-height: 5.5rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.24rem 0.44rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1;
+    color: var(--ink);
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+
+  .chip__kind {
+    color: var(--ink-soft);
+  }
+
+  /* Keluarga yang pecah. Terakota hanya menyala sebelum audit. */
+  .audit-fig[data-state="before"] .chip--leak,
+  .audit-fig[data-state="before"] .chip--leak .chip__kind {
+    color: var(--before-audit);
+  }
+
+  .audit-fig[data-state="before"] .chip--leak {
+    border-color: var(--before-audit);
+    background: var(--before-audit-wash);
+  }
+
+  .audit-fig[data-state="after"] .chip {
+    border-color: color-mix(in srgb, var(--verified) 40%, var(--rule));
+  }
+
+  .readout {
+    margin-top: 1.1rem;
+    font-size: var(--size-figure);
+    color: var(--ink-soft);
+  }
+
+  .readout__line {
+    display: none;
+  }
+
+  .audit-fig[data-state="before"] .readout__line[data-when="before"],
+  .audit-fig[data-state="after"] .readout__line[data-when="after"] {
+    display: inline;
+  }
+
+  .readout__num {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+  }
+
+  .readout__num--bad {
+    color: var(--before-audit);
+  }
+
+  .readout__num--good {
+    color: var(--verified);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+</style>
