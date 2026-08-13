@@ -1,0 +1,156 @@
+---
+// Bagian 1. Angka di sini diambil dari Riwayat Akademik, Berita Acara Ujian
+// Skripsi (20 Juli 2026), Riwayat Pengalaman, dan naskah jurnal ITJRD.
+const figures = [
+  { value: "3.86", unit: "/ 4.00", label: "GPA, cum laude" },
+  { value: "1,645", unit: "images", label: "Thesis dataset" },
+  { value: "~300", unit: "undergraduates", label: "Taught over 4 semesters" },
+  { value: "144", unit: "credits", label: "Four years, no repeats" },
+];
+---
+
+<section class="hero shell" aria-labelledby="hero-title">
+  <div class="hero__text">
+    <h1 id="hero-title">Dwi Yuda</h1>
+
+    <p class="hero__claim">
+      I audit my own work before someone else has to.
+    </p>
+
+    <p class="hero__meta measure">
+      Informatics graduate from Universitas Islam Riau, Pekanbaru. I work on
+      computer vision, LLM applications, and the evaluation that decides whether
+      either one is telling the truth.
+    </p>
+
+    {/* Tanpa tombol unduh CV. Berkas CV memuat nomor telepon, dan nomor
+        telepon tidak ditayangkan. Minta lewat email. */}
+    <p class="hero__actions">
+      <a class="button" href="mailto:dwiiyudaaa@gmail.com">
+        dwiiyudaaa@gmail.com
+      </a>
+      <a class="hero__link" href="https://www.linkedin.com/in/dwiyuda">
+        LinkedIn
+      </a>
+      <a class="hero__link" href="https://github.com/Dwiyuda">GitHub</a>
+    </p>
+  </div>
+
+  {/* ponytail: kotak menunggu potret hasil kurasi. Ganti seluruh <div> ini
+      dengan satu <img src="/portrait.webp" alt="..." /> saat fotonya siap. */}
+  <div class="hero__portrait" role="img" aria-label="Portrait photograph pending">
+    <span class="caption">Portrait pending</span>
+  </div>
+
+  <dl class="hero__figures">
+    {
+      figures.map((f) => (
+        <div class="hero__figure">
+          <dt class="caption">{f.label}</dt>
+          <dd>
+            <span class="hero__value">{f.value}</span>
+            <span class="figure hero__unit">{f.unit}</span>
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3rem);
+    padding-block: clamp(3rem, 8vw, 5.5rem) var(--section-gap);
+  }
+
+  @media (min-width: 48rem) {
+    .hero {
+      grid-template-columns: 1fr 15rem;
+      align-items: start;
+    }
+
+    .hero__figures {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .hero__claim {
+    font-family: var(--font-display);
+    font-size: var(--size-section);
+    font-weight: 400;
+    line-height: 1.35;
+    font-variation-settings: "SOFT" 30, "WONK" 1;
+    max-width: 28ch;
+    margin-block: 1.25rem 1rem;
+    text-wrap: balance;
+  }
+
+  .hero__meta {
+    color: var(--ink-soft);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    margin-top: 1.75rem;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 0.6rem 1.1rem;
+    font-size: var(--size-figure);
+    text-decoration: none;
+    color: var(--paper);
+    background: var(--ink);
+    border-radius: 2px;
+    transition: opacity 120ms ease;
+  }
+
+  .button:hover {
+    opacity: 0.85;
+  }
+
+  .hero__link {
+    font-family: var(--font-mono);
+    font-size: var(--size-figure);
+  }
+
+  .hero__portrait {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 5;
+    border: 1px dashed var(--rule);
+    border-radius: 2px;
+    background: var(--paper-raised);
+  }
+
+  .hero__figures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1.5rem 2rem;
+    padding-top: 2rem;
+    margin: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .hero__figure dd {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+  }
+
+  .hero__value {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+  }
+
+  .hero__unit {
+    color: var(--ink-soft);
+  }
+</style>

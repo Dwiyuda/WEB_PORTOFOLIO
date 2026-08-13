@@ -1,0 +1,82 @@
+---
+// Bagian 8. Sumber: Riwayat Akademik Dwi Yuda, KHS Semester 8,
+// Berita Acara Ujian Skripsi 20 Juli 2026, dan transkrip 5 Juli 2026.
+// Nilai terendah B- diambil dari transkrip. Menyebutnya lebih kuat daripada
+// menulis "tidak ada nilai C", karena pembaca bisa memeriksanya.
+const marks = [
+  { value: "3.86", unit: "/ 4.00", label: "Cumulative GPA" },
+  { value: "4.00", unit: "final term", label: "Semester 8" },
+  { value: "144", unit: "credits", label: "Completed in four years" },
+  { value: "82.07", unit: "graded A", label: "Thesis defence" },
+];
+---
+
+<section class="section" id="achievements" aria-labelledby="achievements-title">
+  <div class="shell">
+    <span class="section__label">Record</span>
+    <h2 id="achievements-title">What the transcript says</h2>
+
+    <dl class="marks">
+      {
+        marks.map((m) => (
+          <div class="marks__item">
+            <dt class="caption">{m.label}</dt>
+            <dd>
+              <span class="marks__value">{m.value}</span>
+              <span class="figure marks__unit">{m.unit}</span>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <div class="measure record__note">
+      <p>
+        Four years, September 2022 to July 2026, with no repeated course. The
+        lowest grade anywhere on the transcript is a B− in Linear Algebra.
+        Cum laude. The defence on 20 July passed outright, with no revision
+        round attached.
+      </p>
+      <p>
+        <a class="figure figure--verified" href="/khs-semester-8.pdf">
+          Semester 8 record, PDF
+        </a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .marks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1.5rem 2rem;
+    margin: 2.5rem 0 0;
+  }
+
+  .marks__item dd {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+  }
+
+  .marks__value {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+  }
+
+  .marks__unit {
+    color: var(--ink-soft);
+  }
+
+  .record__note {
+    margin-top: 2.25rem;
+  }
+
+  .record__note p + p {
+    margin-top: 1.25rem;
+  }
+</style>

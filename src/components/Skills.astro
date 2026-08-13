@@ -1,0 +1,175 @@
+---
+// Bagian 9. Aturan PRD: tanpa persentase, dan tiap tool disebut dipakai di
+// mana. Kalau sebuah tool tidak bisa ditautkan ke pekerjaan nyata, tool itu
+// tidak masuk daftar. TensorFlow/Keras, React, dan Streamlit ada di CV tapi
+// belum ada proyek yang bisa disebut, jadi sengaja tidak dicantumkan.
+const groups = [
+  {
+    heading: "Modelling",
+    items: [
+      ["PyTorch", "Both training phases of the detection model"],
+      ["Hugging Face Transformers", "Qwen3-VL and Florence-2 in the pipeline"],
+      ["Scikit-learn", "Metrics and StratifiedGroupKFold on the thesis data"],
+      ["OpenCV", "Canny edge detection and deskewing before classification"],
+      ["Grad-CAM", "Checking which region drove each decision"],
+    ],
+  },
+  {
+    heading: "Evaluation",
+    items: [
+      ["Group-aware splitting", "Rebuilt the thesis split by card family"],
+      ["ROC-AUC, confusion matrix", "Reported per model and per split"],
+      ["Ablation study", "Resolution ablation that broke the 1.0 ceiling"],
+      ["Robustness benchmark", "JPEG, blur, occlusion, rotation, noise"],
+      ["LLM-as-a-judge", "Independent check on the semantic gate"],
+    ],
+  },
+  {
+    heading: "Building",
+    items: [
+      ["Python", "The detection pipeline and the grading system"],
+      ["FastAPI", "Serving the detection model"],
+      ["Next.js 14, JavaScript", "The detection frontend"],
+      ["PHP, CodeIgniter, MariaDB", "OpenSID at Pulau Gadang"],
+      ["SQL, MySQL", "Lab modules I wrote for the database course"],
+      ["Git", "Everything above"],
+    ],
+  },
+];
+
+const languages = [
+  ["Indonesian", "Native"],
+  ["English", "Professional working"],
+  ["Arabic", "Elementary, conversational"],
+];
+---
+
+<section class="section" id="contact" aria-labelledby="contact-title">
+  <div class="shell">
+    <span class="section__label">Tools and contact</span>
+    <h2 id="contact-title">What I use, and where I used it</h2>
+
+    <div class="kit">
+      {
+        groups.map((g) => (
+          <div class="kit__group">
+            <h3 class="kit__heading">{g.heading}</h3>
+            <dl class="kit__list">
+              {g.items.map(([name, where]) => (
+                <div class="kit__row">
+                  <dt class="figure">{name}</dt>
+                  <dd class="caption">{where}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="tail">
+      <div>
+        <h3 class="kit__heading">Languages</h3>
+        <dl class="kit__list">
+          {
+            languages.map(([name, level]) => (
+              <div class="kit__row">
+                <dt class="figure">{name}</dt>
+                <dd class="caption">{level}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div>
+        <h3 class="kit__heading">Reach me</h3>
+        <ul class="contact">
+          <li>
+            <a class="figure" href="mailto:dwiiyudaaa@gmail.com"
+              >dwiiyudaaa@gmail.com</a
+            >
+          </li>
+          <li>
+            <a class="figure" href="https://www.linkedin.com/in/dwiyuda"
+              >linkedin.com/in/dwiyuda</a
+            >
+          </li>
+          <li>
+            <a class="figure" href="https://github.com/Dwiyuda"
+              >github.com/Dwiyuda</a
+            >
+          </li>
+        </ul>
+        <p class="caption tail__note">
+          Based in Pekanbaru, Riau. Open to remote.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .kit {
+    display: grid;
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+  }
+
+  @media (min-width: 48rem) {
+    .kit {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+  }
+
+  .kit__heading {
+    font-size: var(--size-figure);
+    font-family: var(--font-body);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .kit__list {
+    margin: 1rem 0 0;
+  }
+
+  .kit__row + .kit__row {
+    margin-top: 0.9rem;
+  }
+
+  .kit__row dd {
+    margin: 0.1rem 0 0;
+  }
+
+  .tail {
+    display: grid;
+    gap: 2.5rem;
+    margin-top: 3rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  @media (min-width: 48rem) {
+    .tail {
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .contact {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+  }
+
+  .contact li + li {
+    margin-top: 0.6rem;
+  }
+
+  .tail__note {
+    margin-top: 1.25rem;
+  }
+</style>

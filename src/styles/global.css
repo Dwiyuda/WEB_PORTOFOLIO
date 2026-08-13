@@ -1,0 +1,258 @@
+/* Portofolio Dwi Yuda — token, reset, tipografi.
+   Palet dan skala huruf diambil persis dari PRD. Jangan ubah nilainya
+   tanpa memperbarui catatan di D:\History\Project\Portofolio Dwi Yuda\ */
+
+:root {
+  /* Palet terang — default yang disengaja, bukan turunan preferensi sistem */
+  --ink: #14181c;
+  --paper: #faf9f5;
+  --rule: #e4e1d8;
+  --verified: #0e6e5c;
+  --before-audit: #b04a28;
+
+  /* Turunan seperlunya, tidak menambah warna baru ke palet */
+  --ink-soft: #545b61;
+  --paper-raised: #fffefb;
+  --verified-wash: #0e6e5c14;
+  --before-audit-wash: #b04a2814;
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Public Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", monospace;
+
+  /* Skala PRD: 44 / 28 / 20 / 17 / 15 / 13 */
+  --size-page-title: clamp(2.125rem, 1.4rem + 3.1vw, 2.75rem);
+  --size-section: clamp(1.5rem, 1.3rem + 0.9vw, 1.75rem);
+  --size-subhead: 1.25rem;
+  --size-body: 1.0625rem;
+  --size-figure: 0.9375rem;
+  --size-caption: 0.8125rem;
+  --leading-body: 1.7;
+
+  --measure: 34rem;
+  --gutter: clamp(1.25rem, 5vw, 3rem);
+  --section-gap: clamp(4rem, 9vw, 6.5rem);
+  --page-max: 60rem;
+}
+
+[data-theme="dark"] {
+  --ink: #e8e6e0;
+  --paper: #101314;
+  --rule: #272c2e;
+  --verified: #4fbfa3;
+  --before-audit: #e08055;
+  --ink-soft: #9aa2a5;
+  --paper-raised: #171b1d;
+  --verified-wash: #4fbfa31f;
+  --before-audit-wash: #e080551f;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+p,
+figure,
+blockquote,
+ul,
+ol,
+dl,
+dd {
+  margin: 0;
+}
+
+ul[class],
+ol[class] {
+  list-style: none;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--size-body);
+  line-height: var(--leading-body);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  /* Fraunces punya sumbu SOFT dan WONK. Sedikit saja, supaya judul
+     terbaca sebagai cetakan, bukan sebagai dekorasi. */
+  font-variation-settings: "SOFT" 20, "WONK" 1;
+}
+
+h1 {
+  font-size: var(--size-page-title);
+}
+
+h2 {
+  font-size: var(--size-section);
+}
+
+h3 {
+  font-size: var(--size-subhead);
+  font-variation-settings: "SOFT" 10, "WONK" 0;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  transition: text-decoration-color 120ms ease;
+}
+
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+:focus-visible {
+  outline: 2px solid var(--verified);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Angka selalu monospace. Ini yang membedakan hasil pengukuran
+   dari klaim pemasaran, dan alasan JetBrains Mono ada di sini. */
+.figure {
+  font-family: var(--font-mono);
+  font-size: var(--size-figure);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.figure--verified {
+  color: var(--verified);
+}
+
+.caption {
+  font-size: var(--size-caption);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.measure {
+  max-width: var(--measure);
+}
+
+.shell {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+main {
+  counter-reset: section;
+}
+
+.section {
+  padding-block: var(--section-gap);
+  border-top: 1px solid var(--rule);
+}
+
+/* Penanda bagian: nomor kecil di atas judul, seperti label di catatan lab.
+   Nomornya dihitung dari urutan tayang, bukan ditulis tangan, supaya
+   menyisipkan bagian baru tidak memaksa penomoran ulang. */
+.section__label {
+  font-family: var(--font-mono);
+  font-size: var(--size-caption);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.section__label::before {
+  counter-increment: section;
+  content: counter(section, decimal-leading-zero) " / ";
+}
+
+/* Satu jabatan atau satu peran. Dipakai di bagian Experience dan
+   Organisation, jadi tinggal di sini, bukan di salah satu komponen. */
+.role__head {
+  margin-top: 2.5rem;
+}
+
+.role + .role {
+  margin-top: 3rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--rule);
+}
+
+.role__meta {
+  margin-top: 0.3rem;
+  color: var(--ink-soft);
+}
+
+.role__points {
+  margin: 1.25rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.role__points li + li {
+  margin-top: 0.7rem;
+}
+
+.role__points li::marker {
+  color: var(--ink-soft);
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--paper-raised);
+  color: var(--ink);
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--rule);
+  z-index: 10;
+}
+
+.skip-link:focus {
+  left: var(--gutter);
+  top: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

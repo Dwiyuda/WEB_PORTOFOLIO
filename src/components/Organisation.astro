@@ -1,0 +1,103 @@
+---
+import { Image } from "astro:assets";
+import handover from "../assets/village-handover.jpeg";
+
+// Bagian 6. Sumber: Riwayat Pengalaman Dwi Yuda.
+// Website HIMATIF ditulis "Directed", tidak pernah "Built". Kenyataannya
+// supervisi, dan poin kedua di bawah menyebutkan itu terang-terangan.
+// Bagian ini belum punya artefak. Angkanya yang menahan bagian ini berdiri.
+---
+
+<section class="section" id="organisation" aria-labelledby="organisation-title">
+  <div class="shell">
+    <span class="section__label">Organisation and service</span>
+    <h2 id="organisation-title">Running things I did not build</h2>
+
+    <article class="role">
+      <header class="role__head">
+        <h3>Vice Chairman, HIMATIF</h3>
+        <p class="figure role__meta">
+          Informatics Student Association, UIR · Feb 2024 – Apr 2025
+        </p>
+      </header>
+
+      <ul class="role__points measure">
+        <li>
+          Supervised seven operational divisions and 50 members, reporting to
+          the chair.
+        </li>
+        <li>
+          Directed the Research and Technology division through the
+          association's Next.js profile site. I set the scope and reviewed what
+          came back. The code is theirs.
+        </li>
+        <li>
+          Ran an IT and cyber security seminar at SMK Labor for around 50
+          vocational students. Twelve volunteers delivered it with me.
+        </li>
+        <li>
+          Coordinated the student induction camp: 280 participants, 100
+          committee members.
+        </li>
+      </ul>
+    </article>
+
+    <article class="role">
+      <header class="role__head">
+        <h3>Student team member, Desa Binaan</h3>
+        <p class="figure role__meta">
+          Pulau Gadang, Kampar · Oct 2024 – Mar 2025
+        </p>
+      </header>
+
+      <ul class="role__points measure">
+        <li>
+          Community empowerment programme run by a UIR student team. The
+          pre-survey went out on 25 October 2024.
+        </li>
+        <li>
+          Sessions at the village hall with the village head and every member
+          of staff, on village law and on publishing budget records.
+        </li>
+        <li>
+          The programme was written up afterwards and published. It is the
+          article in the next section.
+        </li>
+      </ul>
+
+      <figure class="shot">
+        <Image
+          src={handover}
+          alt="Handover in the village meeting room. A student team member
+            passes a laptop showing the new site to the village head, with four
+            others standing alongside."
+          widths={[720, 1200]}
+          sizes="(min-width: 46rem) 60vw, 92vw"
+          format="webp"
+          loading="lazy"
+        />
+        <figcaption class="caption">
+          Handing the finished site to the village head. Photograph used with
+          permission.
+        </figcaption>
+      </figure>
+    </article>
+  </div>
+</section>
+
+<style>
+  .shot {
+    margin: 2rem 0 0;
+    max-width: 40rem;
+  }
+
+  .shot img {
+    width: 100%;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+  }
+
+  .shot figcaption {
+    margin-top: 0.6rem;
+  }
+</style>

@@ -1,0 +1,279 @@
+---
+// Bagian 5. Sumber angka: HASIL_UJICOBA_TAMBAHAN/README.md (25 Juli 2026) dan
+// metrics_summary.json tiap folder hasil, sudah dicocokkan satu per satu.
+//
+// PENTING soal narasi. Perbaikan kebocoran 29% TIDAK menurunkan akurasi.
+// Akurasi tetap 1,0000 setelah split dibersihkan. Yang menurunkannya ke
+// 0,9606-0,9774 adalah ablasi resolusi. Jangan pernah menyandingkan angka
+// 29% dengan 97,7% seolah yang satu menyebabkan yang lain. CV lama
+// melakukan itu dan implikasinya keliru.
+const pipeline = [
+  {
+    stage: "Qwen3-VL",
+    role: "Semantic gate. Rejects anything that is not an ID card, zero-shot.",
+  },
+  {
+    stage: "Florence-2 + Canny",
+    role: "Phrase grounding locates the card, then edge detection crops and deskews it.",
+  },
+  {
+    stage: "EfficientNet-B0",
+    role: "Binary classifier, genuine against forged.",
+  },
+  {
+    stage: "Grad-CAM",
+    role: "Heatmap over the region that drove the decision.",
+  },
+];
+---
+
+<section class="section" id="projects" aria-labelledby="projects-title">
+  <div class="shell">
+    <span class="section__label">Projects</span>
+    <h2 id="projects-title">Two I can defend line by line</h2>
+
+    <article class="project">
+      <header class="role__head">
+        <h3>Student ID card forgery detection</h3>
+        <p class="figure role__meta">
+          Final year project · PyTorch, FastAPI, Next.js 14, OpenCV ·
+          <a
+            class="figure--verified"
+            href="https://github.com/Dwiyuda/KTM-Detector-UIR-Skripsi_Public"
+            rel="noopener">Repository</a
+          >
+        </p>
+      </header>
+
+      <p class="measure project__lede">
+        Card checks at the university library were a person looking at a card.
+        The printed QR code was never wired to any database, so a good forgery
+        only had to survive a glance. This is a four-stage pipeline that decides
+        instead, and shows its reasoning.
+      </p>
+
+      <ol class="pipeline">
+        {
+          pipeline.map((p) => (
+            <li class="pipeline__step">
+              <span class="figure pipeline__stage">{p.stage}</span>
+              <span class="pipeline__role">{p.role}</span>
+            </li>
+          ))
+        }
+      </ol>
+
+      <p class="measure">
+        The dataset is 1,645 images, 845 genuine scans and 800 forgeries built
+        under five scenarios: generative-AI face swap, font inconsistency,
+        print-scan recapture, identity text tampering, and hybrids that stack
+        one on another. The model that ships runs at 1024×474 on a group-aware
+        80:10:10 split and scores 1.0000 across accuracy, precision, recall,
+        F1, and ROC-AUC. It fits in 4 GB of VRAM.
+      </p>
+
+      <div class="audit">
+        <p class="audit__label figure">The audit</p>
+
+        <div class="measure">
+          <p>
+            Four models. Four perfect scores, with confusion matrices holding no
+            errors at all. A result like that is not something to celebrate. It
+            is a reason to go and check the data.
+          </p>
+
+          <p>
+            The check found something. Every forgery was built from a real card
+            and kept its number, so <code>real_214</code> became
+            <code>fake_214</code>. My split script shuffled the genuine files
+            and the forged files independently, which let two halves of one
+            physical card land on opposite sides of the train-test boundary. On
+            the 80:10:10 split, <span class="audit__figure"
+              >48 of 165 test images</span
+            > were contaminated. That is 29.1%. On 70:15:15 it was 71 of 248.
+          </p>
+
+          <p>
+            I rewrote the split to work on card families rather than files.
+            Every derivative of one card now lands in the same subset.
+            Contamination went to zero.
+          </p>
+
+          <p class="audit__turn">Then I retrained, and it was still 1.0000.</p>
+
+          <p>
+            The leak was real and it explained nothing. I had spent the audit
+            proving my own suspicion wrong. A five-fold group-aware
+            cross-validation agreed. At 1024×474 the two classes genuinely do
+            separate, and the contamination had been riding along without
+            changing the outcome.
+          </p>
+
+          <p>
+            My examiners raised a different objection. If every model scores
+            1.0, there is no basis for saying which one is better. They asked
+            for results that were not perfect.
+          </p>
+
+          <p>
+            The quick way to do that is to make the numbers worse. I did not.
+            Instead I ran a resolution ablation, holding every other parameter
+            fixed and dropping the input to each architecture's native size,
+            224×224 for B0 and 300×300 for B3. Accuracy fell to between
+            <span class="figure">0.9606</span> and
+            <span class="figure">0.9774</span> on its own, and the fall carried
+            information: the model leans on high-frequency forensic traces that
+            do not survive being shrunk.
+          </p>
+
+          <p>
+            Every false negative in those runs came from one scenario. Font
+            inconsistency. Not a single face swap, recapture, text patch, or
+            hybrid got past. Four files defeated every native-resolution model I
+            trained. Letterforms are the finest detail in the dataset, so they
+            are the first thing to go when a card is squeezed to 224 pixels
+            wide.
+          </p>
+        </div>
+      </div>
+    </article>
+
+    <article class="project">
+      <header class="role__head">
+        <h3>LLM practicum grading system</h3>
+        <p class="figure role__meta">
+          Personal project, approved by the head of department · Python, Gemini
+          API
+        </p>
+      </header>
+
+      <ul class="role__points measure">
+        <li>
+          Reads the question, the answer key, and the lecturer's rubric, scores
+          each submission against it, then writes an Excel recap with feedback
+          per student. Covers eight sessions, six of material plus a quiz and a
+          final.
+        </li>
+        <li>
+          No retrieval layer. The whole context fits in one prompt, so RAG would
+          have been machinery with nothing to do.
+        </li>
+        <li>
+          Every output carries a confidence label. Anything below high
+          confidence goes to a human before it counts.
+        </li>
+        <li>
+          Answer keys drafted by the model are validated by the lecturer before
+          they grade anything. Student code is read, never executed.
+        </li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<style>
+  .project + .project {
+    margin-top: 3.5rem;
+    padding-top: 3.5rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .project__lede {
+    margin-top: 1.25rem;
+  }
+
+  .pipeline {
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+    margin: 1.75rem 0;
+    padding: 0;
+  }
+
+  @media (min-width: 52rem) {
+    .pipeline {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+    }
+  }
+
+  .pipeline__step {
+    position: relative;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: var(--paper-raised);
+  }
+
+  /* Panah antar tahap. Dekoratif, jadi tidak masuk pohon aksesibilitas. */
+  .pipeline__step + .pipeline__step::before {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    top: -0.6rem;
+    width: 1px;
+    height: 0.45rem;
+    background: var(--ink-soft);
+  }
+
+  @media (min-width: 52rem) {
+    .pipeline__step + .pipeline__step::before {
+      left: -0.35rem;
+      top: 1.4rem;
+      width: 0.2rem;
+      height: 1px;
+    }
+  }
+
+  .pipeline__stage {
+    display: block;
+    color: var(--verified);
+  }
+
+  .pipeline__role {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: var(--size-caption);
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+
+  /* Satu-satunya tempat terakota dipakai di seluruh halaman. */
+  .audit {
+    margin-top: 2.5rem;
+    padding: 1.75rem;
+    border: 1px solid var(--rule);
+    border-left: 2px solid var(--before-audit);
+    border-radius: 2px;
+    background: var(--before-audit-wash);
+  }
+
+  .audit__label {
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--before-audit);
+    margin-bottom: 1.25rem;
+  }
+
+  .audit p + p {
+    margin-top: 1.1rem;
+  }
+
+  .audit__figure {
+    font-family: var(--font-mono);
+    font-size: var(--size-figure);
+    color: var(--before-audit);
+  }
+
+  .audit__turn {
+    font-family: var(--font-display);
+    font-size: var(--size-subhead);
+    line-height: 1.4;
+    font-variation-settings: "SOFT" 30, "WONK" 1;
+  }
+
+  .audit code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+</style>

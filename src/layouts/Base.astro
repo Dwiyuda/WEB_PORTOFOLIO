@@ -1,0 +1,141 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:SOFT,WONK,opsz,wght@0..100,0..1,9..144,400..700&family=JetBrains+Mono:wght@400..500&family=Public+Sans:wght@400..600&display=swap"
+    />
+
+    {/* Dibaca sebelum paint supaya tema pilihan tidak berkedip saat muat.
+        Terang tetap default: tanpa pilihan tersimpan, tidak ada yang di-set. */}
+    <script is:inline>
+      if (localStorage.getItem("theme") === "dark") {
+        document.documentElement.dataset.theme = "dark";
+      }
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="masthead">
+      <div class="shell masthead__inner">
+        <span class="masthead__name">Dwi Yuda</span>
+        <button
+          type="button"
+          id="theme-toggle"
+          class="masthead__toggle"
+          aria-pressed="false"
+          aria-label="Switch to dark theme"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <path
+              d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.3"
+              stroke-linejoin="round"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <script>
+      const toggle = document.getElementById("theme-toggle");
+      const root = document.documentElement;
+
+      const sync = () => {
+        const dark = root.dataset.theme === "dark";
+        toggle?.setAttribute("aria-pressed", String(dark));
+        toggle?.setAttribute(
+          "aria-label",
+          dark ? "Switch to light theme" : "Switch to dark theme",
+        );
+      };
+
+      toggle?.addEventListener("click", () => {
+        const dark = root.dataset.theme === "dark";
+        if (dark) {
+          delete root.dataset.theme;
+          localStorage.removeItem("theme");
+        } else {
+          root.dataset.theme = "dark";
+          localStorage.setItem("theme", "dark");
+        }
+        sync();
+      });
+
+      sync();
+    </script>
+
+    <style>
+      .masthead {
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .masthead__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-block: 1rem;
+      }
+
+      .masthead__name {
+        font-family: var(--font-mono);
+        font-size: var(--size-caption);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+      }
+
+      .masthead__toggle {
+        display: grid;
+        place-items: center;
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        color: var(--ink-soft);
+        background: transparent;
+        border: 1px solid var(--rule);
+        border-radius: 50%;
+        cursor: pointer;
+        transition:
+          color 120ms ease,
+          border-color 120ms ease;
+      }
+
+      .masthead__toggle:hover {
+        color: var(--ink);
+        border-color: var(--ink-soft);
+      }
+    </style>
+  </body>
+</html>
