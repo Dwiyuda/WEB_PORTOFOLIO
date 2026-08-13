@@ -25,7 +25,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="en" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={new URL("/og.png", Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Dwi Yuda. I audit my own work before someone else has to. GPA 3.86, 1,645 images, around 300 undergraduates, thesis graded A." />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="author" content="Dwi Yuda" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -96,18 +100,54 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       };
 
       toggle?.addEventListener("click", () => {
-        const dark = root.dataset.theme === "dark";
-        if (dark) {
-          delete root.dataset.theme;
-          localStorage.removeItem("theme");
+        const flip = () => {
+          const dark = root.dataset.theme === "dark";
+          if (dark) {
+            delete root.dataset.theme;
+            localStorage.removeItem("theme");
+          } else {
+            root.dataset.theme = "dark";
+            localStorage.setItem("theme", "dark");
+          }
+          sync();
+        };
+
+        const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (document.startViewTransition && !reduced) {
+          document.startViewTransition(flip);
         } else {
-          root.dataset.theme = "dark";
-          localStorage.setItem("theme", "dark");
+          flip();
         }
-        sync();
       });
 
       sync();
+
+      // Menandai bagian yang sedang dibaca. Pitanya sempit di tengah layar,
+      // jadi hanya satu tautan menyala pada satu waktu.
+      const links = [
+        ...document.querySelectorAll<HTMLAnchorElement>(".masthead__nav a"),
+      ];
+      const byId = new Map(
+        links.map((a) => [a.getAttribute("href")?.slice(1) ?? "", a]),
+      );
+
+      if (byId.size) {
+        const spy = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              byId
+                .get(entry.target.id)
+                ?.classList.toggle("is-current", entry.isIntersecting);
+            });
+          },
+          { rootMargin: "-45% 0px -50% 0px" },
+        );
+
+        byId.forEach((_, id) => {
+          const target = document.getElementById(id);
+          if (target) spy.observe(target);
+        });
+      }
     </script>
 
     <style>
@@ -179,8 +219,18 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         transition: transform var(--t-mid) var(--ease-out);
       }
 
-      .masthead__nav a:hover::after {
+      .masthead__nav a:hover::after,
+      .masthead__nav a.is-current::after {
         transform: scaleX(1);
+      }
+
+      .masthead__nav a.is-current {
+        color: var(--ink);
+      }
+
+      .masthead__nav a.is-current::after {
+        background: var(--verified);
+        height: 2px;
       }
 
       .masthead__toggle {

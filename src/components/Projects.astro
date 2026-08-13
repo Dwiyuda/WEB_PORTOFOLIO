@@ -13,18 +13,26 @@ const pipeline = [
   {
     stage: "Qwen3-VL",
     role: "Semantic gate. Rejects anything that is not an ID card, zero-shot.",
+    detail:
+      "It has to throw out a photo of a desk, a hand, a blank wall, before any of that reaches the classifier. Evaluated separately with an LLM-as-a-judge pass over card and non-card images, where it scored perfectly.",
   },
   {
     stage: "Florence-2 + Canny",
     role: "Phrase grounding locates the card, then edge detection crops and deskews it.",
+    detail:
+      "Florence-2 says where the card is, Canny finds its edges, and the crop straightens it. The classifier never sees the desk it was lying on, so background stops being a feature it can cheat with.",
   },
   {
     stage: "EfficientNet-B0",
     role: "Binary classifier, genuine against forged.",
+    detail:
+      "Two-phase transfer learning from ImageNet: the head trains first with the backbone frozen, then the whole network fine-tunes. Mixup at alpha 0.4, AdamW, seed 42. The shipped model runs at 1024×474 and fits in 4 GB of VRAM.",
   },
   {
     stage: "Grad-CAM",
     role: "Heatmap over the region that drove the decision.",
+    detail:
+      "This is the part that keeps the rest honest. On a font forgery the heat sits on the text block; on a face swap it sits on the portrait. If it had lit up the background instead, the accuracy figure would have meant nothing.",
   },
 ];
 ---
@@ -54,12 +62,21 @@ const pipeline = [
         instead, and shows its reasoning.
       </p>
 
+      {/* Akordeon eksklusif lewat atribut name, tanpa JavaScript. Peramban
+          yang belum mendukungnya tetap bisa membuka tiap tahap, hanya bisa
+          terbuka bersamaan. */}
       <ol class="pipeline rise-group">
         {
-          pipeline.map((p) => (
+          pipeline.map((p, i) => (
             <li class="pipeline__step">
-              <span class="figure pipeline__stage">{p.stage}</span>
-              <span class="pipeline__role">{p.role}</span>
+              <details name="ktm-pipeline" open={i === 0}>
+                <summary>
+                  <span class="pipeline__no figure">{`0${i + 1}`}</span>
+                  <span class="pipeline__stage figure">{p.stage}</span>
+                  <span class="pipeline__role">{p.role}</span>
+                </summary>
+                <p class="pipeline__detail">{p.detail}</p>
+              </details>
             </li>
           ))
         }
@@ -184,58 +201,94 @@ const pipeline = [
 
   .pipeline {
     list-style: none;
-    display: grid;
-    gap: 0.75rem;
     margin: 1.75rem 0;
     padding: 0;
-  }
-
-  @media (min-width: 52rem) {
-    .pipeline {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.5rem;
-    }
-  }
-
-  .pipeline__step {
-    position: relative;
-    padding: 0.9rem 1rem;
     border: 1px solid var(--rule);
-    border-radius: 2px;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .pipeline__step + .pipeline__step {
+    border-top: 1px solid var(--rule);
+  }
+
+  .pipeline summary {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 11rem) 1fr;
+    align-items: baseline;
+    gap: 0.35rem 0.75rem;
+    padding: 0.95rem 1.1rem;
+    cursor: pointer;
+    list-style: none;
     background: var(--paper-raised);
+    transition: background var(--t-fast) var(--ease);
   }
 
-  /* Panah antar tahap. Dekoratif, jadi tidak masuk pohon aksesibilitas. */
-  .pipeline__step + .pipeline__step::before {
-    content: "";
-    position: absolute;
-    left: 1rem;
-    top: -0.6rem;
-    width: 1px;
-    height: 0.45rem;
-    background: var(--ink-soft);
+  .pipeline summary::-webkit-details-marker {
+    display: none;
   }
 
-  @media (min-width: 52rem) {
-    .pipeline__step + .pipeline__step::before {
-      left: -0.35rem;
-      top: 1.4rem;
-      width: 0.2rem;
-      height: 1px;
+  .pipeline summary:hover {
+    background: color-mix(in srgb, var(--verified) 7%, var(--paper-raised));
+  }
+
+  @media (max-width: 44rem) {
+    .pipeline summary {
+      grid-template-columns: 2.25rem 1fr;
     }
+    .pipeline__role {
+      grid-column: 2;
+    }
+  }
+
+  .pipeline__no {
+    color: var(--ink-soft);
+    font-size: 0.75rem;
   }
 
   .pipeline__stage {
-    display: block;
     color: var(--verified);
+    transition: letter-spacing var(--t-mid) var(--ease-out);
+  }
+
+  .pipeline details[open] .pipeline__stage {
+    letter-spacing: 0.02em;
   }
 
   .pipeline__role {
-    display: block;
-    margin-top: 0.35rem;
     font-size: var(--size-caption);
     line-height: 1.5;
     color: var(--ink-soft);
+  }
+
+  .pipeline__detail {
+    max-width: var(--measure);
+    margin: 0;
+    padding: 0 1.1rem 1.15rem calc(2.25rem + 1.85rem);
+    font-size: var(--size-figure);
+    line-height: 1.65;
+    color: var(--ink-soft);
+    background: var(--paper-raised);
+  }
+
+  @media (max-width: 44rem) {
+    .pipeline__detail {
+      padding-left: 1.1rem;
+    }
+  }
+
+  /* Isi tahap yang dibuka meluncur turun, bukan muncul mendadak. */
+  @media (prefers-reduced-motion: no-preference) {
+    .pipeline details[open] .pipeline__detail {
+      animation: slide-down var(--t-mid) var(--ease-out);
+    }
+  }
+
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-0.4rem);
+    }
   }
 
   /* Satu-satunya tempat terakota dipakai di seluruh halaman. */
