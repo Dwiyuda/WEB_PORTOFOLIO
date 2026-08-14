@@ -175,7 +175,7 @@ const pipeline = [
 
           <div class="measure audit__rest">
             <p>
-              Every forgery was built from a real card and kept its number, so
+              Every forgery was built from a real card and kept its number, so{" "}
               <code>real_214</code> became <code>fake_214</code>. My split
               script shuffled the genuine files and the forged files
               independently, which let two halves of one physical card land on
@@ -202,8 +202,8 @@ const pipeline = [
               The quick way to do that is to make the numbers worse. I did not.
               Instead I ran a resolution ablation, holding every other parameter
               fixed and dropping the input to each architecture's native size,
-              224×224 for B0 and 300×300 for B3. Accuracy fell to between
-              <span class="figure">0.9606</span> and
+              224×224 for B0 and 300×300 for B3. Accuracy fell to between{" "}
+              <span class="figure">0.9606</span> and{" "}
               <span class="figure">0.9774</span> on its own, and the fall
               carried information: the model leans on high-frequency forensic
               traces that do not survive being shrunk.

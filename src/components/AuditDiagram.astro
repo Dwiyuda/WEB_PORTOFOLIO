@@ -76,12 +76,14 @@ const chips = families.flatMap((f) =>
   </div>
 
   <p class="readout">
+    {/* Spasi eksplisit setelah tiap </span>. Astro memangkas whitespace di
+        akhir baris, jadi tanpa ini angkanya menempel ke kata berikutnya. */}
     <span class="readout__line" data-when="before">
-      <span class="readout__num readout__num--bad">48 of 165</span>
+      <span class="readout__num readout__num--bad">48 of 165</span>{" "}
       test images contaminated on the 80:10:10 split. That is 29.1%.
     </span>
     <span class="readout__line" data-when="after">
-      <span class="readout__num readout__num--good">0 of 165</span>
+      <span class="readout__num readout__num--good">0 of 165</span>{" "}
       contaminated. Every derivative of one card lands in the same subset.
     </span>
   </p>
