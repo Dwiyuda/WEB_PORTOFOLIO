@@ -1,10 +1,15 @@
-# dwiyuda.is-a.dev
+# Portfolio site
 
-Personal portfolio site. One scrolling page, nine sections, from enrolment in
-September 2022 to graduation in July 2026.
+Live at **https://dwiyuda.pages.dev**
+
+A single scrolling page covering the years from enrolment in September 2022 to
+finishing in July 2026: who I am, a timeline, four projects, two jobs, student
+organisation work, one publication, the academic record, and how to reach me.
 
 Built with [Astro](https://astro.build). Static output, no client framework, no
-CSS framework. The only JavaScript that ships is the theme toggle.
+CSS framework, no animation library. The build produces no separate JavaScript
+bundle at all — the theme toggle, the lightbox, the audit diagram and the
+before/after slider all run from small inline scripts.
 
 ## Running it
 
@@ -13,43 +18,113 @@ npm install
 npm run dev
 ```
 
-Then open `http://localhost:4321`. `npm run build` writes the static site to
-`dist/`.
+Then open `http://localhost:4321`.
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Dev server on port 4321, hot reload |
+| `npm run build` | Static site into `dist/` |
+| `npm run preview` | Serves the built `dist/`, closer to production than `dev` |
+
+Check `npm run preview` before deploying anything visual. `dev` does not
+optimise images the same way.
 
 ## Layout
 
 ```
-public/          static files served as-is
+assets/            raw camera sources, gitignored, never committed
+public/            files served as-is: CV, transcript, preview card, robots.txt
+scripts/           one-off image tooling, run by hand
 src/
-├── assets/      source images, converted to WebP at build time
-├── components/  one file per section
-├── layouts/     page shell, fonts, theme toggle
-├── pages/       index.astro composes the sections
-└── styles/      palette tokens, type scale, shared classes
+├── assets/        processed images, turned into WebP at build time
+├── components/    one file per section, plus Compare and AuditDiagram
+├── layouts/       page shell: fonts, theme, lightbox, section spy
+├── pages/         index.astro and 404.astro
+└── styles/        palette tokens, type scale, motion, shared classes
 ```
 
-## Notes on the design
+## Image tooling
 
-The palette is five colours. Teal marks anything that can be verified against a
-document. Terracotta appears in exactly one place, the dataset audit case study,
-and nowhere else.
+Raw photographs stay out of the repository. `assets/` holds the originals from
+the camera and is gitignored; `src/assets/` holds the cropped and resized
+results, and those are committed. Three scripts bridge the two:
+
+```sh
+node scripts/prep-assets.mjs    # crop and resize ordinary photographs
+node scripts/prep-screens.mjs   # crop screenshots AND blur the ID cards in them
+node scripts/make-og.mjs public/og.png   # rebuild the link preview card
+```
+
+`prep-screens.mjs` is not optional. The raw detector screenshots contain other
+people's identity cards, so every card region is blurred until nothing reads
+before anything ships. If you add a screenshot, add its blur regions to that
+script rather than committing the raw file.
+
+## Things worth knowing before editing
+
+**`site` in `astro.config.mjs` must be an address that actually answers.** It
+fills `canonical`, `og:url` and `og:image`. Pointing it at a domain that still
+redirects means link previews on WhatsApp and LinkedIn come out blank, with no
+sign of a problem on the site itself.
+
+**Astro trims trailing whitespace before an inline tag.** Writing
+
+```astro
+Accuracy fell to between
+<span class="figure">0.9606</span>
+```
+
+renders as `between0.9606`. Use an explicit `{" "}`. To check, grep the built
+output rather than the source:
+
+```sh
+grep -oE '[a-z]<(a|em|code|span)|</span>[a-z]' dist/index.html
+```
+
+**Motion is CSS, not JavaScript.** Reveals use `animation-timeline: view()`,
+the reading progress bar uses `scroll()`. Everything sits behind `@supports`
+so unsupported browsers render the content plainly, and
+`prefers-reduced-motion` cancels `animation-timeline` explicitly, since a
+scroll timeline ignores `animation-duration`.
+
+**Every figure traces to a document.** Numbers come from a transcript, an
+examination record, a metrics file or a published article. Nothing is rounded
+up and nothing is estimated. If a number cannot be traced, it does not go on
+the page.
+
+The accuracy figures in the projects section deserve a note. The model that
+ships scores 1.0000 on a group-aware split at 1024×474. The lower range, 0.9606
+to 0.9774, comes from a resolution ablation at each architecture's native input
+size. Those are two different experiments and the page says so. The 29% leak
+that was found and fixed did **not** change the accuracy — the ablation did.
+
+## To do
+
+- [ ] Point `site` at `https://dwiyuda.is-a.dev` once
+      [is-a-dev/register#47149](https://github.com/is-a-dev/register/pull/47149)
+      is merged, the custom domain is added in Cloudflare Pages, **and**
+      `https://dwiyuda.is-a.dev/og.png` returns 200. In that order.
+- [ ] Decide whether the ITJRD manuscript belongs in the publication section;
+      currently held back because its publication status is unconfirmed.
+- [ ] The portrait's bright green background still clashes with the cream
+      palette. The frame was removed, the colour clash was not addressed.
+
+## Design notes
+
+Five colours. Teal marks anything verifiable against a document. Terracotta
+appears in exactly one place, the dataset audit case study, and nowhere else.
 
 Numbers are set in JetBrains Mono so they read as measurements rather than
 marketing. Headings use Fraunces, body text Public Sans.
 
-Light is the default theme rather than a fallback. Dark is available through the
-toggle in the header.
+Light is the default theme rather than a fallback. Dark is available from the
+header toggle and switches through the View Transitions API.
 
 Section numbers come from a CSS counter, so inserting a section does not mean
 renumbering the rest.
 
-## Notes on the content
-
-Every figure on this site comes from a document: a transcript, an examination
-record, a metrics file, or a published article. Nothing is rounded up and nothing
-is estimated.
-
-The accuracy figures in the projects section deserve a note. The model that ships
-scores 1.0000 on a group-aware split at 1024×474. The lower range, 0.9606 to
-0.9774, comes from a resolution ablation run at each architecture's native input
-size. Those are two different experiments and the site says so.
+Each section deliberately has its own shape: the timeline is a spine, Experience
+is a sticky spec column beside flowing text, Organisation is a ledger led by
+numbers, Publication is a bibliography entry with a hanging indent. Uniform
+sections read as machine-made, which is the one thing this page is trying not
+to be.
