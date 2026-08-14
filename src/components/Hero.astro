@@ -48,19 +48,17 @@ const figures = [
       </div>
 
       <figure class="hero__portrait">
-        <div class="hero__plate">
-          <Image
-            src={portrait}
-            alt="Dwi Yuda in a dark suit, wearing a maroon graduation stole
-              reading Bachelor of Informatics Engineering, Class of 2026, in
-              front of a Pekanbaru sign."
-            widths={[360, 467]}
-            sizes="(min-width: 52rem) 14rem, 60vw"
-            format="webp"
-            quality={80}
-            loading="eager"
-          />
-        </div>
+        <Image
+          src={portrait}
+          alt="Dwi Yuda in a dark suit, wearing a maroon graduation stole
+            reading Bachelor of Informatics Engineering, Class of 2026, in
+            front of a Pekanbaru sign."
+          widths={[360, 467]}
+          sizes="(min-width: 52rem) 14rem, 60vw"
+          format="webp"
+          quality={80}
+          loading="eager"
+        />
         <figcaption class="caption">Pekanbaru, July 2026.</figcaption>
       </figure>
     </div>
@@ -215,46 +213,18 @@ const figures = [
     margin: 0;
   }
 
-  /* Pelat foto: satu garis teal digeser di belakang bingkai, seperti
-     lembar arsip yang ditumpuk. Saat disentuh kursor keduanya merapat,
-     jadi gerakannya membaca sebagai foto yang diangkat, bukan efek. */
-  .hero__plate {
-    position: relative;
+  /* Tanpa bingkai dan tanpa bayangan. Fotonya berdiri sendiri di atas
+     kertas; sudut dibulatkan sedikit saja supaya tepinya tidak setajam
+     tangkapan layar di bagian lain halaman. */
+  .hero__portrait img {
     width: 100%;
     max-width: 14rem;
-    isolation: isolate;
-  }
-
-  .hero__plate::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border: 1px solid var(--verified);
-    border-radius: 2px;
-    transform: translate(0.6rem, 0.6rem);
-    transition: transform var(--t-mid) var(--ease-out);
-  }
-
-  .hero__plate img {
-    width: 100%;
-    border: 1px solid var(--rule);
-    border-radius: 2px;
-    background: var(--paper);
-    transition: transform var(--t-mid) var(--ease-out);
-  }
-
-  .hero__portrait:hover .hero__plate::before {
-    transform: translate(0.3rem, 0.3rem);
-  }
-
-  .hero__portrait:hover .hero__plate img {
-    transform: translate(-0.15rem, -0.15rem);
+    border-radius: 3px;
   }
 
   .hero__portrait figcaption {
     max-width: 14rem;
-    margin-top: 1rem;
+    margin-top: 0.85rem;
   }
 
   .hero__figures {
