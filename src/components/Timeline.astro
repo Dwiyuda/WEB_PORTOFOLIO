@@ -156,16 +156,20 @@ const points = [
   @media (min-width: 52rem) {
     .track {
       padding-left: 2.5rem;
-      margin-left: 7rem;
+      /* Harus cukup lebar untuk menampung kolom tanggal di margin kiri:
+         2,5rem padding + 8,1rem offset tanggal, dibulatkan ke atas. */
+      margin-left: 8.5rem;
     }
 
     .track__point::before {
       left: calc(-2.5rem - 4.5px);
     }
 
+    /* Tanggal berakhir di -3,6rem, titiknya duduk di -2,5rem. Selisih itu
+       yang menjaga angka tidak tertimpa titik. */
     .track__date {
       position: absolute;
-      left: -9.5rem;
+      left: -10.6rem;
       top: 0.15rem;
       width: 7rem;
       text-align: right;
