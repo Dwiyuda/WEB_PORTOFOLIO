@@ -39,6 +39,43 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       href="https://fonts.googleapis.com/css2?family=Fraunces:SOFT,WONK,opsz,wght@0..100,0..1,9..144,400..700&family=JetBrains+Mono:wght@400..500&family=Public+Sans:wght@400..600&display=swap"
     />
 
+    {/* Supaya mesin pencari tahu halaman ini tentang satu orang, dan
+        menampilkan nama serta tautan yang benar saat seseorang mencari
+        "Dwi Yuda". Tanpa ini mereka menebak dari teks. */}
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Person",
+        name: "Dwi Yuda",
+        url: canonical.href,
+        image: new URL("/og.png", Astro.site).href,
+        jobTitle: "AI Engineer",
+        email: "mailto:dwiiyudaaa@gmail.com",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Pekanbaru",
+          addressRegion: "Riau",
+          addressCountry: "ID",
+        },
+        alumniOf: {
+          "@type": "CollegeOrUniversity",
+          name: "Universitas Islam Riau",
+        },
+        knowsAbout: [
+          "Computer vision",
+          "Deep learning",
+          "Model evaluation",
+          "Large language model applications",
+        ],
+        knowsLanguage: ["Indonesian", "English", "Arabic"],
+        sameAs: [
+          "https://github.com/Dwiyuda",
+          "https://www.linkedin.com/in/dwiyuda",
+        ],
+      })}
+    />
+
     {/* Dibaca sebelum paint supaya tema pilihan tidak berkedip saat muat.
         Terang tetap default: tanpa pilihan tersimpan, tidak ada yang di-set. */}
     <script is:inline>

@@ -62,7 +62,7 @@ const ledger = [
     </p>
 
     <div class="gallery rise-group">
-      <figure class="frame">
+      <figure class="shot">
         <Image
           src={goesToSchool}
           alt="A hall at SMK Labor at the end of the seminar. Around fifty
@@ -79,7 +79,7 @@ const ledger = [
         </figcaption>
       </figure>
 
-      <figure class="frame">
+      <figure class="shot">
         <Image
           src={inductionCamp}
           alt="The student induction camp, with participants gathered in an
@@ -211,24 +211,6 @@ const ledger = [
     }
   }
 
-  .frame {
-    margin: 0;
-  }
-
-  .frame img {
-    width: 100%;
-    border: 1px solid var(--rule);
-    transition: filter var(--t-mid) var(--ease);
-  }
-
-  .frame:hover img {
-    filter: brightness(1.04) saturate(1.05);
-  }
-
-  .frame figcaption {
-    margin-top: 0.6rem;
-  }
-
   /* Catatan integritas. Bukan kartu, hanya teks bertakik, supaya terbaca
      sebagai koreksi penulis atas dirinya sendiri. */
   .disclaim {
@@ -257,23 +239,5 @@ const ledger = [
 
   .service__text p + p {
     margin-top: 1.1rem;
-  }
-
-  .shot {
-    margin: 0;
-  }
-
-  .shot img {
-    width: 100%;
-    border: 1px solid var(--rule);
-    transition: filter var(--t-mid) var(--ease);
-  }
-
-  .shot:hover img {
-    filter: brightness(1.04) saturate(1.05);
-  }
-
-  .shot figcaption {
-    margin-top: 0.65rem;
   }
 </style>

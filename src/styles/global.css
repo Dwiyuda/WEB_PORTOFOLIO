@@ -265,44 +265,24 @@ main {
   background: var(--paper-raised);
 }
 
-.bento__wide {
-  grid-column: span 2;
+/* Satu foto beserta keterangannya. Dipakai di Pengalaman dan Organisasi,
+   jadi tinggal di sini alih-alih ditulis dua kali. */
+.shot {
+  margin: 0;
 }
 
-@media (max-width: 34rem) {
-  .bento__wide {
-    grid-column: span 1;
-  }
+.shot img {
+  width: 100%;
+  border: 1px solid var(--rule);
+  transition: filter var(--t-mid) var(--ease);
 }
 
-/* Satu jabatan atau satu peran. Dipakai di bagian Experience dan
-   Organisation, jadi tinggal di sini, bukan di salah satu komponen. */
-.role__head {
-  margin-top: 2.5rem;
+.shot:hover img {
+  filter: brightness(1.04) saturate(1.05);
 }
 
-.role + .role {
-  margin-top: 3rem;
-  padding-top: 3rem;
-  border-top: 1px solid var(--rule);
-}
-
-.role__meta {
-  margin-top: 0.3rem;
-  color: var(--ink-soft);
-}
-
-.role__points {
-  margin: 1.25rem 0 0;
-  padding-left: 1.1rem;
-}
-
-.role__points li + li {
-  margin-top: 0.7rem;
-}
-
-.role__points li::marker {
-  color: var(--ink-soft);
+.shot figcaption {
+  margin-top: 0.65rem;
 }
 
 .skip-link {
@@ -334,15 +314,6 @@ main {
   to {
     opacity: 1;
     transform: none;
-  }
-}
-
-@keyframes wipe-in {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
   }
 }
 
@@ -381,12 +352,6 @@ main {
   }
   .rise-group > *:nth-child(n + 5) {
     animation-range: entry 18% cover 42%;
-  }
-
-  .wipe {
-    animation: wipe-in linear both;
-    animation-timeline: view();
-    animation-range: entry 10% cover 40%;
   }
 }
 
@@ -493,7 +458,6 @@ main {
   /* Linimasa gulir mengabaikan durasi, jadi harus dimatikan sendiri. */
   .rise,
   .rise-group > *,
-  .wipe,
   .progress {
     animation-timeline: auto !important;
     animation: none !important;
