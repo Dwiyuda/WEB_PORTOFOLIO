@@ -1,6 +1,8 @@
 ---
 import { Image } from "astro:assets";
 import handover from "../assets/village-handover.jpeg";
+import goesToSchool from "../assets/goes-to-school.jpg";
+import inductionCamp from "../assets/induction-camp.jpg";
 
 // Bagian 6. Sumber: Riwayat Pengalaman Dwi Yuda.
 //
@@ -48,6 +50,41 @@ const ledger = [
         ))
       }
     </dl>
+
+    <div class="gallery rise-group">
+      <figure class="frame">
+        <Image
+          src={goesToSchool}
+          alt="A hall at SMK Labor at the end of the seminar. Around fifty
+            vocational students and the volunteer team stand behind a banner
+            reading HIMATIF Go To School."
+          widths={[560, 900]}
+          sizes="(min-width: 46rem) 45vw, 92vw"
+          format="webp"
+          quality={64}
+          loading="lazy"
+        />
+        <figcaption class="caption">
+          Go To School at SMK Labor. Photograph used with permission.
+        </figcaption>
+      </figure>
+
+      <figure class="frame">
+        <Image
+          src={inductionCamp}
+          alt="The student induction camp, with participants gathered in an
+            open field."
+          widths={[560, 900]}
+          sizes="(min-width: 46rem) 45vw, 92vw"
+          format="webp"
+          quality={64}
+          loading="lazy"
+        />
+        <figcaption class="caption">
+          The induction camp: 280 participants, 100 on the committee.
+        </figcaption>
+      </figure>
+    </div>
 
     <p class="disclaim rise">
       The association's Next.js profile site was built by the Research and
@@ -155,6 +192,37 @@ const ledger = [
       grid-template-columns: 4rem minmax(0, 1fr);
       gap: 1rem;
     }
+  }
+
+  .gallery {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  @media (min-width: 46rem) {
+    .gallery {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+    }
+  }
+
+  .frame {
+    margin: 0;
+  }
+
+  .frame img {
+    width: 100%;
+    border: 1px solid var(--rule);
+    transition: filter var(--t-mid) var(--ease);
+  }
+
+  .frame:hover img {
+    filter: brightness(1.04) saturate(1.05);
+  }
+
+  .frame figcaption {
+    margin-top: 0.6rem;
   }
 
   /* Catatan integritas. Bukan kartu, hanya teks bertakik, supaya terbaca

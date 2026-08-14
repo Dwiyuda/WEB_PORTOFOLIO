@@ -1,4 +1,7 @@
 ---
+import { Image } from "astro:assets";
+import portrait from "../assets/portrait.jpg";
+
 // Bagian 1. Angka dari Riwayat Akademik, Berita Acara Ujian Skripsi
 // (20 Juli 2026), Riwayat Pengalaman, dan hasil eksperimen skripsi.
 const figures = [
@@ -39,15 +42,22 @@ const figures = [
         </p>
       </div>
 
-      {/* ponytail: kotak menunggu potret hasil kurasi. Ganti seluruh <div>
-          ini dengan satu <Image /> saat fotonya siap. */}
-      <div
-        class="hero__portrait"
-        role="img"
-        aria-label="Portrait photograph pending"
-      >
-        <span class="caption">Portrait pending</span>
-      </div>
+      <figure class="hero__portrait">
+        <Image
+          src={portrait}
+          alt="Dwi Yuda in a dark suit, wearing a maroon graduation stole
+            reading Bachelor of Informatics Engineering, Class of 2026, in
+            front of a Pekanbaru sign."
+          widths={[360, 467]}
+          sizes="(min-width: 52rem) 14rem, 60vw"
+          format="webp"
+          quality={80}
+          loading="eager"
+        />
+        <figcaption class="caption">
+          Pekanbaru, July 2026. Study finished, ceremony in November.
+        </figcaption>
+      </figure>
     </div>
 
     <dl class="hero__figures rise-group">
@@ -197,12 +207,19 @@ const figures = [
   }
 
   .hero__portrait {
-    display: grid;
-    place-items: center;
-    aspect-ratio: 4 / 5;
-    border: 1px dashed var(--rule);
+    margin: 0;
+  }
+
+  .hero__portrait img {
+    width: 100%;
+    max-width: 14rem;
+    border: 1px solid var(--rule);
     border-radius: 2px;
-    background: var(--paper-raised);
+  }
+
+  .hero__portrait figcaption {
+    max-width: 14rem;
+    margin-top: 0.6rem;
   }
 
   .hero__figures {

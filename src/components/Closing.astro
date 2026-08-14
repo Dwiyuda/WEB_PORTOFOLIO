@@ -1,0 +1,129 @@
+---
+// Bagian 10, penutup. Sumber: Pembacaan Diri Dwi Yuda.
+//
+// Preferensi kerja diambil apa adanya dari catatan: perusahaan dengan proses
+// rapi, jadi bagian kecil supaya bisa belajar banyak, remote boleh, bersedia
+// pindah. Jangan diganti dengan bahasa lamaran yang generik.
+//
+// Nomor telepon tidak ditayangkan.
+---
+
+<section class="section close" id="contact" aria-labelledby="closing-title">
+  <div class="shell">
+    <span class="section__label">Now</span>
+    <h2 id="closing-title" class="rise">Where this leaves me</h2>
+
+    <div class="close__grid">
+      <div class="close__text rise">
+        <p class="close__line">
+          I finished in July. I am looking for work now, not in November.
+        </p>
+        <p>
+          What I want is a team with a process I can learn from, and I would
+          rather be the least experienced person in that room than the most
+          experienced in a smaller one. Remote works. So does moving.
+        </p>
+        <p>
+          If anything above is useful to you, email is the fastest way to reach
+          me. I answer.
+        </p>
+      </div>
+
+      <div class="close__links rise">
+        <a class="close__mail" href="mailto:dwiiyudaaa@gmail.com">
+          dwiiyudaaa@gmail.com
+        </a>
+        <ul class="close__list">
+          <li>
+            <a class="figure" href="https://www.linkedin.com/in/dwiyuda"
+              >linkedin.com/in/dwiyuda</a
+            >
+          </li>
+          <li>
+            <a class="figure" href="https://github.com/Dwiyuda"
+              >github.com/Dwiyuda</a
+            >
+          </li>
+        </ul>
+        <p class="caption close__where">Pekanbaru, Riau, Indonesia</p>
+      </div>
+    </div>
+
+    <p class="caption colophon">
+      Built with Astro. It sets no cookies and runs no analytics. Every figure
+      on this page traces back to a document, and the source is
+      <a href="https://github.com/Dwiyuda/WEB_PORTOFOLIO" rel="noopener"
+        >on GitHub</a
+      >.
+    </p>
+  </div>
+</section>
+
+<style>
+  .close__grid {
+    display: grid;
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+  }
+
+  @media (min-width: 52rem) {
+    .close__grid {
+      grid-template-columns: minmax(0, 1fr) 16rem;
+      gap: 3.5rem;
+      align-items: start;
+    }
+  }
+
+  .close__text {
+    max-width: var(--measure);
+  }
+
+  .close__line {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 1.15rem + 1.2vw, 1.95rem);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    font-variation-settings: "SOFT" 40, "WONK" 1;
+    text-wrap: balance;
+  }
+
+  .close__text p + p {
+    margin-top: 1.2rem;
+    color: var(--ink-soft);
+  }
+
+  .close__mail {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
+    color: var(--verified);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--verified) 40%, transparent);
+    transition: border-color var(--t-fast) var(--ease);
+  }
+
+  .close__mail:hover {
+    border-bottom-color: var(--verified);
+  }
+
+  .close__list {
+    margin: 1.1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .close__list li + li {
+    margin-top: 0.5rem;
+  }
+
+  .close__where {
+    margin-top: 1.25rem;
+  }
+
+  .colophon {
+    max-width: 46ch;
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+  }
+</style>

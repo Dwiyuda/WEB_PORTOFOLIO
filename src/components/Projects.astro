@@ -3,12 +3,16 @@ import AuditDiagram from "./AuditDiagram.astro";
 
 // Bagian 5. Sumber angka: HASIL_UJICOBA_TAMBAHAN/README.md (25 Juli 2026) dan
 // metrics_summary.json tiap folder hasil, sudah dicocokkan satu per satu.
+// Sumber LLM Grading: SISTEM_ASISTENSI_A/RINGKASAN_PROYEK.md (10 Juli 2026).
+// Sumber Hening: SISTEM_SmartBand/README.md.
+// Sumber tracker: FOLDER_PAYMENT_GEN_HALILINTAR/.../README.md.
 //
 // PENTING soal narasi. Perbaikan kebocoran 29% TIDAK menurunkan akurasi.
 // Akurasi tetap 1,0000 setelah split dibersihkan. Yang menurunkannya ke
 // 0,9606-0,9774 adalah ablasi resolusi. Jangan pernah menyandingkan angka
-// 29% dengan 97,7% seolah yang satu menyebabkan yang lain. CV lama
-// melakukan itu dan implikasinya keliru.
+// 29% dengan 97,7% seolah yang satu menyebabkan yang lain.
+//
+// Bentuk tiap proyek: abstrak terbuka, kedalaman di balik <details>.
 const pipeline = [
   {
     stage: "Qwen3-VL",
@@ -40,12 +44,12 @@ const pipeline = [
 <section class="section section--ink" id="projects" aria-labelledby="projects-title">
   <div class="shell">
     <span class="section__label">Projects</span>
-    <h2 id="projects-title" class="rise">Two I can defend line by line</h2>
+    <h2 id="projects-title" class="rise">Four I can defend line by line</h2>
 
-    <article class="project">
-      <header class="role__head">
+    <article class="work rise">
+      <header class="work__head">
         <h3>Student ID card forgery detection</h3>
-        <p class="figure role__meta">
+        <p class="figure work__meta">
           Final year project · PyTorch, FastAPI, Next.js 14, OpenCV ·
           <a
             class="figure--verified"
@@ -55,153 +59,363 @@ const pipeline = [
         </p>
       </header>
 
-      <p class="measure project__lede">
-        Card checks at the university library were a person looking at a card.
-        The printed QR code was never wired to any database, so a good forgery
-        only had to survive a glance. This is a four-stage pipeline that decides
-        instead, and shows its reasoning.
+      <p class="work__abstract">
+        Card checks at the university library were a person looking at a card,
+        and the printed QR code was never wired to any database. This is a
+        four-stage pipeline that decides instead, and shows its reasoning. The
+        model that ships scores 1.0000 across every metric on a group-aware
+        split and fits in 4 GB of VRAM.
       </p>
 
-      {/* Akordeon eksklusif lewat atribut name, tanpa JavaScript. Peramban
-          yang belum mendukungnya tetap bisa membuka tiap tahap, hanya bisa
-          terbuka bersamaan. */}
-      <ol class="pipeline rise-group">
-        {
-          pipeline.map((p, i) => (
-            <li class="pipeline__step">
-              <details name="ktm-pipeline" open={i === 0}>
-                <summary>
-                  <span class="pipeline__no figure">{`0${i + 1}`}</span>
-                  <span class="pipeline__stage figure">{p.stage}</span>
-                  <span class="pipeline__role">{p.role}</span>
-                </summary>
-                <p class="pipeline__detail">{p.detail}</p>
-              </details>
-            </li>
-          ))
-        }
-      </ol>
+      <ul class="chips" aria-label="Key figures">
+        <li><span class="figure">1,645</span> images</li>
+        <li><span class="figure">5</span> forgery scenarios</li>
+        <li><span class="figure">4 GB</span> VRAM</li>
+      </ul>
 
-      <p class="measure">
-        The dataset is 1,645 images, 845 genuine scans and 800 forgeries built
-        under five scenarios: generative-AI face swap, font inconsistency,
-        print-scan recapture, identity text tampering, and hybrids that stack
-        one on another. The model that ships runs at 1024×474 on a group-aware
-        80:10:10 split and scores 1.0000 across accuracy, precision, recall,
-        F1, and ROC-AUC. It fits in 4 GB of VRAM.
-      </p>
+      <details class="deep">
+        <summary><span>How the pipeline works</span></summary>
+        <ol class="pipeline">
+          {
+            pipeline.map((p, i) => (
+              <li class="pipeline__step">
+                <details name="ktm-pipeline" open={i === 0}>
+                  <summary>
+                    <span class="pipeline__no figure">{`0${i + 1}`}</span>
+                    <span class="pipeline__stage figure">{p.stage}</span>
+                    <span class="pipeline__role">{p.role}</span>
+                  </summary>
+                  <p class="pipeline__detail">{p.detail}</p>
+                </details>
+              </li>
+            ))
+          }
+        </ol>
+      </details>
 
       <div class="audit">
         <p class="audit__label figure">The audit</p>
 
-        <div class="measure">
-          <p>
-            Four models. Four perfect scores, with confusion matrices holding no
-            errors at all. A result like that is not something to celebrate. It
-            is a reason to go and check the data.
-          </p>
-
-          <p>
-            The check found something. Every forgery was built from a real card
-            and kept its number, so <code>real_214</code> became
-            <code>fake_214</code>. My split script shuffled the genuine files
-            and the forged files independently, which let two halves of one
-            physical card land on opposite sides of the train-test boundary. On
-            the 80:10:10 split, <span class="audit__figure"
-              >48 of 165 test images</span
-            > were contaminated. That is 29.1%. On 70:15:15 it was 71 of 248.
-          </p>
-        </div>
+        <p class="measure audit__gist">
+          Four models scored a perfect 1.0000. I went looking for a data leak,
+          found one that contaminated 29.1% of the test set, fixed it, and the
+          accuracy did not move. The leak was real and it explained nothing.
+        </p>
 
         <AuditDiagram />
 
-        <div class="measure audit__rest">
-          <p class="audit__turn">Then I retrained, and it was still 1.0000.</p>
+        <details class="deep deep--audit">
+          <summary><span>Read what happened next</span></summary>
 
-          <p>
-            The leak was real and it explained nothing. I had spent the audit
-            proving my own suspicion wrong. A five-fold group-aware
-            cross-validation agreed. At 1024×474 the two classes genuinely do
-            separate, and the contamination had been riding along without
-            changing the outcome.
-          </p>
+          <div class="measure audit__rest">
+            <p>
+              Every forgery was built from a real card and kept its number, so
+              <code>real_214</code> became <code>fake_214</code>. My split
+              script shuffled the genuine files and the forged files
+              independently, which let two halves of one physical card land on
+              opposite sides of the train-test boundary. I rewrote the split to
+              work on card families. Contamination went to zero.
+            </p>
 
-          <p>
-            My examiners raised a different objection. If every model scores
-            1.0, there is no basis for saying which one is better. They asked
-            for results that were not perfect.
-          </p>
+            <p class="audit__turn">Then I retrained, and it was still 1.0000.</p>
 
-          <p>
-            The quick way to do that is to make the numbers worse. I did not.
-            Instead I ran a resolution ablation, holding every other parameter
-            fixed and dropping the input to each architecture's native size,
-            224×224 for B0 and 300×300 for B3. Accuracy fell to between
-            <span class="figure">0.9606</span> and
-            <span class="figure">0.9774</span> on its own, and the fall carried
-            information: the model leans on high-frequency forensic traces that
-            do not survive being shrunk.
-          </p>
+            <p>
+              A five-fold group-aware cross-validation agreed. At 1024×474 the
+              two classes genuinely do separate, and the contamination had been
+              riding along without changing the outcome. I had spent the audit
+              proving my own suspicion wrong, and reported it that way.
+            </p>
 
-          <p>
-            Every false negative in those runs came from one scenario. Font
-            inconsistency. Not a single face swap, recapture, text patch, or
-            hybrid got past. Four files defeated every native-resolution model I
-            trained. Letterforms are the finest detail in the dataset, so they
-            are the first thing to go when a card is squeezed to 224 pixels
-            wide.
-          </p>
-        </div>
+            <p>
+              My examiners raised a different objection. If every model scores
+              1.0, there is no basis for saying which one is better. They asked
+              for results that were not perfect.
+            </p>
+
+            <p>
+              The quick way to do that is to make the numbers worse. I did not.
+              Instead I ran a resolution ablation, holding every other parameter
+              fixed and dropping the input to each architecture's native size,
+              224×224 for B0 and 300×300 for B3. Accuracy fell to between
+              <span class="figure">0.9606</span> and
+              <span class="figure">0.9774</span> on its own, and the fall
+              carried information: the model leans on high-frequency forensic
+              traces that do not survive being shrunk.
+            </p>
+
+            <p>
+              Every false negative in those runs came from one scenario. Font
+              inconsistency. Not a single face swap, recapture, text patch, or
+              hybrid got past. Four files defeated every native-resolution model
+              I trained. Letterforms are the finest detail in the dataset, so
+              they are the first thing to go when a card is squeezed to 224
+              pixels wide.
+            </p>
+          </div>
+        </details>
       </div>
     </article>
 
-    <article class="project">
-      <header class="role__head">
-        <h3>LLM practicum grading system</h3>
-        <p class="figure role__meta">
+    <article class="work rise">
+      <header class="work__head">
+        <h3>Automated practicum grading</h3>
+        <p class="figure work__meta">
           Personal project, approved by the head of department · Python, Gemini
-          API
+          2.5 Flash
         </p>
       </header>
 
-      <ul class="role__points measure">
-        <li>
-          Reads the question, the answer key, and the lecturer's rubric, scores
-          each submission against it, then writes an Excel recap with feedback
-          per student. Covers eight sessions, six of material plus a quiz and a
-          final.
-        </li>
-        <li>
-          No retrieval layer. The whole context fits in one prompt, so RAG would
-          have been machinery with nothing to do.
-        </li>
-        <li>
-          Every output carries a confidence label. Anything below high
-          confidence goes to a human before it counts.
-        </li>
-        <li>
-          Answer keys drafted by the model are validated by the lecturer before
-          they grade anything. Student code is read, never executed.
-        </li>
+      <p class="work__abstract">
+        Marking practicum submissions by hand across eight sessions is slow and
+        drifts between the first script and the fortieth. This reads the
+        question, the answer key, and the lecturer's rubric, scores each
+        submission against it, and writes an Excel recap with per-student
+        feedback. Phase one passed after its marks were calibrated against
+        manual grading.
+      </p>
+
+      <ul class="chips" aria-label="Key figures">
+        <li><span class="figure">8</span> sessions</li>
+        <li><span class="figure">3</span> Excel sheets per run</li>
+        <li><span class="figure">no</span> RAG</li>
       </ul>
+
+      <details class="deep">
+        <summary><span>Design decisions, and one that went wrong</span></summary>
+        <div class="measure deep__body">
+          <p>
+            No retrieval layer. The whole context fits in one prompt, so RAG
+            would have been machinery with nothing to do. Every output carries a
+            confidence label, and anything below high confidence goes to a human
+            before it counts. Answer keys drafted by the model are validated by
+            the lecturer before they grade anything. Student code is read, never
+            executed.
+          </p>
+          <p>
+            The one that went wrong is worth more than the ones that went right.
+            A quiz on SQL shipped to the model without its table schema, so the
+            model guessed at column names, and students who had used the real
+            ones were marked down for it. One went from 7 to 34.4 after the
+            schema was added and the rubric was told to accept aliases. Another
+            went from 44 to 46.4. A rubric on another session was also summing
+            to 105%.
+          </p>
+          <p>
+            Both were caught by checking the machine's marks against marks given
+            by hand, which is the only reason I trust the rest of them. The
+            grader does earn its keep: it caught a foreign key pointing at the
+            wrong table purely from reading, without running a line.
+          </p>
+        </div>
+      </details>
+    </article>
+
+    <article class="work rise">
+      <header class="work__head">
+        <h3>Hening, a reminder service that mostly stays quiet</h3>
+        <p class="figure work__meta">
+          Personal project · Cloudflare Workers, KV, OpenRouter, ntfy
+        </p>
+      </header>
+
+      <p class="work__abstract">
+        Reminder apps fail because the content never changes: drink water at
+        ten, at twelve, at two, whether or not you are in a meeting. Hening asks
+        a model once an hour whether interrupting is worth it at all. Out of
+        sixteen chances a day it says yes six to eight times. The silence is the
+        feature.
+      </p>
+
+      <ul class="chips" aria-label="Key figures">
+        <li><span class="figure">16</span> checks a day</li>
+        <li><span class="figure">6–8</span> actually sent</li>
+        <li><span class="figure">&lt;$1</span> a month</li>
+      </ul>
+
+      <details class="deep">
+        <summary><span>What the prompt has to get right</span></summary>
+        <div class="measure deep__body">
+          <p>
+            The hard part is not the code, it is telling the model that saying
+            nothing is a valid answer and that the daily quota is not a target
+            to hit. Three rules keep it from collapsing. A notification whose
+            button was never pressed is logged as no response rather than
+            ignored, because a busy person is not a refusal, and treating it as
+            one makes the system go mute within days. Context older than ninety
+            minutes is flagged as stale so it never tells someone they have been
+            sitting for eight hours when their phone spent the night on a table.
+            And the model returns structured JSON with a reason field, which is
+            what makes calibration possible: you can read why it chose to stay
+            quiet.
+          </p>
+          <p>
+            The README lists what it cannot do, and that list matters. The band
+            is output only, since Huawei exposes no open API. What gets detected
+            is the state of a phone, not the state of a person. Motorbikes are
+            regularly classified as bicycles.
+          </p>
+        </div>
+      </details>
+    </article>
+
+    <article class="work rise">
+      <header class="work__head">
+        <h3>Cohort payment tracker</h3>
+        <p class="figure work__meta">
+          Built for my year group · Google Apps Script, Sheets
+        </p>
+      </header>
+
+      <p class="work__abstract">
+        Nineteen of us owed each other money on a rotating schedule: every time
+        one person defends, the other eighteen contribute. Tracking that in a
+        chat thread does not survive contact with reality. This is a 19×19
+        matrix in Sheets with a small web form for updating from a phone, and a
+        dashboard that recalculates itself because every column is a formula.
+      </p>
+
+      <ul class="chips" aria-label="Key figures">
+        <li><span class="figure">19×19</span> matrix</li>
+        <li><span class="figure">3</span> live charts</li>
+      </ul>
+
+      <details class="deep">
+        <summary><span>Why a spreadsheet and not an app</span></summary>
+        <div class="measure deep__body">
+          <p>
+            The people using it already lived in Sheets, and the whole thing had
+            to be maintainable by someone who is not me after I graduate. Apps
+            Script meant no hosting, no database, and no account for anyone to
+            forget the password to. Duplicate entries are rejected at the form
+            rather than cleaned up later, and the diagonal of the matrix is
+            protected so nobody can pay themselves.
+          </p>
+          <p>
+            The repository stays private on purpose. The deployment URL is a
+            write endpoint with no authentication, which is fine for a group of
+            nineteen with the link and not fine in public.
+          </p>
+        </div>
+      </details>
     </article>
   </div>
 </section>
 
 <style>
-  .project + .project {
+  .work + .work {
     margin-top: 3.5rem;
     padding-top: 3.5rem;
     border-top: 1px solid var(--rule);
   }
 
-  .project__lede {
-    margin-top: 1.25rem;
+  .work__head {
+    margin-top: 3rem;
+  }
+
+  .work__head h3 {
+    font-size: var(--size-subhead);
+    line-height: 1.25;
+  }
+
+  .work__meta {
+    margin-top: 0.4rem;
+    color: var(--ink-soft);
+  }
+
+  .work__abstract {
+    max-width: var(--measure);
+    margin-top: 1.15rem;
+  }
+
+  /* Angka kunci sebagai baris chip, terbaca sebelum ada yang membuka apa pun */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chips li {
+    padding: 0.3rem 0.6rem;
+    font-size: var(--size-caption);
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+  }
+
+  .chips .figure {
+    color: var(--ink);
+  }
+
+  /* Pengungkap kedalaman. Ringkasan tetap terbaca tanpa membuka apa pun. */
+  .deep {
+    margin-top: 1.5rem;
+  }
+
+  .deep > summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--size-caption);
+    color: var(--verified);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .deep > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .deep > summary::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 5px solid currentColor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    transition: transform var(--t-mid) var(--ease-out);
+  }
+
+  .deep[open] > summary::before {
+    transform: rotate(90deg);
+  }
+
+  .deep > summary span {
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--t-fast) var(--ease);
+  }
+
+  .deep > summary:hover span {
+    border-bottom-color: currentColor;
+  }
+
+  .deep__body {
+    margin-top: 1.1rem;
+  }
+
+  .deep__body p + p {
+    margin-top: 1.1rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .deep[open] > :not(summary) {
+      animation: slide-down var(--t-mid) var(--ease-out);
+    }
+  }
+
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-0.4rem);
+    }
   }
 
   .pipeline {
     list-style: none;
-    margin: 1.75rem 0;
+    margin: 1.1rem 0 0;
     padding: 0;
     border: 1px solid var(--rule);
     border-radius: 3px;
@@ -248,11 +462,6 @@ const pipeline = [
 
   .pipeline__stage {
     color: var(--verified);
-    transition: letter-spacing var(--t-mid) var(--ease-out);
-  }
-
-  .pipeline details[open] .pipeline__stage {
-    letter-spacing: 0.02em;
   }
 
   .pipeline__role {
@@ -277,24 +486,8 @@ const pipeline = [
     }
   }
 
-  /* Isi tahap yang dibuka meluncur turun, bukan muncul mendadak. */
-  @media (prefers-reduced-motion: no-preference) {
-    .pipeline details[open] .pipeline__detail {
-      animation: slide-down var(--t-mid) var(--ease-out);
-    }
-  }
-
-  @keyframes slide-down {
-    from {
-      opacity: 0;
-      transform: translateY(-0.4rem);
-    }
-  }
-
-  /* Satu-satunya tempat terakota dipakai di seluruh halaman.
-     Bukan kartu membulat berpalang: sisipan bertepi lurus dengan garis
-     terakota di atas dan label yang duduk di garis itu, seperti halaman
-     catatan yang diselipkan ke dalam laporan. */
+  /* Satu-satunya tempat terakota dipakai di seluruh halaman. Sisipan
+     bertepi lurus dengan garis di atas dan label duduk di garis itu. */
   .audit {
     position: relative;
     margin-top: 3.25rem;
@@ -314,27 +507,25 @@ const pipeline = [
     background: var(--paper);
   }
 
-  .audit p + p {
+  .audit__gist {
+    margin: 0;
+  }
+
+  .audit__rest p + p {
     margin-top: 1.1rem;
   }
 
-  .audit__rest {
-    margin-top: 2.25rem;
-  }
-
-  .audit__figure {
-    font-family: var(--font-mono);
-    font-size: var(--size-figure);
-    color: var(--before-audit);
+  .deep--audit {
+    margin-top: 1.75rem;
   }
 
   /* Titik balik cerita. Satu kalimat yang membatalkan kecurigaan penulis
      sendiri, jadi diberi ruang seperti kutipan. */
   .audit__turn {
     max-width: 22ch;
-    margin-block: 2rem;
+    margin-block: 1.75rem;
     font-family: var(--font-display);
-    font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.15rem);
+    font-size: clamp(1.4rem, 1.15rem + 1.2vw, 1.95rem);
     line-height: 1.22;
     letter-spacing: -0.02em;
     font-variation-settings: "SOFT" 40, "WONK" 1;

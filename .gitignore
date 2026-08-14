@@ -1,3 +1,11 @@
+# Foto sumber dari kamera, 29 MB dan beresolusi penuh. Dijalankan lewat
+# scripts/prep-assets.mjs menjadi src/assets/ yang jauh lebih kecil, dan
+# versi terproses itulah yang di-commit. Repo ini publik, jadi wajah orang
+# lain tidak perlu ikut pada resolusi 6016x4000.
+# Garis miring di depan wajib: tanpa itu polanya ikut mengabaikan
+# src/assets/ dan seluruh gambar situs hilang dari repo.
+/assets/
+
 # build output
 dist/
 # generated types
