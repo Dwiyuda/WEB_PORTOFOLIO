@@ -1,10 +1,17 @@
-# Portfolio site
+# dwiyuda.pages.dev
 
-Live at **https://dwiyuda.pages.dev**
+Source for my portfolio site. **[Live here](https://dwiyuda.pages.dev)**
 
 A single scrolling page covering the years from enrolment in September 2022 to
 finishing in July 2026: who I am, a timeline, four projects, two jobs, student
 organisation work, one publication, the academic record, and how to reach me.
+
+I am Dwi Yuda, an informatics graduate from Universitas Islam Riau working on
+computer vision and LLM applications.
+
+![The site's link preview card: the name Dwi Yuda over the line "I audit my own
+work before someone else has to", with GPA, dataset size, undergraduates taught
+and thesis grade along the bottom](public/og.png)
 
 Built with [Astro](https://astro.build). Static output, no client framework, no
 CSS framework, no animation library. The build produces no separate JavaScript
@@ -106,8 +113,9 @@ that was found and fixed did **not** change the accuracy — the ablation did.
       `https://dwiyuda.is-a.dev/og.png` returns 200. In that order.
 - [ ] Decide whether the ITJRD manuscript belongs in the publication section;
       currently held back because its publication status is unconfirmed.
-- [ ] The portrait's bright green background still clashes with the cream
-      palette. The frame was removed, the colour clash was not addressed.
+- [ ] The hero portrait is 528×584 at source, so it is cropped at native
+      resolution rather than upscaled. That caps how large the hero can show
+      it. A higher-resolution shot would open up a bolder opening.
 
 ## Design notes
 
@@ -128,3 +136,15 @@ is a sticky spec column beside flowing text, Organisation is a ledger led by
 numbers, Publication is a bibliography entry with a hanging indent. Uniform
 sections read as machine-made, which is the one thing this page is trying not
 to be.
+
+## Using any of this
+
+The code is here to be read, and you are welcome to borrow an approach from it.
+The scroll-driven reveals, the before/after slider built on a real
+`input[type=range]`, and the audit diagram using the View Transitions API are
+all plain enough to lift.
+
+What is not reusable is the content: the writing, the photographs, the CV, and
+the academic records are mine and are not licensed for reuse. No formal licence
+file, which under copyright means all rights reserved by default. If you want to
+use something and are unsure, ask.
