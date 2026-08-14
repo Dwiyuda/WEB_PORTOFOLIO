@@ -1,5 +1,22 @@
 ---
+import { Image } from "astro:assets";
 import AuditDiagram from "./AuditDiagram.astro";
+import shotAccepted from "../assets/detector-accepted.jpg";
+import shotRejected from "../assets/detector-rejected.jpg";
+import shotGradcam from "../assets/detector-gradcam.jpg";
+
+// Tangkapan layar sudah melewati scripts/prep-screens.mjs. Setiap kartu
+// identitas di dalamnya diburamkan sampai tidak terbaca, karena kartu itu
+// milik orang lain. Jangan pernah memasang tangkapan mentah dari assets/.
+//
+// Keluaran LLM Grading tidak ditampilkan sebagai data. Berkas Excel-nya
+// memuat nama, alamat surel, dan nilai mahasiswa. Yang ditayangkan hanya
+// susunan kolomnya.
+const sheets = [
+  { name: "Rekap", cols: "NIM, name, status, total, confidence, needs review" },
+  { name: "Detail", cols: "NIM, name, criterion, score, feedback" },
+  { name: "Flag", cols: "NIM, name, status, reason for review" },
+];
 
 // Bagian 5. Sumber angka: HASIL_UJICOBA_TAMBAHAN/README.md (25 Juli 2026) dan
 // metrics_summary.json tiap folder hasil, sudah dicocokkan satu per satu.
@@ -72,6 +89,55 @@ const pipeline = [
         <li><span class="figure">5</span> forgery scenarios</li>
         <li><span class="figure">4 GB</span> VRAM</li>
       </ul>
+
+      <div class="screens rise-group">
+        <figure class="screen">
+          <Image
+            src={shotAccepted}
+            alt="The detector's result panel reading ASLI, meaning genuine,
+              with 91.26% confidence and a probability bar for each class."
+            widths={[520, 1100]}
+            sizes="(min-width: 48rem) 46vw, 92vw"
+            format="webp"
+            loading="lazy"
+          />
+          <figcaption class="caption">
+            Accepted. 91.26% confidence, above the gate.
+          </figcaption>
+        </figure>
+
+        <figure class="screen">
+          <Image
+            src={shotRejected}
+            alt="The same panel reading TIDAK DIKENALI, meaning unrecognised,
+              because model confidence of 83.19% fell below the 85% threshold."
+            widths={[520, 1100]}
+            sizes="(min-width: 48rem) 46vw, 92vw"
+            format="webp"
+            loading="lazy"
+          />
+          <figcaption class="caption">
+            Refused at 83.19%, below the 85% gate. It declines rather than
+            guesses.
+          </figcaption>
+        </figure>
+      </div>
+
+      <figure class="screen screen--wide">
+        <Image
+          src={shotGradcam}
+          alt="Grad-CAM view: the model input beside a heat map of the regions
+            that drove the prediction, with a low-to-high colour legend."
+          widths={[560, 1090]}
+          sizes="(min-width: 48rem) 70vw, 92vw"
+          format="webp"
+          loading="lazy"
+        />
+        <figcaption class="caption">
+          Grad-CAM over the same card. Card details are blurred here because
+          the card belongs to someone else; the heat pattern is the point.
+        </figcaption>
+      </figure>
 
       <details class="deep">
         <summary><span>How the pipeline works</span></summary>
@@ -205,6 +271,24 @@ const pipeline = [
             by hand, which is the only reason I trust the rest of them. The
             grader does earn its keep: it caught a foreign key pointing at the
             wrong table purely from reading, without running a line.
+          </p>
+
+          <p class="sheets__intro">
+            Each run writes one workbook with three sheets:
+          </p>
+          <dl class="sheets">
+            {
+              sheets.map((s) => (
+                <div class="sheets__row">
+                  <dt class="figure">{s.name}</dt>
+                  <dd class="caption">{s.cols}</dd>
+                </div>
+              ))
+            }
+          </dl>
+          <p class="caption sheets__note">
+            Only the column layout is shown. The real workbooks hold student
+            names, email addresses, and marks, so none of it belongs here.
           </p>
         </div>
       </details>
@@ -347,6 +431,64 @@ const pipeline = [
 
   .chips .figure {
     color: var(--ink);
+  }
+
+  .screens {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.75rem;
+  }
+
+  @media (min-width: 48rem) {
+    .screens {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  .screen {
+    margin: 0;
+  }
+
+  .screen--wide {
+    margin-top: 1.5rem;
+    max-width: 46rem;
+  }
+
+  .screen img {
+    width: 100%;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+  }
+
+  .screen figcaption {
+    margin-top: 0.6rem;
+  }
+
+  /* Susunan lembar Excel. Kolom saja, tanpa satu baris data pun. */
+  .sheets {
+    margin: 0.9rem 0 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .sheets__row {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr);
+    gap: 0.9rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .sheets__row dt {
+    color: var(--verified);
+  }
+
+  .sheets__row dd {
+    margin: 0;
+  }
+
+  .sheets__note {
+    margin-top: 0.9rem;
   }
 
   /* Pengungkap kedalaman. Ringkasan tetap terbaca tanpa membuka apa pun. */
