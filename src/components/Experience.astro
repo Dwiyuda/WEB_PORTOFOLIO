@@ -124,42 +124,43 @@ import Compare from "./Compare.astro";
             donut chart of budget against realisation on the right. The village
             head asked for proportion at a glance."
         />
-      </div>
 
-      {/* Dua foto ini menopang butir tentang requirements dan validasi
-          angka. Tanpa keduanya, klaim itu hanya kalimat. */}
-      <div class="pair rise-group">
-        <figure class="shot">
-          <Image
-            src={villageFinance}
-            alt="Standing with a member of village staff in the Pulau Gadang
-              integrated service office, under the office's name board."
-            widths={[520, 1000]}
-            sizes="(min-width: 46rem) 45vw, 92vw"
-            format="webp"
-            quality={70}
-            loading="lazy"
-          />
-          <figcaption class="caption">
-            Checking figures at the village office before writing any code.
-          </figcaption>
-        </figure>
+        {/* Harus tetap di dalam .post__body. Sebagai anak langsung .post
+            ia jadi item grid ketiga dan mendarat di kolom kiri, menimpa
+            pelat spesifikasi yang menempel di sana. */}
+        <div class="pair rise-group">
+          <figure class="shot">
+            <Image
+              src={villageFinance}
+              alt="Standing with a member of village staff in the Pulau Gadang
+                integrated service office, under the office's name board."
+              widths={[520, 1000]}
+              sizes="(min-width: 46rem) 45vw, 92vw"
+              format="webp"
+              quality={70}
+              loading="lazy"
+            />
+            <figcaption class="caption">
+              Checking figures at the village office before writing any code.
+            </figcaption>
+          </figure>
 
-        <figure class="shot">
-          <Image
-            src={villagePresentation}
-            alt="Presenting the rebuilt village website in the village meeting
-              room, with the site projected on screen."
-            widths={[520, 1000]}
-            sizes="(min-width: 46rem) 45vw, 92vw"
-            format="webp"
-            quality={70}
-            loading="lazy"
-          />
-          <figcaption class="caption">
-            Presenting the result to village staff, 28 May 2025.
-          </figcaption>
-        </figure>
+          <figure class="shot">
+            <Image
+              src={villagePresentation}
+              alt="Presenting the rebuilt village website in the village meeting
+                room, with the site projected on screen."
+              widths={[520, 1000]}
+              sizes="(min-width: 46rem) 45vw, 92vw"
+              format="webp"
+              quality={70}
+              loading="lazy"
+            />
+            <figcaption class="caption">
+              Presenting the result to village staff, 28 May 2025.
+            </figcaption>
+          </figure>
+        </div>
       </div>
     </article>
   </div>
