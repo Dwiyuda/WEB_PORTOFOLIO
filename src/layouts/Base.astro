@@ -123,6 +123,24 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       <slot />
     </main>
 
+    {/* Satu dialog dipakai bersama seluruh gambar yang bisa diperbesar.
+        <dialog> asli, jadi Esc, fokus, dan latar gelapnya sudah ditangani
+        peramban. */}
+    <dialog class="lightbox" id="lightbox">
+      <button class="lightbox__close" type="button" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+          <path
+            d="M4 4l8 8M12 4l-8 8"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"></path>
+        </svg>
+      </button>
+      <img alt="" />
+      <p class="lightbox__cap caption"></p>
+    </dialog>
+
     <script>
       const toggle = document.getElementById("theme-toggle");
       const root = document.documentElement;
@@ -163,6 +181,40 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       });
 
       sync();
+
+      // Perbesar gambar. Satu penangan di dokumen, bukan satu per gambar,
+      // supaya gambar yang ditambahkan nanti ikut tanpa kode tambahan.
+      const box = document.getElementById("lightbox") as HTMLDialogElement | null;
+
+      if (box) {
+        const boxImg = box.querySelector("img");
+        const boxCap = box.querySelector(".lightbox__cap");
+
+        document.addEventListener("click", (event) => {
+          const target = event.target as HTMLElement;
+          const img = target.closest<HTMLImageElement>(
+            ".screen img, .shot img",
+          );
+
+          if (img && boxImg) {
+            boxImg.src = img.currentSrc || img.src;
+            boxImg.alt = img.alt;
+            if (boxCap) {
+              const cap = img
+                .closest("figure")
+                ?.querySelector("figcaption")?.textContent;
+              boxCap.textContent = cap?.trim() ?? "";
+            }
+            box.showModal();
+            return;
+          }
+
+          // Klik pada latar gelap menargetkan dialognya sendiri.
+          if (target === box || target.closest(".lightbox__close")) {
+            box.close();
+          }
+        });
+      }
 
       // Menandai bagian yang sedang dibaca. Pitanya sempit di tengah layar,
       // jadi hanya satu tautan menyala pada satu waktu.
@@ -293,6 +345,61 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
       .masthead__toggle:hover {
         color: var(--ink);
+        border-color: var(--ink-soft);
+      }
+
+      .lightbox {
+        max-width: min(92vw, 68rem);
+        max-height: 92vh;
+        padding: 0;
+        color: var(--ink);
+        background: var(--paper);
+        border: 1px solid var(--rule);
+        border-radius: 3px;
+        overflow: visible;
+      }
+
+      .lightbox::backdrop {
+        background: rgb(10 12 13 / 0.72);
+        backdrop-filter: blur(3px);
+      }
+
+      .lightbox img {
+        display: block;
+        max-width: 100%;
+        max-height: 80vh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+      }
+
+      .lightbox__cap {
+        margin: 0;
+        padding: 0.75rem 1rem;
+        border-top: 1px solid var(--rule);
+      }
+
+      .lightbox__cap:empty {
+        display: none;
+      }
+
+      .lightbox__close {
+        position: absolute;
+        top: -0.75rem;
+        right: -0.75rem;
+        display: grid;
+        place-items: center;
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        color: var(--ink);
+        background: var(--paper);
+        border: 1px solid var(--rule);
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      .lightbox__close:hover {
         border-color: var(--ink-soft);
       }
     </style>

@@ -3,6 +3,8 @@ import { Image } from "astro:assets";
 import labClass from "../assets/lab-class.jpeg";
 import apbdesBefore from "../assets/apbdes-before.jpg";
 import apbdesAfter from "../assets/apbdes-after.jpg";
+import villageFinance from "../assets/village-finance.jpg";
+import villagePresentation from "../assets/village-presentation.jpg";
 import Compare from "./Compare.astro";
 
 // Bagian 4. Sumber: Riwayat Pengalaman Dwi Yuda.
@@ -123,6 +125,42 @@ import Compare from "./Compare.astro";
             head asked for proportion at a glance."
         />
       </div>
+
+      {/* Dua foto ini menopang butir tentang requirements dan validasi
+          angka. Tanpa keduanya, klaim itu hanya kalimat. */}
+      <div class="pair rise-group">
+        <figure class="shot">
+          <Image
+            src={villageFinance}
+            alt="Standing with a member of village staff in the Pulau Gadang
+              integrated service office, under the office's name board."
+            widths={[520, 1000]}
+            sizes="(min-width: 46rem) 45vw, 92vw"
+            format="webp"
+            quality={70}
+            loading="lazy"
+          />
+          <figcaption class="caption">
+            Checking figures at the village office before writing any code.
+          </figcaption>
+        </figure>
+
+        <figure class="shot">
+          <Image
+            src={villagePresentation}
+            alt="Presenting the rebuilt village website in the village meeting
+              room, with the site projected on screen."
+            widths={[520, 1000]}
+            sizes="(min-width: 46rem) 45vw, 92vw"
+            format="webp"
+            quality={70}
+            loading="lazy"
+          />
+          <figcaption class="caption">
+            Presenting the result to village staff, 28 May 2025.
+          </figcaption>
+        </figure>
+      </div>
     </article>
   </div>
 </section>
@@ -212,5 +250,22 @@ import Compare from "./Compare.astro";
   /* Sisanya diwarisi .shot di global.css. */
   .shot {
     margin-top: 2rem;
+  }
+
+  .pair {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.75rem;
+  }
+
+  @media (min-width: 46rem) {
+    .pair {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  .pair .shot {
+    margin-top: 0;
   }
 </style>

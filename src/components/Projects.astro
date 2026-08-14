@@ -459,6 +459,12 @@ const pipeline = [
     width: 100%;
     border: 1px solid var(--rule);
     border-radius: 2px;
+    cursor: zoom-in;
+    transition: border-color var(--t-fast) var(--ease);
+  }
+
+  .screen:hover img {
+    border-color: var(--verified);
   }
 
   .screen figcaption {
@@ -612,6 +618,13 @@ const pipeline = [
     color: var(--ink-soft);
   }
 
+  /* Latar dipasang di <details>, bukan di paragrafnya. Paragraf dibatasi
+     lebar bacanya, jadi kalau latar ikut menempel di sana sisa barisnya
+     menembus ke latar bagian dan terbaca sebagai kotak kosong. */
+  .pipeline details {
+    background: var(--paper-raised);
+  }
+
   .pipeline__detail {
     max-width: var(--measure);
     margin: 0;
@@ -619,7 +632,6 @@ const pipeline = [
     font-size: var(--size-figure);
     line-height: 1.65;
     color: var(--ink-soft);
-    background: var(--paper-raised);
   }
 
   @media (max-width: 44rem) {

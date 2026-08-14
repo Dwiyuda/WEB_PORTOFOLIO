@@ -274,6 +274,7 @@ main {
 .shot img {
   width: 100%;
   border: 1px solid var(--rule);
+  cursor: zoom-in;
   transition: filter var(--t-mid) var(--ease);
 }
 
