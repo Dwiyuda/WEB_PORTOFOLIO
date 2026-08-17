@@ -70,8 +70,8 @@ for (const { nama, sel } of TEMA) {
     const motif = token(sel, `motif-${n}`);
     const dL = Math.abs(Lstar(Y(lantai)) - Lstar(Y(motif)));
 
-    if (dL > 2) {
-      console.log(`  lantai ${n}  MOTIF TERLALU KUAT  dL* ${dL.toFixed(2)} > 2`);
+    if (dL > 3.2) {
+      console.log(`  lantai ${n}  MOTIF TERLALU KUAT  dL* ${dL.toFixed(2)} > 3,2`);
       gagal++;
     }
 

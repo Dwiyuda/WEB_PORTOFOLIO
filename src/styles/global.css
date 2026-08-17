@@ -11,11 +11,14 @@
   --rung-3: #e4dac4;
   --rung-4: #d6c8aa;
 
-  /* Motif tekstur, ΔL* 1,5 di bawah lantainya. Rona dipertahankan. */
-  --motif-1: #f6f4ef;
-  --motif-2: #ece6d8;
-  --motif-3: #e0d6c0;
-  --motif-4: #d2c4a6;
+  /* Motif tekstur, ΔL* 3 di bawah lantainya. Rona dipertahankan. Dinaikkan
+     dari 1,5 supaya teksturnya konsisten terlihat di tiap bagian, bukan cuma
+     tertangkap mata saat tepi transisi bergerak. 3 adalah batas amannya:
+     di atas itu kontras teks tema gelap turun di bawah margin. */
+  --motif-1: #f1efeb;
+  --motif-2: #e7e1d4;
+  --motif-3: #dbd2bc;
+  --motif-4: #cdc0a3;
 
   --pen: #1a1a17;
   /* #545b61 yang lama cuma 3,5:1 di lantai 4. Ini hasil hitungan, bukan selera. */
@@ -74,10 +77,10 @@
   --rung-4: #0d0e10;
 
   /* Di tema gelap motif lebih TERANG dari lantainya, bukan lebih gelap. */
-  --motif-1: #292d33;
-  --motif-2: #202327;
-  --motif-3: #18191d;
-  --motif-4: #111214;
+  --motif-1: #2c3036;
+  --motif-2: #23262b;
+  --motif-3: #1b1c21;
+  --motif-4: #141518;
 
   --pen: #eae6dc;
   --pen-soft: #a7a29a;
@@ -295,7 +298,7 @@ main {
 .room[data-rung="3"]::before { background: var(--rung-2); }
 .room[data-rung="4"]::before { background: var(--rung-3); }
 
-/* Tekstur ornamen, ΔL* 1,5 dari lantainya. Satu berkas melayani delapan
+/* Tekstur ornamen, ΔL* 3 dari lantainya. Satu berkas melayani delapan
    lantai: berkasnya cuma peta transparansi, warnanya dari --motif.
 
    Tanpa background-attachment: fixed — itu memaksa repaint tiap frame
@@ -347,8 +350,12 @@ main {
   transition: background var(--t-fast) var(--ease-out);
 }
 
+/* Hover diambil dari lantai ruangan, bukan --paper-raised yang nyaris putih.
+   Di lantai krem tua, putih terbaca sebagai kartu nyasar yang terlalu kontras.
+   color-mix menyesuaikan diri per tema: sedikit lebih gelap di terang, sedikit
+   lebih terang di gelap, selalu sekeluarga dengan lantainya. */
 .bento > *:hover {
-  background: var(--paper-raised);
+  background: color-mix(in srgb, var(--paper) 90%, var(--ink));
 }
 
 /* Satu foto beserta keterangannya. Dipakai di Pengalaman dan Organisasi,
@@ -493,15 +500,18 @@ main {
     animation-range: entry 60% cover 10%;
   }
 
-  /* Rentang sengaja sempit: pergantian selesai lebih awal, pembaca tidak
-     menunggu. Rentang gulir tidak punya durasi — mempercepatnya berarti
-     mempersempit rentangnya. */
+  /* Rentang sengaja LEBAR: pergantian warna berlangsung sepanjang gulir yang
+     panjang, dari saat bagian mulai muncul sampai sudah masuk penuh, jadi
+     terasa mengalir bukan patah. Rentang gulir tidak punya durasi —
+     memperlambatnya berarti melebarkan rentangnya. Dari entry 20%–70% yang
+     terasa cepat dan menyentak, jadi entry 10% sampai cover 25%: lebih dari
+     dua kali jarak gulir. */
   .room::before {
     animation-name: peel;
     animation-timing-function: linear;
     animation-fill-mode: both;
     animation-timeline: view();
-    animation-range: entry 20% entry 70%;
+    animation-range: entry 10% cover 25%;
   }
 
   /* Isi bergerak lebih lambat daripada lantainya, jadi ada rasa kedalaman.
