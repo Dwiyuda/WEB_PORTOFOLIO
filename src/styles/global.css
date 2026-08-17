@@ -305,8 +305,8 @@ main {
   -webkit-mask-image: url("../assets/motif-tile.webp");
   mask-repeat: repeat;
   -webkit-mask-repeat: repeat;
-  mask-size: 368px 368px;
-  -webkit-mask-size: 368px 368px;
+  mask-size: 736px 736px;
+  -webkit-mask-size: 736px 736px;
   pointer-events: none;
 }
 
