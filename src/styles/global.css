@@ -271,6 +271,25 @@ main {
 .room[data-rung="3"] { --paper: var(--rung-3); --motif: var(--motif-3); }
 .room[data-rung="4"] { --paper: var(--rung-4); --motif: var(--motif-4); }
 
+/* Selimut berisi warna lantai SEBELUMNYA. Saat ruangan masuk layar,
+   selimut mengelupas ke atas dan lantai baru muncul dari bawah, dengan
+   satu garis teal menandai tepinya. Ruangan satu tidak punya selimut
+   karena tidak ada lantai sebelumnya. */
+.room::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform-origin: top;
+  border-bottom: 1px solid var(--verified);
+  pointer-events: none;
+}
+
+.room[data-rung="1"]::before { display: none; }
+.room[data-rung="2"]::before { background: var(--rung-1); }
+.room[data-rung="3"]::before { background: var(--rung-2); }
+.room[data-rung="4"]::before { background: var(--rung-3); }
+
 /* Pergantian lantai sudah jadi pemisah, jadi garis atas bagian pertama
    tiap ruangan dibuang supaya tidak ada dua pemisah bertumpuk. */
 .room > .section:first-child {
@@ -369,6 +388,16 @@ main {
   }
 }
 
+@keyframes peel {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(0); }
+}
+
+@keyframes drift {
+  from { transform: translateY(2rem); }
+  to { transform: translateY(-2rem); }
+}
+
 @supports (animation-timeline: view()) {
   .rise {
     animation: rise linear both;
@@ -395,6 +424,23 @@ main {
   }
   .rise-group > *:nth-child(n + 5) {
     animation-range: entry 18% cover 42%;
+  }
+
+  /* Rentang sengaja sempit: pergantian selesai lebih awal, pembaca tidak
+     menunggu. Rentang gulir tidak punya durasi — mempercepatnya berarti
+     mempersempit rentangnya. */
+  .room::before {
+    animation: peel linear both;
+    animation-timeline: view();
+    animation-range: entry 20% entry 70%;
+  }
+
+  /* Isi bergerak lebih lambat daripada lantainya, jadi ada rasa kedalaman.
+     Dipasang di anak langsung supaya pseudo-element selimut tidak ikut. */
+  .room > * {
+    animation: drift linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
   }
 }
 
@@ -510,7 +556,9 @@ main {
   /* Linimasa gulir mengabaikan durasi, jadi harus dimatikan sendiri. */
   .rise,
   .rise-group > *,
-  .progress {
+  .progress,
+  .room::before,
+  .room > * {
     animation-timeline: auto !important;
     animation: none !important;
     opacity: 1 !important;
@@ -520,5 +568,11 @@ main {
 
   .progress {
     scale: 1 1;
+  }
+
+  /* Selimut dibuang, bukan dibekukan — kalau dibekukan pada scaleY(1) dia
+     menutupi lantai baru dan seluruh halaman terlihat satu warna. */
+  .room::before {
+    display: none !important;
   }
 }
