@@ -150,9 +150,6 @@ h3 {
   line-height: 1.15;
   letter-spacing: -0.015em;
   text-wrap: balance;
-  /* Fraunces punya sumbu SOFT dan WONK. Sedikit saja, supaya judul
-     terbaca sebagai cetakan, bukan sebagai dekorasi. */
-  font-variation-settings: "SOFT" 20, "WONK" 1;
 }
 
 h1 {
@@ -165,7 +162,6 @@ h2 {
 
 h3 {
   font-size: var(--size-subhead);
-  font-variation-settings: "SOFT" 10, "WONK" 0;
 }
 
 p {
