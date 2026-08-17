@@ -426,9 +426,26 @@ main {
   to { transform: translateY(-2rem); }
 }
 
+/* SEMUA animasi gulir di bawah ini ditulis longhand, bukan
+   `animation: rise linear both`. Alasannya wajib dibaca sebelum
+   merapikannya kembali jadi shorthand:
+
+   lightningcss — pengecil CSS bawaan Astro — melipat animation-timeline yang
+   menyusul ke dalam shorthand, jadi `animation: rise linear both` +
+   `animation-timeline: view()` keluar sebagai `animation:linear both rise
+   view()` di dist/. Chrome menolak bentuk itu seluruhnya:
+   CSS.supports('animation','linear both rise view()') === false. Akibatnya
+   seluruh gerak gulir mati DI HASIL BUILD, sementara di astro dev — yang tidak
+   mengecilkan CSS — semuanya jalan. Itu sebabnya cacat ini lolos sembilan kali
+   peninjauan: yang diperiksa selalu dev server.
+
+   Longhand tidak pernah dilipat lightningcss. Diverifikasi terhadap
+   dist/_astro/*.css, bukan terhadap dev server. */
 @supports (animation-timeline: view()) {
   .rise {
-    animation: rise linear both;
+    animation-name: rise;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
     animation-timeline: view();
     animation-range: entry 5% cover 28%;
   }
@@ -436,7 +453,9 @@ main {
   /* Anak-anak muncul berurutan. Rentangnya digeser, bukan pakai delay,
      karena pada linimasa gulir delay tidak punya arti. */
   .rise-group > * {
-    animation: rise linear both;
+    animation-name: rise;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
     animation-timeline: view();
     animation-range: entry 2% cover 26%;
   }
@@ -458,7 +477,9 @@ main {
      .rise-group. Kelas sendiri, bukan menyetel .rise-group, karena kelas itu
      juga menaungi paragraf dan galeri yang tidak boleh ikut melambat. */
   .rise-figures > * {
-    animation: rise linear both;
+    animation-name: rise;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
     animation-timeline: view();
     animation-range: entry 40% entry 85%;
   }
@@ -479,7 +500,9 @@ main {
      menunggu. Rentang gulir tidak punya durasi — mempercepatnya berarti
      mempersempit rentangnya. */
   .room::before {
-    animation: peel linear both;
+    animation-name: peel;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
     animation-timeline: view();
     animation-range: entry 20% entry 70%;
   }
@@ -487,7 +510,9 @@ main {
   /* Isi bergerak lebih lambat daripada lantainya, jadi ada rasa kedalaman.
      Dipasang di anak langsung supaya pseudo-element selimut tidak ikut. */
   .room > * {
-    animation: drift linear both;
+    animation-name: drift;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
     animation-timeline: view();
     animation-range: entry 0% exit 100%;
   }
@@ -506,7 +531,9 @@ main {
 
 @supports (animation-timeline: scroll()) {
   .progress {
-    animation: progress-scale linear both;
+    animation-name: progress-scale;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
     animation-timeline: scroll(root block);
   }
 

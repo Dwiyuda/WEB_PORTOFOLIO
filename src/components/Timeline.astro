@@ -95,9 +95,15 @@ const points = [
     transform: scaleY(0);
   }
 
+  /* Longhand, bukan `animation: grow-y linear both`. lightningcss melipat
+     animation-timeline ke dalam shorthand dan Chrome menolak hasil lipatannya,
+     jadi garis ini tidak pernah tergambar di hasil build. Lihat catatan panjang
+     di global.css. */
   @supports (animation-timeline: view()) {
     .track::before {
-      animation: grow-y linear both;
+      animation-name: grow-y;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: view();
       animation-range: entry 55% cover 75%;
     }
