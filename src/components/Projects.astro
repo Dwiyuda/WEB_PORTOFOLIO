@@ -168,9 +168,8 @@ const pipeline = [
           accuracy did not move. The leak was real and it explained nothing.
         </p>
 
-        <div class="audit--hold">
-          <AuditDiagram />
-        </div>
+        {/* Sticky hold di sini butuh jalur samping dua kolom untuk perjalanan yang berguna; buktinya dan angkanya ada di laporan task 6, 58px tanpa itu tidak sepadan dikirim. */}
+        <AuditDiagram />
 
         <details class="deep deep--audit">
           <summary><span>Read what happened next</span></summary>
@@ -690,24 +689,5 @@ const pipeline = [
   .audit code {
     font-family: var(--font-mono);
     font-size: 0.9em;
-  }
-
-  /* Satu-satunya penahanan baru di halaman, tapi tipis: ~58px perjalanan
-     selagi `deep--audit` tertutup. Membuka `deep--audit` menambah ruang jadi
-     ~966px, tapi papan lalu menimpa prosa itu sendiri sampai ~286px, karena
-     keduanya satu kolom tanpa jalur sampingnya sendiri — bukan tata dua kolom
-     seperti pelat spesifikasi di Experience. Menaikkannya perlu tata dua
-     kolom untuk studi kasus audit: keputusan desain, bukan tweak CSS. */
-  .audit--hold {
-    position: sticky;
-    top: 4rem;
-  }
-
-  /* Penahanan hanya berlaku kalau ada ruang untuk menahan. Di layar pendek
-     posisi sticky justru memakan tinggi baca. */
-  @media (max-height: 44rem) {
-    .audit--hold {
-      position: static;
-    }
   }
 </style>
