@@ -69,6 +69,9 @@ script rather than committing the raw file.
 
 ## Things worth knowing before editing
 
+Longer version in [CONTEXT.md](CONTEXT.md): what was decided while building
+this, why each section has a different shape, and the traps already hit.
+
 **`site` in `astro.config.mjs` must be an address that actually answers.** It
 fills `canonical`, `og:url` and `og:image`. Pointing it at a domain that still
 redirects means link previews on WhatsApp and LinkedIn come out blank, with no
