@@ -650,7 +650,11 @@ main {
     scroll-behavior: auto !important;
   }
 
-  /* Linimasa gulir mengabaikan durasi, jadi harus dimatikan sendiri. */
+  /* Linimasa gulir mengabaikan durasi, jadi harus dimatikan sendiri.
+     Daftar ini WAJIB memuat setiap animasi bergulir yang ditambahkan. Yang
+     ber-scope komponen tidak terjangkau dari sini dan butuh bloknya sendiri —
+     .track::before di Timeline.astro adalah satu-satunya, dan pernah terlewat.
+     Daftar reset di blok @media print di atas menanggung kewajiban yang sama. */
   .rise,
   .rise-group > *,
   .rise-figures > *,

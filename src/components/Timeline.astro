@@ -109,6 +109,19 @@ const points = [
     }
   }
 
+  /* Linimasa gulir mengabaikan animation-duration, jadi reset selimutan di
+     global.css tidak mematikannya — daftar selector di blok reduced-motion sana
+     yang melakukannya, dan daftar itu tidak bisa menjangkau selector ber-scope
+     komponen. Jadi blok ini harus ada di sini. transform: none menyisakan
+     scaleY(1): garisnya tergambar penuh, keadaan akhir tanpa gerak. */
+  @media (prefers-reduced-motion: reduce) {
+    .track::before {
+      animation-timeline: auto !important;
+      animation: none !important;
+      transform: none !important;
+    }
+  }
+
   .track__point {
     position: relative;
     padding-bottom: 2.5rem;
