@@ -310,14 +310,6 @@ main {
   pointer-events: none;
 }
 
-@media print {
-  /* Selimut berisi warna lantai sebelumnya, tidak tersemat di kertas:
-     aturan --paper: #fff tidak menjangkau --rung-*, jadi selimut akan cetak
-     di atas warna lantai baru kalau tidak dibuang. */
-  .room::before,
-  .room::after { display: none; }
-}
-
 /* Pergantian lantai sudah jadi pemisah, jadi garis atas bagian pertama
    tiap ruangan dibuang supaya tidak ada dua pemisah bertumpuk. */
 .room > .section:first-child {
@@ -549,7 +541,9 @@ main {
 
 /* Sebagian perekrut mencetak atau menyimpan sebagai PDF. Semua gerak dan
    kendali dibuang, warna dikembalikan ke tinta di atas putih, dan alamat
-   tautan dicetak supaya halaman tetap berguna di atas kertas. */
+   tautan dicetak supaya halaman tetap berguna di atas kertas.
+   SATU blok saja. Dulu ada dua, dan pemisahan itulah yang menyembunyikan
+   token cetak yang tidak pernah menang serta daftar reset yang basi. */
 @media print {
   :root {
     --ink: #000;
@@ -573,13 +567,28 @@ main {
     display: none !important;
   }
 
+  /* !important-nya bukan hiasan. .room[data-rung="N"] berspesifisitas (0,2,0)
+     dan mengalahkan .room (0,1,0) apa pun urutan sumbernya, jadi tanpa ini
+     --paper di dalam ruangan tetap warna lantainya. Yang kena bukan .room
+     sendiri — background: #fff !important menyelamatkan itu — melainkan setiap
+     keturunan yang mengambil var(--paper), terutama .bento > *: kartu Skills
+     tercetak #d6c8aa dan kartu Achievements #e4dac4 di atas kertas putih.
+     Satu !important di tokennya, bukan di tiap belas pemakainya. */
   .section,
   .room {
-    --paper: #fff;
-    --motif: #fff;
+    --paper: #fff !important;
+    --motif: #fff !important;
     background: #fff !important;
     color: #000 !important;
     break-inside: avoid;
+  }
+
+  /* Selimut berisi warna lantai sebelumnya, tidak tersemat di kertas: aturan
+     --paper: #fff tidak menjangkau --rung-*, jadi selimut akan cetak di atas
+     warna lantai baru kalau tidak dibuang. Tekstur ikut dibuang. */
+  .room::before,
+  .room::after {
+    display: none !important;
   }
 
   .rise,
