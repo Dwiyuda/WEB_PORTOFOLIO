@@ -16,11 +16,26 @@ const rasio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 
 // Ambil satu token dari satu blok selector. Sengaja tidak memakai parser CSS:
 // yang dibutuhkan hanya nilai hex, dan dependency baru dilarang.
+//
+// Dijangkar ke kolom 0 dan menuntut kecocokan TUNGGAL. `:root {` sekarang juga
+// muncul di dalam @media print, menjorok dua spasi. indexOf yang lama kebetulan
+// menemukan yang benar hanya karena blok token berada di atas blok cetak: kalau
+// urutannya pernah bertukar, pemeriksa akan membaca warna cetak — hitam di atas
+// putih, lolos semua — dan melaporkan berhasil tanpa suara.
 function blok(selector) {
-  const i = CSS.indexOf(selector + " {");
-  if (i === -1) throw new Error(`blok "${selector}" tidak ada di global.css`);
-  const akhir = CSS.indexOf("}", i);
-  return CSS.slice(i, akhir);
+  const pola = new RegExp(
+    `^${selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} \\{`,
+    "gm",
+  );
+  const cocok = [...CSS.matchAll(pola)];
+  if (cocok.length !== 1) {
+    throw new Error(
+      `blok "${selector}" harus muncul tepat sekali di kolom 0 global.css, ` +
+        `ditemukan ${cocok.length}`,
+    );
+  }
+  const akhir = CSS.indexOf("}", cocok[0].index);
+  return CSS.slice(cocok[0].index, akhir);
 }
 
 function token(selector, nama) {
