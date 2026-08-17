@@ -168,7 +168,9 @@ const pipeline = [
           accuracy did not move. The leak was real and it explained nothing.
         </p>
 
-        <AuditDiagram />
+        <div class="audit--hold">
+          <AuditDiagram />
+        </div>
 
         <details class="deep deep--audit">
           <summary><span>Read what happened next</span></summary>
@@ -688,5 +690,23 @@ const pipeline = [
   .audit code {
     font-family: var(--font-mono);
     font-size: 0.9em;
+  }
+
+  /* Satu-satunya penahanan baru di halaman. Yang pertama pelat spesifikasi di
+     Experience, jadi ini yang kedua dan terakhir — PRD melarang lebih dari dua.
+     Papan diagram menempel sementara prosa di sekitarnya bergulir, sehingga
+     pembaca menghabiskan lebih banyak detik di bagian ini daripada di mana pun.
+     Itulah cara Proyek disorot, menggantikan kontras lantai. */
+  .audit--hold {
+    position: sticky;
+    top: 4rem;
+  }
+
+  /* Penahanan hanya berlaku kalau ada ruang untuk menahan. Di layar pendek
+     posisi sticky justru memakan tinggi baca. */
+  @media (max-height: 44rem) {
+    .audit--hold {
+      position: static;
+    }
   }
 </style>
