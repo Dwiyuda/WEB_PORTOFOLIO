@@ -290,6 +290,30 @@ main {
 .room[data-rung="3"]::before { background: var(--rung-2); }
 .room[data-rung="4"]::before { background: var(--rung-3); }
 
+/* Tekstur ornamen, ΔL* 1,5 dari lantainya. Satu berkas melayani delapan
+   lantai: berkasnya cuma peta transparansi, warnanya dari --motif.
+
+   Tanpa background-attachment: fixed — itu memaksa repaint tiap frame
+   gulir, dan halaman ini seluruhnya digerakkan gulir. */
+.room::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--motif);
+  mask-image: url("../assets/motif-tile.webp");
+  -webkit-mask-image: url("../assets/motif-tile.webp");
+  mask-repeat: repeat;
+  -webkit-mask-repeat: repeat;
+  mask-size: 368px 368px;
+  -webkit-mask-size: 368px 368px;
+  pointer-events: none;
+}
+
+@media print {
+  .room::after { display: none; }
+}
+
 /* Pergantian lantai sudah jadi pemisah, jadi garis atas bagian pertama
    tiap ruangan dibuang supaya tidak ada dua pemisah bertumpuk. */
 .room > .section:first-child {
