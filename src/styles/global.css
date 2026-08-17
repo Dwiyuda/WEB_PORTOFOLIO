@@ -311,6 +311,10 @@ main {
 }
 
 @media print {
+  /* Selimut berisi warna lantai sebelumnya, tidak tersemat di kertas:
+     aturan --paper: #fff tidak menjangkau --rung-*, jadi selimut akan cetak
+     di atas warna lantai baru kalau tidak dibuang. */
+  .room::before,
   .room::after { display: none; }
 }
 
@@ -552,7 +556,9 @@ main {
   }
 
   .rise,
-  .rise-group > * {
+  .rise-group > *,
+  .rise-figures > *,
+  .room > * {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
