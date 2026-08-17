@@ -15,7 +15,15 @@ import Compare from "./Compare.astro";
 // menempel berisi angka jabatan, kanan mengalir. Di sana berupa lajur.
 ---
 
-<section class="section" id="experience" aria-labelledby="experience-title">
+{/* data-no-drift: dua pelat .post__meta di bawah menempel. Transform di
+    leluhur dipakai saat paint, setelah offset sticky selesai dihitung, jadi
+    pelat yang seharusnya berhenti di top: 5rem akan ikut menghanyut. */}
+<section
+  class="section"
+  id="experience"
+  data-no-drift
+  aria-labelledby="experience-title"
+>
   <div class="shell shell--wide">
     <span class="section__label">Experience</span>
     <h2 id="experience-title" class="rise">Two jobs, both finished</h2>

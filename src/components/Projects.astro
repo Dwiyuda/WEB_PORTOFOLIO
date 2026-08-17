@@ -58,7 +58,16 @@ const pipeline = [
 ];
 ---
 
-<section class="section section--bleed" id="projects" aria-labelledby="projects-title">
+{/* data-no-drift: AuditDiagram di bawah memasang view-transition-name pada 18
+    chip. Transform di leluhur menjadikan bagian ini stacking context sekaligus
+    containing block untuk semuanya — beban yang sama yang membuat aturan sticky
+    di bagian ini dibuang lebih dulu. */}
+<section
+  class="section section--bleed"
+  id="projects"
+  data-no-drift
+  aria-labelledby="projects-title"
+>
   <div class="shell">
     <span class="section__label">Projects</span>
     <h2 id="projects-title" class="rise">Four I can defend line by line</h2>

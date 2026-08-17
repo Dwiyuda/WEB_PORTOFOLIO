@@ -500,8 +500,18 @@ main {
   }
 
   /* Isi bergerak lebih lambat daripada lantainya, jadi ada rasa kedalaman.
-     Dipasang di anak langsung supaya pseudo-element selimut tidak ikut. */
-  .room > * {
+     Dipasang di anak langsung supaya pseudo-element selimut tidak ikut.
+
+     Bagian ber-data-no-drift dilewati. Transform di leluhur dibayar mahal oleh
+     dua hal: pelat position: sticky ikut bergeser saat paint karena
+     offset-nya sudah selesai dihitung lebih dulu, dan elemen jadi stacking
+     context sekaligus containing block untuk seluruh keturunannya. Aturan
+     sticky 15 baris di bagian Proyek pernah dibuang di cabang ini justru untuk
+     menghindari beban kedua itu di sekitar chip view-transition; membiarkan
+     .room > * memaksakannya tanpa syarat akan membatalkan keputusan itu.
+     Bagian yang punya salah satu beban tersebut menandai dirinya sendiri,
+     supaya alasannya tinggal di komponen yang memilikinya. */
+  .room > *:not([data-no-drift]) {
     animation-name: drift;
     animation-timing-function: linear;
     animation-fill-mode: both;
