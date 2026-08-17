@@ -49,13 +49,20 @@ const pola = await sharp({
 
 // Putih penuh, dengan polanya sebagai alfa. Warnanya nanti datang dari
 // --motif lewat CSS, jadi satu berkas melayani delapan lantai.
+//
+// alphaQuality rendah sengaja: kanal alfa ini SATU-SATUNYA muatan berkas
+// (RGB-nya putih rata, nyaris gratis dikompres). Sumbernya cuma punya ~55
+// aras abu-abu dari 255, jadi sebagian besar presisi hasil normalise()
+// adalah interpolasi, bukan informasi asli — aman ditekan jauh. Diuji
+// 90/70/50/30/15/5 (420/192/167/137/101/54 KB); 14 mendarat di 71,8 KB
+// tanpa artefak yang terlihat pada ΔL* 1,5 ini.
 await sharp({
   create: { width: UNIT * 2, height: UNIT * 2, channels: 3, background: "#ffffff" },
 })
   .joinChannel(await sharp(pola).greyscale().raw().toBuffer(), {
     raw: { width: UNIT * 2, height: UNIT * 2, channels: 1 },
   })
-  .webp({ quality: 82, alphaQuality: 90 })
+  .webp({ quality: 82, alphaQuality: 14 })
   .toFile(KELUARAN);
 
 const m = await sharp(KELUARAN).metadata();
