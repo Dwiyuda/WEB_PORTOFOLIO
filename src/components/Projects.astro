@@ -692,11 +692,12 @@ const pipeline = [
     font-size: 0.9em;
   }
 
-  /* Satu-satunya penahanan baru di halaman. Yang pertama pelat spesifikasi di
-     Experience, jadi ini yang kedua dan terakhir — PRD melarang lebih dari dua.
-     Papan diagram menempel sementara prosa di sekitarnya bergulir, sehingga
-     pembaca menghabiskan lebih banyak detik di bagian ini daripada di mana pun.
-     Itulah cara Proyek disorot, menggantikan kontras lantai. */
+  /* Satu-satunya penahanan baru di halaman, tapi tipis: ~58px perjalanan
+     selagi `deep--audit` tertutup. Membuka `deep--audit` menambah ruang jadi
+     ~966px, tapi papan lalu menimpa prosa itu sendiri sampai ~286px, karena
+     keduanya satu kolom tanpa jalur sampingnya sendiri — bukan tata dua kolom
+     seperti pelat spesifikasi di Experience. Menaikkannya perlu tata dua
+     kolom untuk studi kasus audit: keputusan desain, bukan tweak CSS. */
   .audit--hold {
     position: sticky;
     top: 4rem;
