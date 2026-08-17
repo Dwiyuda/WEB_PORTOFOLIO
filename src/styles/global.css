@@ -52,6 +52,11 @@
   --page-max: 60rem;
   --page-wide: 74rem;
 
+  /* Satu kurva untuk seluruh situs: --ease-out. Semua transisi dan animasi
+     yang dipicu klik atau kursor memakainya, dan durasinya selalu salah satu
+     token --t-* di bawah. --ease tinggal satu pemakai, denyut .hero__hint yang
+     menganggur di Hero.astro; alasannya ditulis di sana. Jangan tambah pemakai
+     baru untuk --ease. */
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --t-fast: 180ms;
@@ -173,7 +178,7 @@ a {
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
   text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
-  transition: text-decoration-color 120ms ease;
+  transition: text-decoration-color var(--t-fast) var(--ease-out);
 }
 
 a:hover {
@@ -339,7 +344,7 @@ main {
 .bento > * {
   padding: 1.5rem 1.4rem;
   background: var(--paper);
-  transition: background var(--t-fast) var(--ease);
+  transition: background var(--t-fast) var(--ease-out);
 }
 
 .bento > *:hover {
@@ -356,7 +361,7 @@ main {
   width: 100%;
   border: 1px solid var(--rule);
   cursor: zoom-in;
-  transition: filter var(--t-mid) var(--ease);
+  transition: filter var(--t-mid) var(--ease-out);
 }
 
 .shot:hover img {

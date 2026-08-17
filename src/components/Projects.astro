@@ -470,7 +470,7 @@ const pipeline = [
     border: 1px solid var(--rule);
     border-radius: 2px;
     cursor: zoom-in;
-    transition: border-color var(--t-fast) var(--ease);
+    transition: border-color var(--t-fast) var(--ease-out);
   }
 
   .screen:hover img {
@@ -543,7 +543,7 @@ const pipeline = [
 
   .deep > summary span {
     border-bottom: 1px solid transparent;
-    transition: border-color var(--t-fast) var(--ease);
+    transition: border-color var(--t-fast) var(--ease-out);
   }
 
   .deep > summary:hover span {
@@ -593,7 +593,7 @@ const pipeline = [
     cursor: pointer;
     list-style: none;
     background: var(--paper-raised);
-    transition: background var(--t-fast) var(--ease);
+    transition: background var(--t-fast) var(--ease-out);
   }
 
   .pipeline summary::-webkit-details-marker {

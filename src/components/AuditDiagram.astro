@@ -164,8 +164,8 @@ const chips = families.flatMap((f) =>
     border-radius: 999px;
     cursor: pointer;
     transition:
-      border-color var(--t-fast) var(--ease),
-      background var(--t-fast) var(--ease);
+      border-color var(--t-fast) var(--ease-out),
+      background var(--t-fast) var(--ease-out);
   }
 
   .switch:hover {
@@ -178,7 +178,7 @@ const chips = families.flatMap((f) =>
     height: 7px;
     border-radius: 50%;
     background: var(--before-audit);
-    transition: background var(--t-mid) var(--ease);
+    transition: background var(--t-mid) var(--ease-out);
   }
 
   .switch[aria-pressed="true"] .switch__dot {

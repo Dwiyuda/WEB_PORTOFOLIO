@@ -200,7 +200,7 @@ const figures = [
     font-size: var(--size-figure);
     color: var(--ink-soft);
     text-decoration: none;
-    transition: color var(--t-fast) var(--ease);
+    transition: color var(--t-fast) var(--ease-out);
   }
 
   .hero__link:hover {
@@ -260,6 +260,11 @@ const figures = [
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--ink-soft);
+    /* Satu-satunya pemakai --ease yang tersisa, dan sengaja. Ini denyut
+       menganggur yang bolak-balik, bukan tanggapan atas klik. --ease-out
+       (0.16, 1, 0.3, 1) menaruh hampir seluruh gerak di awal tiap segmen, jadi
+       denyutnya terbaca sebagai sentakan lalu diam. Kurva --ease yang lebih
+       simetris itulah yang membuatnya bernapas. */
     animation: hint 2.6s var(--ease) infinite;
   }
 
