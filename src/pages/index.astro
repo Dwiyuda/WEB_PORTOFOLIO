@@ -21,14 +21,25 @@ import Closing from "../components/Closing.astro";
   title="Dwi Yuda — Portfolio"
   description="Informatics graduate from Universitas Islam Riau. Computer vision and LLM systems, with the evaluation work that decides whether they hold."
 >
-  <Hero />
-  <About />
-  <Timeline />
-  <Projects />
-  <Experience />
-  <Organisation />
-  <Publication />
-  <Achievements />
-  <Skills />
-  <Closing />
+  <div class="room" data-rung="1">
+    <Hero />
+    <About />
+    <Timeline />
+  </div>
+
+  <div class="room" data-rung="2">
+    <Projects />
+  </div>
+
+  <div class="room" data-rung="3">
+    <Experience />
+    <Organisation />
+    <Publication />
+    <Achievements />
+  </div>
+
+  <div class="room" data-rung="4">
+    <Skills />
+    <Closing />
+  </div>
 </Base>

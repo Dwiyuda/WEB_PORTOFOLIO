@@ -251,27 +251,37 @@ main {
   max-width: var(--page-wide);
 }
 
-/* Blok tinta selebar layar. Dipakai sekali saja, di bagian Proyek, supaya
-   halaman punya satu titik jeda alih-alih delapan bagian berwarna sama.
-   Token didefinisikan ulang di sini, jadi seluruh isinya ikut tanpa
-   satu pun aturan tambahan. */
-.section--ink {
-  --paper: #101314;
-  --paper-raised: #171b1d;
-  --ink: #e8e6e0;
-  --ink-soft: #9aa2a5;
-  --rule: #2b3133;
-  --verified: #4fbfa3;
-  --before-audit: #e08055;
-  --before-audit-wash: #e0805518;
+/* ── Ruangan ──────────────────────────────────────────────────────────
+   Empat ruangan, lantainya turun satu arah. Tiap ruangan mendefinisikan
+   ulang token warnanya, jadi seluruh isinya ikut tanpa satu pun aturan
+   tambahan. Ini pola yang dulu dipakai .section--ink untuk satu blok,
+   diperluas jadi empat.
+
+   Lantai adalah NOMOR LANGKAH, bukan warna. Tema memutuskan tangga mana
+   yang dipakai, jadi satu himpunan aturan melayani dua tema. */
+.room {
+  position: relative;
   background: var(--paper);
   color: var(--ink);
+  isolation: isolate;
+}
+
+.room[data-rung="1"] { --paper: var(--rung-1); --motif: var(--motif-1); }
+.room[data-rung="2"] { --paper: var(--rung-2); --motif: var(--motif-2); }
+.room[data-rung="3"] { --paper: var(--rung-3); --motif: var(--motif-3); }
+.room[data-rung="4"] { --paper: var(--rung-4); --motif: var(--motif-4); }
+
+/* Pergantian lantai sudah jadi pemisah, jadi garis atas bagian pertama
+   tiap ruangan dibuang supaya tidak ada dua pemisah bertumpuk. */
+.room > .section:first-child {
   border-top: none;
 }
 
-[data-theme="dark"] .section--ink {
-  --paper: #080a0b;
-  --rule: #24292b;
+/* Satu-satunya bagian yang melanggar lebar baca. Pelanggaran ukuran itu
+   sendiri jadi penanda, menggantikan kontras lantai yang dulu menyorot
+   bagian ini. */
+.section--bleed .shell {
+  max-width: var(--page-wide);
 }
 
 /* Kisi bento. Celah satu piksel di atas warna garis, jadi pemisahnya
@@ -442,15 +452,16 @@ main {
   }
 
   .section,
-  .section--ink {
+  .room {
+    --paper: #fff;
+    --motif: #fff;
     background: #fff !important;
     color: #000 !important;
     break-inside: avoid;
   }
 
   .rise,
-  .rise-group > *,
-  .wipe {
+  .rise-group > * {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
