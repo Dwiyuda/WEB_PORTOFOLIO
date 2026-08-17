@@ -7,6 +7,13 @@ this up next, including me in six months.
 
 Built 13–14 August 2026.
 
+**Redesigned 18 August 2026.** The palette became a four-floor light/dark ladder
+with an ornament texture, the type moved to Bricolage Grotesque and Literata
+(both self-hosted), and the section transitions became scroll-driven floor
+peels. The design descriptions below this line predate that and some no longer
+match; the redesign's decisions live in the vault (see the last section). The
+build discipline, the numbers, the privacy rules and the traps still hold.
+
 ---
 
 ## What this site is
@@ -90,7 +97,7 @@ reintroduce it.
 | Images through `astro:assets` | WebP and srcset at build time, so there is no manual conversion step. |
 | Pipeline diagram as an HTML list, not SVG | More accessible, and it reflows on its own. |
 | Lightbox on native `<dialog>` | Escape, focus handling and the backdrop come free. |
-| Cloudflare Pages, not Workers | Workers custom domains require a zone you own. `is-a.dev` belongs to someone else, so Pages is the only route that works with CNAME verification. |
+| Cloudflare Pages, not Workers | Workers custom domains require a zone you own. `is-a.dev` belongs to someone else. Pages can serve it, but the dashboard refuses because `is-a.dev` is on the Public Suffix List, so the custom domain has to be registered through the Pages API instead — or the `cf-pages.is-a.dev` tool that wraps it. |
 
 The build produces **no separate JavaScript bundle**. The theme toggle, the
 lightbox, the audit diagram and the before/after slider all run from small
@@ -171,6 +178,16 @@ sticky spec plate, and collided with it while scrolling.
 
 **`prefers-reduced-motion` must cancel `animation-timeline` explicitly.** A
 scroll timeline ignores `animation-duration`, so the usual reset does nothing.
+
+**The minifier folds `animation-timeline` into the `animation` shorthand.**
+lightningcss turns `animation: … view()` into a form Chrome rejects outright, so
+every scroll-driven animation dies in the built site while `astro dev` looks
+fine — floors render off by one, the last floor never appears. Write the scroll
+animations as longhands, and check the built CSS, not the dev server:
+
+```sh
+grep -oE 'animation:[^;}]*(view\(|scroll\()' dist/_astro/*.css   # must be empty
+```
 
 ---
 

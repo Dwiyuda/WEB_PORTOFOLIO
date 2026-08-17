@@ -1,6 +1,7 @@
-# dwiyuda.pages.dev
+# dwiyuda.is-a.dev
 
-Source for my portfolio site. **[Live here](https://dwiyuda.pages.dev)**
+Source for my portfolio site. **[Live here](https://dwiyuda.is-a.dev)**
+(also at [dwiyuda.pages.dev](https://dwiyuda.pages.dev))
 
 A single scrolling page covering the years from enrolment in September 2022 to
 finishing in July 2026: who I am, a timeline, four projects, two jobs, student
@@ -110,10 +111,6 @@ that was found and fixed did **not** change the accuracy — the ablation did.
 
 ## To do
 
-- [ ] Point `site` at `https://dwiyuda.is-a.dev` once
-      [is-a-dev/register#47149](https://github.com/is-a-dev/register/pull/47149)
-      is merged, the custom domain is added in Cloudflare Pages, **and**
-      `https://dwiyuda.is-a.dev/og.png` returns 200. In that order.
 - [ ] Decide whether the ITJRD manuscript belongs in the publication section;
       currently held back because its publication status is unconfirmed.
 - [ ] The hero portrait is 528×584 at source, so it is cropped at native
@@ -122,11 +119,16 @@ that was found and fixed did **not** change the accuracy — the ablation did.
 
 ## Design notes
 
-Five colours. Teal marks anything verifiable against a document. Terracotta
-appears in exactly one place, the dataset audit case study, and nowhere else.
+The page is grouped into four rooms whose floor steps down one shade per act
+and never returns, carried by two colour ladders — a light one and a dark one —
+so a floor is a step number, not a fixed colour. A low-contrast ornament texture
+sits over every floor. Teal marks anything verifiable against a document.
+Terracotta appears in exactly one place, the dataset audit case study.
 
 Numbers are set in JetBrains Mono so they read as measurements rather than
-marketing. Headings use Fraunces, body text Public Sans.
+marketing. Headings use Bricolage Grotesque, body text Literata. All three
+faces are self-hosted, so nothing is fetched from a third party before the
+first paint.
 
 Light is the default theme rather than a fallback. Dark is available from the
 header toggle and switches through the View Transitions API.
