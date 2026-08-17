@@ -3,31 +3,48 @@
    tanpa memperbarui catatan di D:\History\Project\Portofolio Dwi Yuda\ */
 
 :root {
-  /* Palet terang — default yang disengaja, bukan turunan preferensi sistem */
-  --ink: #14181c;
-  --paper: #faf9f5;
-  --rule: #e4e1d8;
-  --verified: #0e6e5c;
-  --before-audit: #b04a28;
+  /* Tangga lantai terang, turun satu arah. L* 97,6 / 92,8 / 87,3 / 81,0.
+     ΔL* antar langkah 4,8 / 5,5 / 6,3 — di atas 4,8 semuanya terlihat.
+     Jangan ubah tanpa menjalankan npm run check:contrast. */
+  --rung-1: #faf8f3;
+  --rung-2: #f0eadc;
+  --rung-3: #e4dac4;
+  --rung-4: #d6c8aa;
 
-  /* Turunan seperlunya, tidak menambah warna baru ke palet */
-  --ink-soft: #545b61;
+  /* Motif tekstur, ΔL* 1,5 di bawah lantainya. Rona dipertahankan. */
+  --motif-1: #f6f4ef;
+  --motif-2: #ece6d8;
+  --motif-3: #e0d6c0;
+  --motif-4: #d2c4a6;
+
+  --pen: #1a1a17;
+  /* #545b61 yang lama cuma 3,5:1 di lantai 4. Ini hasil hitungan, bukan selera. */
+  --pen-soft: #4f4a42;
+  --verified: #16584a;
+  --before-audit: #8f3617;
+
+  /* Diisi ulang per ruangan oleh .room. Nilai di sini melayani <html> dan
+     apa pun di luar ruangan, misalnya masthead. */
+  --paper: var(--rung-1);
+  --motif: var(--motif-1);
+  --ink: var(--pen);
+  --ink-soft: var(--pen-soft);
+  --rule: #cfc6b2;
   --paper-raised: #fffefb;
-  --verified-wash: #0e6e5c14;
-  --before-audit-wash: #b04a2814;
+  --verified-wash: #16584a14;
+  --before-audit-wash: #8f361714;
 
-  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-body: "Public Sans", system-ui, -apple-system, sans-serif;
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-body: "Literata", Georgia, "Times New Roman", serif;
   --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", monospace;
 
-  /* Skala PRD: 44 / 28 / 20 / 17 / 15 / 13 */
   --size-page-title: clamp(2.125rem, 1.4rem + 3.1vw, 2.75rem);
   --size-section: clamp(1.5rem, 1.3rem + 0.9vw, 1.75rem);
   --size-subhead: 1.25rem;
   --size-body: 1.0625rem;
   --size-figure: 0.9375rem;
   --size-caption: 0.8125rem;
-  --leading-body: 1.7;
+  --leading-body: 1.72;
 
   --measure: 34rem;
   --gutter: clamp(1.25rem, 5vw, 3rem);
@@ -35,23 +52,41 @@
   --page-max: 60rem;
   --page-wide: 74rem;
 
-  /* Gerak. Satu easing untuk semuanya supaya halaman terasa satu benda. */
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --t-fast: 140ms;
-  --t-mid: 320ms;
+  --t-fast: 180ms;
+  --t-mid: 260ms;
+  --t-theme: 320ms;
 }
 
 [data-theme="dark"] {
-  --ink: #e8e6e0;
-  --paper: #101314;
-  --rule: #272c2e;
+  /* Tangga gelap WAJIB dimulai jauh lebih terang dari kebiasaan mode gelap,
+     supaya punya ruang untuk turun. Versi yang dimulai dari #1c2024
+     berlangkah ΔL* 1,7–2,3 dan tidak terlihat. Jangan diulang. */
+  --rung-1: #262a2f;
+  --rung-2: #1d2024;
+  --rung-3: #15161a;
+  --rung-4: #0d0e10;
+
+  /* Di tema gelap motif lebih TERANG dari lantainya, bukan lebih gelap. */
+  --motif-1: #292d33;
+  --motif-2: #202327;
+  --motif-3: #18191d;
+  --motif-4: #111214;
+
+  --pen: #eae6dc;
+  --pen-soft: #a7a29a;
   --verified: #4fbfa3;
   --before-audit: #e08055;
-  --ink-soft: #9aa2a5;
-  --paper-raised: #171b1d;
+
+  --paper: var(--rung-1);
+  --motif: var(--motif-1);
+  --ink: var(--pen);
+  --ink-soft: var(--pen-soft);
+  --rule: #333a40;
+  --paper-raised: #2d3238;
   --verified-wash: #4fbfa31f;
-  --before-audit-wash: #e080551f;
+  --before-audit-wash: #e0805520;
 }
 
 *,
