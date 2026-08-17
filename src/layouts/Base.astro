@@ -32,12 +32,39 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="author" content="Dwi Yuda" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:SOFT,WONK,opsz,wght@0..100,0..1,9..144,400..700&family=JetBrains+Mono:wght@400..500&family=Public+Sans:wght@400..600&display=swap"
+      rel="preload"
+      href="/fonts/literata.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
+    <style is:global>
+      /* Self-host, jadi tidak ada permintaan pihak ketiga sebelum teks pertama
+         tampil. Variable font, satu berkas untuk seluruh rentang berat.
+         Diperbarui lewat: node scripts/fetch-fonts.mjs */
+      @font-face {
+        font-family: "Bricolage Grotesque";
+        src: url("/fonts/bricolage-grotesque.woff2") format("woff2");
+        font-weight: 400 800;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Literata";
+        src: url("/fonts/literata.woff2") format("woff2");
+        font-weight: 400 700;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "JetBrains Mono";
+        src: url("/fonts/jetbrains-mono.woff2") format("woff2");
+        font-weight: 400 600;
+        font-style: normal;
+        font-display: swap;
+      }
+    </style>
 
     {/* Supaya mesin pencari tahu halaman ini tentang satu orang, dan
         menampilkan nama serta tautan yang benar saat seseorang mencari

@@ -145,7 +145,8 @@ h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-optical-sizing: auto;
+  font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.015em;
   text-wrap: balance;
@@ -479,6 +480,14 @@ main {
   .ledger__row {
     break-inside: avoid;
   }
+}
+
+/* Durasi tukar tema. Diatur di sini, bukan di skrip: startViewTransition
+   tidak menerima durasi, dia membaca animasi pseudo-element ini. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--t-theme);
+  animation-timing-function: var(--ease-out);
 }
 
 @media (prefers-reduced-motion: reduce) {

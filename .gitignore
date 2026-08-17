@@ -30,3 +30,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Ruang kerja subagent-driven-development. Scratch, bukan bagian situs.
+.superpowers/
