@@ -33,6 +33,15 @@ const certifications = [
     date: "August 2024",
     verify:
       "https://www.credly.com/badges/1479df3b-8a32-4618-a3b0-edeedbe34cc1/public_url",
+    // Sertifikat aslinya, dibuka di viewer PDF peramban seperti CV — tanpa
+    // atribut `download`. Isinya cuma nama sendiri, nama kursus, tanggal, Cert
+    // ID, dan tanda tangan Direktur Cisco Networking Academy yang tercetak di
+    // jutaan sertifikat yang sama. Tidak ada data pribadi pihak ketiga, jadi
+    // aman ditayangkan — berbeda dari KHS yang memuat nama dosen PA.
+    //
+    // Catatan: PDF menulis "CCNAv7", halaman Credly menulis "CCNA". Yang
+    // ditayangkan versi Credly, karena itu yang dibandingkan pembaca.
+    pdf: "/cisco-ccna-intro-to-networks.pdf",
   },
 ];
 ---
@@ -52,18 +61,28 @@ const certifications = [
             <p class="cert__meta">
               {c.issuer} · {c.date}
             </p>
-            {c.verify && (
-              <p class="cert__verify">
+            <p class="cert__links">
+              {c.verify && (
                 <a
-                  class="figure figure--verified"
+                  class="cert__link"
                   href={c.verify}
                   target="_blank"
                   rel="noopener"
                 >
                   Verify with Cisco
                 </a>
-              </p>
-            )}
+              )}
+              {c.pdf && (
+                <a
+                  class="cert__link"
+                  href={c.pdf}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Certificate, PDF
+                </a>
+              )}
+            </p>
           </li>
         ))
       }
@@ -110,8 +129,39 @@ const certifications = [
     margin-top: 0.4rem;
   }
 
-  .cert__verify {
-    margin-top: 0.7rem;
+  /* Meniru gaya .deep > summary di Projects.astro: mono, teal, dengan
+     segitiga CSS. Dipakai supaya "buka berkas" terbaca sebagai satu bahasa
+     visual di seluruh situs, bukan tombol baru yang berdiri sendiri. */
+  .cert__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-top: 0.8rem;
+  }
+
+  .cert__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--size-caption);
+    color: var(--verified);
+    text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+    text-underline-offset: 0.25em;
+  }
+
+  .cert__link::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 5px solid currentColor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    transition: transform var(--t-fast) var(--ease-out);
+  }
+
+  .cert__link:hover::before {
+    transform: translateX(2px);
   }
 
   .record__note {
