@@ -11,20 +11,28 @@
 // pendek; nama sertifikat adalah frasa, dan memaksanya ke gaya angka besar
 // membuatnya pecah. Daftar ini juga tumbuh rapi saat sertifikat bertambah.
 //
-// Sumber: sertifikat Cisco Networking Academy 10 Agustus 2024.
+// Sumber: badge Credly yang sudah diklaim, diverifikasi langsung di peramban
+// 18 Agustus 2026. Halamannya menyatakan "This badge was issued to Dwi Yuda",
+// "Date issued: August 10, 2024", "Issued by Cisco".
 //
-// Belum ada tautan verifikasi. Halaman Credly untuk ID sertifikat ini membalas
-// "unable to verify the status of this badge", hampir pasti karena badge-nya
-// belum diklaim. Tautan yang gagal memverifikasi lebih merugikan daripada
-// tidak ada tautan sama sekali, di halaman yang seluruh tesisnya soal bukti
-// yang bisa diperiksa orang lain. Pasang `verify` setelah badge diklaim dan
-// halamannya benar-benar hidup.
+// Namanya "CCNA", BUKAN "CCNAv7". PDF sertifikatnya menulis CCNAv7, tapi yang
+// dipakai di sini nama persis seperti di halaman verifikasi — pembaca yang
+// mengklik akan membandingkan keduanya, dan selisih sekecil "v7" pun menimbulkan
+// keraguan yang justru merusak guna tautan verifikasi.
+//
+// Kualifikasinya wajib ada. Deskripsi Credly sendiri menyebut ini "student level
+// credential", jadi ini kredensial kursus tingkat mahasiswa, BUKAN sertifikasi
+// profesional CCNA. Tanpa kalimat itu pembaca bisa salah mengira sebaliknya, dan
+// aturan situs ini cuma mengizinkan klaim yang bisa dipertahankan saat wawancara.
+// Ini logika yang sama dengan bagian Publikasi, yang wajib menyatakan jurnalnya
+// pengabdian nasional dan penulisnya ke-7 dari 11.
 const certifications = [
   {
-    name: "CCNAv7: Introduction to Networks",
+    name: "CCNA: Introduction to Networks",
     issuer: "Cisco Networking Academy",
     date: "August 2024",
-    verify: null,
+    verify:
+      "https://www.credly.com/badges/1479df3b-8a32-4618-a3b0-edeedbe34cc1/public_url",
   },
 ];
 ---
@@ -46,8 +54,13 @@ const certifications = [
             </p>
             {c.verify && (
               <p class="cert__verify">
-                <a class="figure figure--verified" href={c.verify}>
-                  Verify with the issuer
+                <a
+                  class="figure figure--verified"
+                  href={c.verify}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Verify with Cisco
                 </a>
               </p>
             )}
@@ -57,6 +70,11 @@ const certifications = [
     </ol>
 
     <div class="measure record__note rise">
+      <p>
+        This is the Networking Academy course credential, at student level. It
+        is not the professional CCNA certification, and the badge above says so
+        in its own words.
+      </p>
       <p>Four years, September 2022 to July 2026, with no repeated course.</p>
     </div>
   </div>
