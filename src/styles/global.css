@@ -477,29 +477,6 @@ main {
     animation-range: entry 18% cover 42%;
   }
 
-  /* Jeda khusus chip angka, lebih lambat dan lebih berjenjang daripada
-     .rise-group. Kelas sendiri, bukan menyetel .rise-group, karena kelas itu
-     juga menaungi paragraf dan galeri yang tidak boleh ikut melambat. */
-  .rise-figures > * {
-    animation-name: rise;
-    animation-timing-function: linear;
-    animation-fill-mode: both;
-    animation-timeline: view();
-    animation-range: entry 40% entry 85%;
-  }
-  .rise-figures > *:nth-child(2) {
-    animation-range: entry 45% entry 90%;
-  }
-  .rise-figures > *:nth-child(3) {
-    animation-range: entry 50% entry 95%;
-  }
-  .rise-figures > *:nth-child(4) {
-    animation-range: entry 55% cover 5%;
-  }
-  .rise-figures > *:nth-child(n + 5) {
-    animation-range: entry 60% cover 10%;
-  }
-
   /* Rentang sengaja LEBAR: pergantian warna berlangsung sepanjang gulir yang
      panjang, dari saat bagian mulai muncul sampai sudah masuk penuh, jadi
      terasa mengalir bukan patah. Rentang gulir tidak punya durasi —
@@ -618,7 +595,6 @@ main {
 
   .rise,
   .rise-group > *,
-  .rise-figures > *,
   .room > * {
     animation: none !important;
     opacity: 1 !important;
@@ -672,7 +648,6 @@ main {
      Daftar reset di blok @media print di atas menanggung kewajiban yang sama. */
   .rise,
   .rise-group > *,
-  .rise-figures > *,
   .progress,
   .room::before,
   .room > * {

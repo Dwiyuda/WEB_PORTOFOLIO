@@ -2,31 +2,20 @@
 import { Image } from "astro:assets";
 import portrait from "../assets/portrait.jpg";
 
-// Bagian 1. Angka dari Riwayat Pengalaman dan hasil eksperimen skripsi.
+// Bagian 1. Nama, klaim pembuka, kontak, potret.
 //
-// IPK dan jumlah SKS sengaja tidak ditayangkan, atas keputusan pemilik situs
-// 18 Agustus 2026. Jangan menambahkannya kembali tanpa keputusan baru.
+// Baris chip angka dibuang 19 Agustus 2026 atas keputusan pemilik situs, yang
+// menyatakan aturan PRD "tiap bagian membawa minimal satu angka atau artefak"
+// tidak perlu ditegakkan di sini. Isinya dulu 1.645 citra, ~300 mahasiswa, dan
+// satu chip ketiga yang sempat berganti dua kali — 4 tahun tanpa mengulang,
+// lalu 3 bahasa — sebelum seluruh barisnya dihapus.
 //
-// Chip ketiga dulu "4 tahun tanpa mengulang", satu-satunya sisa klaim rekam
-// akademik di hero yang isinya kini soal pekerjaan. Diganti data diri.
+// Kelas .rise-figures di global.css ikut dibuang: hero satu-satunya pemakainya,
+// jadi menyisakannya berarti CSS mati.
 //
-// Arabic ditulis "conversational" dengan sengaja. Bagian Tentang saya
-// menyatakan "I can still hold a conversation in it, though I would not claim
-// more than that", jadi menulis "3 languages" tanpa kualifikasi akan melebihi
-// yang bisa dipertahankan saat wawancara. Kualifikasi di label justru
-// menguatkan, logika yang sama dengan "Author 7 of 11" di bagian Publikasi.
-//
-// Data diri yang TIDAK boleh naik ke sini: tanggal lahir lengkap, alamat, dan
-// nomor telepon. Alasannya ada di About.astro dan di PRD.
-const figures = [
-  { value: "1,645", unit: "images", label: "Thesis dataset" },
-  { value: "~300", unit: "undergraduates", label: "Taught, 4 semesters" },
-  {
-    value: "3",
-    unit: "languages",
-    label: "Indonesian, English, conversational Arabic",
-  },
-];
+// Angka-angka itu masih hidup di bagian lain: 1.645 di Proyek, ~300 di
+// Pengalaman. Kartu pratinjau og.png juga masih memuatnya, dan itu disengaja —
+// dia ringkasan untuk pratinjau tautan, bukan cerminan hero.
 ---
 
 <section class="hero" id="top" aria-labelledby="hero-title">
@@ -88,19 +77,6 @@ const figures = [
       </figure>
     </div>
 
-    <dl class="hero__figures rise-figures">
-      {
-        figures.map((f) => (
-          <div class="hero__figure">
-            <dt class="caption">{f.label}</dt>
-            <dd>
-              <span class="hero__value">{f.value}</span>
-              <span class="figure hero__unit">{f.unit}</span>
-            </dd>
-          </div>
-        ))
-      }
-    </dl>
   </div>
 
   <span class="hero__hint caption" aria-hidden="true">scroll</span>
@@ -248,33 +224,6 @@ const figures = [
   .hero__portrait figcaption {
     max-width: 14rem;
     margin-top: 0.85rem;
-  }
-
-  .hero__figures {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
-    gap: 1.5rem 2rem;
-    margin: clamp(2.5rem, 6vw, 4rem) 0 0;
-    padding-top: 1.75rem;
-    border-top: 1px solid var(--rule);
-  }
-
-  .hero__figure dd {
-    margin: 0.15rem 0 0;
-    display: flex;
-    align-items: baseline;
-    gap: 0.35rem;
-  }
-
-  .hero__value {
-    font-family: var(--font-mono);
-    font-size: clamp(1.5rem, 1.25rem + 1vw, 2rem);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.035em;
-  }
-
-  .hero__unit {
-    color: var(--ink-soft);
   }
 
   .hero__hint {
