@@ -18,17 +18,17 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
 
   <rect x="88" y="480" width="1024" height="1" fill="#2B3133"/>
 
-  <text x="88" y="546" font-family="monospace" font-size="34" fill="#FAF9F5">3.86</text>
-  <text x="88" y="580" font-family="monospace" font-size="19" fill="#9AA2A5">GPA</text>
+  <text x="88" y="546" font-family="monospace" font-size="34" fill="#FAF9F5">1,645</text>
+  <text x="88" y="580" font-family="monospace" font-size="19" fill="#9AA2A5">images</text>
 
-  <text x="318" y="546" font-family="monospace" font-size="34" fill="#FAF9F5">1,645</text>
-  <text x="318" y="580" font-family="monospace" font-size="19" fill="#9AA2A5">images</text>
+  <text x="358" y="546" font-family="monospace" font-size="34" fill="#FAF9F5">~300</text>
+  <text x="358" y="580" font-family="monospace" font-size="19" fill="#9AA2A5">undergraduates</text>
 
-  <text x="588" y="546" font-family="monospace" font-size="34" fill="#FAF9F5">~300</text>
-  <text x="588" y="580" font-family="monospace" font-size="19" fill="#9AA2A5">undergraduates</text>
+  <text x="688" y="546" font-family="monospace" font-size="34" fill="#FAF9F5">4</text>
+  <text x="688" y="580" font-family="monospace" font-size="19" fill="#9AA2A5">years, no repeats</text>
 
-  <text x="948" y="546" font-family="monospace" font-size="34" fill="#4FBFA3">A</text>
-  <text x="948" y="580" font-family="monospace" font-size="19" fill="#9AA2A5">thesis grade</text>
+  <text x="1008" y="546" font-family="monospace" font-size="34" fill="#4FBFA3">A</text>
+  <text x="1008" y="580" font-family="monospace" font-size="19" fill="#9AA2A5">thesis grade</text>
 </svg>`;
 
 const out = process.argv[2];

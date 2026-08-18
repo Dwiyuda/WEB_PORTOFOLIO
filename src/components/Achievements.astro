@@ -1,72 +1,99 @@
 ---
-// Bagian 8. Sumber: Riwayat Akademik Dwi Yuda, KHS Semester 8,
-// Berita Acara Ujian Skripsi 20 Juli 2026, dan transkrip 5 Juli 2026.
-// Nilai terendah B- diambil dari transkrip. Menyebutnya lebih kuat daripada
-// menulis "tidak ada nilai C", karena pembaca bisa memeriksanya.
-const marks = [
-  { value: "3.86", unit: "/ 4.00", label: "Cumulative GPA" },
-  { value: "4.00", unit: "final term", label: "Semester 8" },
-  { value: "144", unit: "credits", label: "Completed in four years" },
-  { value: "82.07", unit: "graded A", label: "Thesis defence" },
+// Bagian 8. Dulu bagian Record yang menayangkan IPK, IP semester, jumlah SKS,
+// dan tautan KHS. Diubah jadi Sertifikasi pada 18 Agustus 2026 atas keputusan
+// pemilik situs.
+//
+// KHS dihapus bukan cuma soal selera: berkasnya memuat NPM dan nama lengkap
+// dosen pembimbing akademik, yaitu data pribadi orang lain yang tidak pernah
+// menyetujui namanya tayang di halaman publik. Jangan dikembalikan.
+//
+// Bentuknya daftar entri, bukan kisi angka. Kisi angka dipakai untuk metrik
+// pendek; nama sertifikat adalah frasa, dan memaksanya ke gaya angka besar
+// membuatnya pecah. Daftar ini juga tumbuh rapi saat sertifikat bertambah.
+//
+// Sumber: sertifikat Cisco Networking Academy 10 Agustus 2024.
+//
+// Belum ada tautan verifikasi. Halaman Credly untuk ID sertifikat ini membalas
+// "unable to verify the status of this badge", hampir pasti karena badge-nya
+// belum diklaim. Tautan yang gagal memverifikasi lebih merugikan daripada
+// tidak ada tautan sama sekali, di halaman yang seluruh tesisnya soal bukti
+// yang bisa diperiksa orang lain. Pasang `verify` setelah badge diklaim dan
+// halamannya benar-benar hidup.
+const certifications = [
+  {
+    name: "CCNAv7: Introduction to Networks",
+    issuer: "Cisco Networking Academy",
+    date: "August 2024",
+    verify: null,
+  },
 ];
 ---
 
 <section class="section" id="achievements" aria-labelledby="achievements-title">
   <div class="shell">
-    <span class="section__label">Record</span>
-    <h2 id="achievements-title" class="rise">What the transcript says</h2>
+    <span class="section__label">Certification</span>
+    <h2 id="achievements-title" class="rise">
+      Certifications, and who issued them
+    </h2>
 
-    <dl class="bento rise-figures">
+    <ol class="certs rise-group">
       {
-        marks.map((m) => (
-          <div class="marks__item">
-            <dt class="caption">{m.label}</dt>
-            <dd>
-              <span class="marks__value">{m.value}</span>
-              <span class="figure marks__unit">{m.unit}</span>
-            </dd>
-          </div>
+        certifications.map((c) => (
+          <li class="cert">
+            <p class="cert__name">{c.name}</p>
+            <p class="cert__meta">
+              {c.issuer} · {c.date}
+            </p>
+            {c.verify && (
+              <p class="cert__verify">
+                <a class="figure figure--verified" href={c.verify}>
+                  Verify with the issuer
+                </a>
+              </p>
+            )}
+          </li>
         ))
       }
-    </dl>
+    </ol>
 
     <div class="measure record__note rise">
-      <p>
-        Four years, September 2022 to July 2026, with no repeated course. The
-        lowest grade anywhere on the transcript is a B− in Linear Algebra.
-        Cum laude. The defence on 20 July passed outright, with no revision
-        round attached.
-      </p>
-      <p>
-        <a class="figure figure--verified" href="/khs-semester-8.pdf">
-          Semester 8 record, PDF
-        </a>
-      </p>
+      <p>Four years, September 2022 to July 2026, with no repeated course.</p>
     </div>
   </div>
 </section>
 
 <style>
-  .marks__item dd {
-    margin: 0;
-    display: flex;
-    align-items: baseline;
-    gap: 0.35rem;
+  .certs {
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    max-width: var(--measure);
+    border-top: 1px solid var(--rule);
   }
 
-  .marks__item dt {
-    margin-bottom: 0.5rem;
+  .cert {
+    padding: 1.35rem 0;
+    border-bottom: 1px solid var(--rule);
   }
 
-  .marks__value {
+  .cert__name {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-size: var(--size-subhead);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+
+  .cert__meta {
     font-family: var(--font-mono);
-    font-size: clamp(1.5rem, 1.3rem + 0.8vw, 1.9rem);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.035em;
+    font-size: var(--size-caption);
+    color: var(--ink-soft);
+    margin-top: 0.4rem;
   }
 
-  .marks__unit {
-    color: var(--ink-soft);
+  .cert__verify {
+    margin-top: 0.7rem;
   }
 
   .record__note {

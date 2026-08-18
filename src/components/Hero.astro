@@ -2,13 +2,15 @@
 import { Image } from "astro:assets";
 import portrait from "../assets/portrait.jpg";
 
-// Bagian 1. Angka dari Riwayat Akademik, Berita Acara Ujian Skripsi
-// (20 Juli 2026), Riwayat Pengalaman, dan hasil eksperimen skripsi.
+// Bagian 1. Angka dari Riwayat Pengalaman dan hasil eksperimen skripsi.
+//
+// IPK dan jumlah SKS sengaja tidak ditayangkan, atas keputusan pemilik situs
+// 18 Agustus 2026. Angka di sini kini seluruhnya soal pekerjaan, bukan nilai
+// kuliah. Jangan menambahkannya kembali tanpa keputusan baru.
 const figures = [
-  { value: "3.86", unit: "/ 4.00", label: "GPA, cum laude" },
   { value: "1,645", unit: "images", label: "Thesis dataset" },
   { value: "~300", unit: "undergraduates", label: "Taught, 4 semesters" },
-  { value: "144", unit: "credits", label: "Four years, no repeats" },
+  { value: "4", unit: "years", label: "No repeated course" },
 ];
 ---
 
@@ -37,7 +39,15 @@ const figures = [
           <a class="button" href="mailto:dwiiyudaaa@gmail.com">
             dwiiyudaaa@gmail.com
           </a>
-          <a class="hero__link" href="/dwi-yuda-cv.pdf" download>
+          {/* Tanpa `download`: atribut itulah yang dulu memaksa berkas terunduh
+              alih-alih tampil. Sekarang CV dibuka di viewer PDF peramban, dan
+              di tab baru supaya pembaca tidak kehilangan tempatnya di halaman. */}
+          <a
+            class="hero__link"
+            href="/dwi-yuda-cv.pdf"
+            target="_blank"
+            rel="noopener"
+          >
             CV (PDF)
           </a>
           <a class="hero__link" href="https://www.linkedin.com/in/dwiyuda">

@@ -11,8 +11,8 @@ I am Dwi Yuda, an informatics graduate from Universitas Islam Riau working on
 computer vision and LLM applications.
 
 ![The site's link preview card: the name Dwi Yuda over the line "I audit my own
-work before someone else has to", with GPA, dataset size, undergraduates taught
-and thesis grade along the bottom](public/og.png)
+work before someone else has to", with dataset size, undergraduates taught,
+years without a repeated course, and thesis grade along the bottom](public/og.png)
 
 Built with [Astro](https://astro.build). Static output, no client framework, no
 CSS framework, no animation library. The build produces no separate JavaScript
