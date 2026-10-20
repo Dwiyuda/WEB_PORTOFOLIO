@@ -39,27 +39,40 @@ const groups = [
       ["LLM-as-a-judge", "Independent check on the semantic gate"],
     ],
   },
+  // "Building" yang dulu 10 butir dipecah dua, dan Bahasa masuk sebagai sel
+  // keenam. Enam habis dibagi 1, 2, dan 3 kolom, jadi kisi .bento tidak pernah
+  // menyisakan sel kosong berwarna garis di ukuran layar mana pun. Jangan
+  // tambah atau kurangi kelompok tanpa menjaga jumlahnya habis dibagi 3.
   {
-    heading: "Building",
+    heading: "Backend and data",
     items: [
       ["Python", "Every project on this page"],
       ["FastAPI", "The detector and the family law API"],
+      ["Google Classroom API", "Pulling submissions for the grader"],
+      ["SQL, MySQL", "Lab modules I wrote for the database course"],
+      ["PHP, CodeIgniter, MariaDB", "OpenSID at Pulau Gadang"],
+    ],
+  },
+  {
+    heading: "Web and delivery",
+    items: [
       ["Next.js", "The detector (JavaScript) and the assistant (TypeScript)"],
       ["Flask, Streamlit, Gradio", "Demo apps for the four brief projects"],
-      ["Docker Compose, GitHub Actions", "Containers and CI for the assistant"],
-      ["Google Classroom API", "Pulling submissions for the grader"],
       ["Astro", "This site and the Mandarin course site"],
-      ["PHP, CodeIgniter, MariaDB", "OpenSID at Pulau Gadang"],
-      ["SQL, MySQL", "Lab modules I wrote for the database course"],
+      ["Docker Compose, GitHub Actions", "Containers and CI for the assistant"],
       ["Git", "Everything above"],
     ],
   },
-];
-
-const languages = [
-  ["Indonesian", "Native"],
-  ["English", "Professional working"],
-  ["Arabic", "Elementary, conversational"],
+  {
+    // Mandarin ditulis apa adanya: sedang belajar, tanpa sertifikat.
+    heading: "Languages",
+    items: [
+      ["Indonesian", "Native"],
+      ["English", "Professional working"],
+      ["Arabic", "Elementary, conversational"],
+      ["Mandarin", "Beginner, currently learning"],
+    ],
+  },
 ];
 ---
 
@@ -84,23 +97,6 @@ const languages = [
           </div>
         ))
       }
-    </div>
-
-    <div class="tail">
-      <div>
-        <h3 class="kit__heading">Languages</h3>
-        <dl class="kit__list">
-          {
-            languages.map(([name, level]) => (
-              <div class="kit__row">
-                <dt class="figure">{name}</dt>
-                <dd class="caption">{level}</dd>
-              </div>
-            ))
-          }
-        </dl>
-      </div>
-
     </div>
   </div>
 </section>
@@ -132,30 +128,4 @@ const languages = [
   .kit__row dd {
     margin: 0.1rem 0 0;
   }
-
-  .tail {
-    display: grid;
-    gap: 2.5rem;
-    margin-top: 3rem;
-    padding-top: 2.5rem;
-    border-top: 1px solid var(--rule);
-  }
-
-  @media (min-width: 48rem) {
-    .tail {
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-    }
-  }
-
-  .contact {
-    list-style: none;
-    margin: 1rem 0 0;
-    padding: 0;
-  }
-
-  .contact li + li {
-    margin-top: 0.6rem;
-  }
-
 </style>
