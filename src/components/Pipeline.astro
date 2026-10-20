@@ -1,0 +1,114 @@
+---
+// Daftar tahap pipeline yang dibuka satu per satu. Dipakai ketiga proyek
+// unggulan di Projects.astro, jadi tinggal di sini alih-alih ditulis tiga kali.
+//
+// `name` mengelompokkan <details> menjadi akordeon: membuka satu tahap menutup
+// yang lain di pipeline yang sama. Tiap pipeline wajib punya name sendiri,
+// kalau tidak membuka tahap di proyek A akan menutup tahap di proyek B.
+//
+// Aturan cetak untuk .pipeline ada di global.css (semua tahap dibuka saat cetak).
+interface Props {
+  name: string;
+  steps: { stage: string; role: string; detail: string }[];
+}
+
+const { name, steps } = Astro.props;
+---
+
+<ol class="pipeline">
+  {
+    steps.map((p, i) => (
+      <li class="pipeline__step">
+        <details name={name} open={i === 0}>
+          <summary>
+            <span class="pipeline__no figure">{`0${i + 1}`}</span>
+            <span class="pipeline__stage figure">{p.stage}</span>
+            <span class="pipeline__role">{p.role}</span>
+          </summary>
+          <p class="pipeline__detail">{p.detail}</p>
+        </details>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .pipeline {
+    list-style: none;
+    margin: 1.1rem 0 0;
+    padding: 0;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .pipeline__step + .pipeline__step {
+    border-top: 1px solid var(--rule);
+  }
+
+  .pipeline summary {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 11rem) 1fr;
+    align-items: baseline;
+    gap: 0.35rem 0.75rem;
+    padding: 0.95rem 1.1rem;
+    cursor: pointer;
+    list-style: none;
+    background: var(--paper-raised);
+    transition: background var(--t-fast) var(--ease-out);
+  }
+
+  .pipeline summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .pipeline summary:hover {
+    background: color-mix(in srgb, var(--verified) 7%, var(--paper-raised));
+  }
+
+  @media (max-width: 44rem) {
+    .pipeline summary {
+      grid-template-columns: 2.25rem 1fr;
+    }
+    .pipeline__role {
+      grid-column: 2;
+    }
+  }
+
+  .pipeline__no {
+    color: var(--ink-soft);
+    font-size: 0.75rem;
+  }
+
+  .pipeline__stage {
+    color: var(--verified);
+  }
+
+  .pipeline__role {
+    font-size: var(--size-caption);
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+
+  /* Latar dipasang di <details>, bukan di paragrafnya. Paragraf dibatasi
+     lebar bacanya, jadi kalau latar ikut menempel di sana sisa barisnya
+     menembus ke latar bagian dan terbaca sebagai kotak kosong. */
+  .pipeline details {
+    background: var(--paper-raised);
+  }
+
+  .pipeline__detail {
+    max-width: var(--measure);
+    margin: 0;
+    padding: 0 1.1rem 1.15rem calc(2.25rem + 1.85rem);
+    font-size: var(--size-figure);
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 44rem) {
+    .pipeline__detail {
+      padding-left: 1.1rem;
+    }
+  }
+</style>

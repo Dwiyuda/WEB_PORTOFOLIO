@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import AuditDiagram from "./AuditDiagram.astro";
+import Pipeline from "./Pipeline.astro";
 import shotAccepted from "../assets/detector-accepted.jpg";
 import shotRejected from "../assets/detector-rejected.jpg";
 import shotGradcam from "../assets/detector-gradcam.jpg";
@@ -18,18 +19,27 @@ const sheets = [
   { name: "Flag", cols: "NIM, name, status, reason for review" },
 ];
 
-// Bagian 5. Sumber angka: HASIL_UJICOBA_TAMBAHAN/README.md (25 Juli 2026) dan
+// Bagian 5. Dua tingkat sejak 21 Oktober 2026: tiga proyek unggulan dengan
+// kartu penuh, lalu kisi ringkas yang dikelompokkan per fokus, AI paling atas.
+// Hening dan pelacak pembayaran angkatan dibuang atas keputusan pemilik situs.
+//
+// Sumber angka KTM: HASIL_UJICOBA_TAMBAHAN/README.md (25 Juli 2026) dan
 // metrics_summary.json tiap folder hasil, sudah dicocokkan satu per satu.
-// Sumber LLM Grading: SISTEM_ASISTENSI_A/RINGKASAN_PROYEK.md (10 Juli 2026).
-// Sumber Hening: SISTEM_SmartBand/README.md.
-// Sumber tracker: FOLDER_PAYMENT_GEN_HALILINTAR/.../README.md.
+// Sumber asisten hukum: README + eval/results/*.md repo publiknya, dan log CI
+// (395 passed, 1 skipped). Bukan 406: itu hitungan venv lokal yang tidak bisa
+// dicek pembaca.
+// Sumber grader: SISTEM_ASISTENSI_A/KELANJUTAN.md (20 Okt 2026) dan README
+// repo publik llm-practicum-grader.
+// Sumber kisi ringkas: README dan berkas hasil tiap repo publik (21 Okt 2026).
 //
-// PENTING soal narasi. Perbaikan kebocoran 29% TIDAK menurunkan akurasi.
-// Akurasi tetap 1,0000 setelah split dibersihkan. Yang menurunkannya ke
-// 0,9606-0,9774 adalah ablasi resolusi. Jangan pernah menyandingkan angka
-// 29% dengan 97,7% seolah yang satu menyebabkan yang lain.
+// PENTING soal narasi KTM. Model final yang dilaporkan = EfficientNet-B0 pada
+// resolusi native 224×224, 97,74% / ROC-AUC 0,9912. Versi 1024×474 dengan
+// 1,0000 adalah versi awal yang ditinggalkan, BUKAN model produksi. Perbaikan
+// kebocoran 29% TIDAK menurunkan akurasi; yang menurunkannya ke 0,9606-0,9774
+// adalah pindah ke resolusi native. Jangan pernah menyandingkan 29% dengan
+// 97,7% seolah yang satu menyebabkan yang lain.
 //
-// Bentuk tiap proyek: abstrak terbuka, kedalaman di balik <details>.
+// Bentuk tiap proyek unggulan: abstrak terbuka, kedalaman di balik <details>.
 const pipeline = [
   {
     stage: "Qwen3-VL",
@@ -47,13 +57,162 @@ const pipeline = [
     stage: "EfficientNet-B0",
     role: "Binary classifier, genuine against forged.",
     detail:
-      "Two-phase transfer learning from ImageNet: the head trains first with the backbone frozen, then the whole network fine-tunes. Mixup at alpha 0.4, AdamW, seed 42. The shipped model runs at 1024×474 and fits in 4 GB of VRAM.",
+      "Two-phase transfer learning from ImageNet: the head trains first with the backbone frozen, then the whole network fine-tunes. Mixup at alpha 0.4, AdamW, seed 42. The reported model runs at its native 224×224 input and fits in 4 GB of VRAM.",
   },
   {
     stage: "Grad-CAM",
     role: "Heatmap over the region that drove the decision.",
     detail:
       "This is the part that keeps the rest honest. On a font forgery the heat sits on the text block; on a face swap it sits on the portrait. If it had lit up the background instead, the accuracy figure would have meant nothing.",
+  },
+];
+
+// Asisten hukum keluarga Islam. Setiap angka evaluasi yang optimistis ditulis
+// beserta alasannya, sesuai bagian "Honest caveats" di README repo-nya.
+const lawPipeline = [
+  {
+    stage: "BM25 + BGE-M3",
+    role: "Hybrid retrieval: keyword and dense search, fused with reciprocal rank fusion.",
+    detail:
+      "On 80 in-domain questions the full stack reaches Recall@5 0.601 and MRR@10 0.702. The fusion on its own is not what earns that: it scored 0.428, below dense search alone at 0.575, and BM25 alone managed 0.223. The reranker in the next step is what lifts it past both.",
+  },
+  {
+    stage: "Reranker gate",
+    role: "bge-reranker-v2-m3 reorders the results, and a low score means refuse.",
+    detail:
+      "The refusal happens before any language model is called, so an off-topic question costs nothing and cannot be answered from thin air. It refused 95.0% of out-of-domain questions while wrongly refusing 1.2% of real ones. Those thresholds were fitted on the same questions they are scored on, so read the figures as optimistic. On the held-out set the gate alone catches 0.650, and the generation stage brings refusal to 1.000.",
+  },
+  {
+    stage: "Grounded answer",
+    role: "The model may only cite retrieved passages, and its output is validated against a schema.",
+    detail:
+      "Citation precision is 1.000 across every question group. RAGAS faithfulness is 0.827 on 69 samples, below the 0.85 I was aiming for, from a run cut short when the free-tier judge quota ran out. The judge is the same model family as the generator, so that number is generous too.",
+  },
+  {
+    stage: "Faraid engine",
+    role: "Inheritance shares in exact fractions, computed by rules, never by the model.",
+    detail:
+      "It implements Book II of the Compilation of Islamic Law, articles 171 to 193, and checks against 104 textbook cases. Grandparents and substitute heirs need interpretation beyond the literal text, so those results are flagged for review by a qualified fiqh scholar instead of being presented as final.",
+  },
+];
+
+// Grader praktikum. Data mahasiswa asli tidak pernah tampil; repo publiknya
+// adalah snapshot bersih dengan contoh sintetis.
+const graderPipeline = [
+  {
+    stage: "Key maker",
+    role: "Drafts the answer key and a weighted rubric from the question.",
+    detail:
+      "Gemini drafts once per session. The draft stays pending until the lecturer approves it, and the grader refuses to run on a key nobody has approved.",
+  },
+  {
+    stage: "Classroom fetch",
+    role: "Pulls every submission and its official status, with read-only access.",
+    detail:
+      "Deadlines come from Classroom's structured fields, not from the wording of the question. Google Docs and Slides are exported to PDF. A late submission is not graded but still appears in the recap, so there is a record if anyone disputes a mark.",
+  },
+  {
+    stage: "Grader",
+    role: "One submission per request, structured output, resumable.",
+    detail:
+      "PDFs go to the model natively, notebooks as Markdown, Word files through LibreOffice. Code is read, never executed: if the model cannot tell whether it would run, it must say so with low confidence. The model fills only the scoring fields. Identity and status are set by code, so it cannot invent them.",
+  },
+  {
+    stage: "Recap",
+    role: "An Excel workbook with three sheets and a confidence gate.",
+    detail:
+      "Only high-confidence results with no file problems become final on their own. Everything else lands in the Flag sheet with its reason, for a person to check.",
+  },
+];
+
+// Kisi ringkas. Tanpa label konteks, atas keputusan pemilik situs; tiap kartu
+// menyebut masalahnya, apa yang dibangun, angka, stack, dan tautan repo.
+// Kalau sebuah angka menyesatkan tanpa penjelasan, penjelasannya ikut di
+// kartu (housing: R² tinggi karena target diturunkan dari rumus SK; village:
+// bobot AHP masih templat).
+const gh = (repo: string) => `https://github.com/Dwiyuda/${repo}`;
+
+const brief = [
+  {
+    heading: "AI and machine learning",
+    items: [
+      {
+        title: "Plant disease detection with Graph RAG explanations",
+        text: "A leaf photo gets a diagnosis and an explanation of what to do about it, in Indonesian. I fine-tuned a ResNet-50 on twelve diseases across four crops, plus an explicit unknown class so it can decline, and built a Graph RAG layer over a Neo4j knowledge graph so the advice comes from curated facts rather than the model's memory. Evaluated with RAGAS on a 60-question golden set.",
+        chips: [
+          ["0.9786", "test accuracy"],
+          ["0.9554", "RAGAS faithfulness"],
+          ["0.9725", "context recall"],
+        ],
+        stack: "PyTorch, Neo4j, sentence-transformers, Groq, RAGAS, Gradio",
+        repo: gh("plant-disease-cnn-graph-rag"),
+      },
+      {
+        title: "Eggplant leaf disease detection",
+        text: "The public dataset gave one label per photo. I rebuilt it for detection, so the model shows where the symptoms are: auto-labelling, a box-level audit with a prioritised review queue, calibrated corrections, then retraining. The audit also measured the ceiling: 46% of the automatic boxes were false and 56% of real lesions were missed, which is why the numbers below are modest and why I report them anyway.",
+        chips: [
+          ["0.8037", "macro-F1 per leaf"],
+          ["166 / 208", "leaves correct"],
+          ["0.6736", "mAP@0.5"],
+        ],
+        stack: "YOLO11 (Ultralytics), OpenCV, SAHI, Flask",
+        repo: gh("eggplant-leaf-disease-detection-yolov11"),
+      },
+      {
+        title: "Shallot disease diagnosis with zero-shot vision models",
+        text: "Can a vision-language model diagnose shallot leaf disease with no training at all? I ran a controlled experiment: five prompt designs, four models, a 30-image split for choosing prompts and 80 held-out images for the result. The finding worth keeping is how unevenly prompt design matters: it moved accuracy by 5 points for Gemini and Llama 4, and by 16 to 19 points for both Qwen models. With 80 test images each 95% confidence interval spans 17 to 20 points, so only one of six model pairs differs significantly.",
+        chips: [
+          ["82.5%", "best accuracy"],
+          ["p = 0.0452", "McNemar, Holm"],
+          ["4 × 5", "models × prompts"],
+        ],
+        stack: "OpenRouter, Gemini, Qwen3-VL, Llama 4, Python",
+        repo: gh("shallot-disease-lvlm-zero-shot"),
+      },
+    ],
+  },
+  {
+    heading: "Data and decision support",
+    items: [
+      {
+        title: "Village priority for social assistance",
+        text: "Aid is decided in village meetings, but the data only existed per household or per regency. I aggregated a regency's socio-economic registry to village level, clustered villages by poverty profile with K-Means, and ranked them with AHP and TOPSIS, cross-checked against SAW. The Flask app has 21 pairwise sliders and refuses to save weights once the consistency ratio passes 0.10. The weights it ships with are a template awaiting the social affairs office, so the ratio describes that template, not an expert panel.",
+        chips: [
+          ["371", "villages"],
+          ["~142,800", "households"],
+          ["0.0100", "consistency ratio"],
+        ],
+        stack: "scikit-learn, pandas, SciPy, Flask, fpdf2",
+        repo: gh("village-aid-priority-kmeans-ahp-topsis"),
+      },
+      {
+        title: "Housing renovation aid priority",
+        text: "A city housing agency decides who gets renovation aid from fifteen observations of each house. Eligibility is written in a mayoral decree, so I computed it as rules rather than learning it, and XGBoost only ranks eligible houses by urgency. A zone clamp guarantees an ineligible house can never outrank an eligible one. The urgency target is derived from the decree's weighting formula, so the model's R² of 0.9989 says it reproduces that formula, not that it predicts something independent.",
+        chips: [
+          ["2", "layers, rules then model"],
+          ["3", "priority tiers"],
+          ["1,196", "houses"],
+        ],
+        stack: "XGBoost, scikit-learn, Streamlit, SQLite, ReportLab",
+        repo: gh("housing-aid-priority-xgboost"),
+      },
+    ],
+  },
+  {
+    heading: "Web",
+    items: [
+      {
+        title: "Website for a Mandarin course agency",
+        text: "A bilingual site in Indonesian and Chinese for an agency that teaches Mandarin and sends students to study in China, with a Git-based CMS so staff can change content without touching code. Static Astro output on Cloudflare Pages. The public repository is a showcase copy: contacts, prices, alumni and photos are replaced with sample data.",
+        chips: [
+          ["2", "languages"],
+          ["67", "components"],
+          ["11", "content collections"],
+        ],
+        stack: "Astro, TypeScript, Sveltia CMS, Cloudflare Pages",
+        repo: gh("website_easternllcedu"),
+      },
+    ],
   },
 ];
 ---
@@ -70,13 +229,13 @@ const pipeline = [
 >
   <div class="shell">
     <span class="section__label">Projects</span>
-    <h2 id="projects-title" class="rise">Four I can defend line by line</h2>
+    <h2 id="projects-title" class="rise">Three in depth, the rest in brief</h2>
 
     <article class="work rise">
       <header class="work__head">
         <h3>Student ID card forgery detection</h3>
         <p class="figure work__meta">
-          Final year project · PyTorch, FastAPI, Next.js 14, OpenCV ·
+          Final year project · PyTorch, FastAPI, Next.js 14, OpenCV ·{" "}
           <a
             class="figure--verified"
             href="https://github.com/Dwiyuda/KTM-Detector-UIR-Skripsi_Public"
@@ -150,22 +309,7 @@ const pipeline = [
 
       <details class="deep">
         <summary><span>How the pipeline works</span></summary>
-        <ol class="pipeline">
-          {
-            pipeline.map((p, i) => (
-              <li class="pipeline__step">
-                <details name="ktm-pipeline" open={i === 0}>
-                  <summary>
-                    <span class="pipeline__no figure">{`0${i + 1}`}</span>
-                    <span class="pipeline__stage figure">{p.stage}</span>
-                    <span class="pipeline__role">{p.role}</span>
-                  </summary>
-                  <p class="pipeline__detail">{p.detail}</p>
-                </details>
-              </li>
-            ))
-          }
-        </ol>
+        <Pipeline name="ktm-pipeline" steps={pipeline} />
       </details>
 
       <div class="audit">
@@ -234,38 +378,84 @@ const pipeline = [
 
     <article class="work rise">
       <header class="work__head">
+        <h3>Islamic family law assistant</h3>
+        <p class="figure work__meta">
+          Personal project · Python, FastAPI, BGE-M3, Qdrant, Next.js, Docker
+          ·{" "}
+          <a
+            class="figure--verified"
+            href="https://github.com/Dwiyuda/islamic-family-law-assistant"
+            rel="noopener">Repository</a
+          >
+        </p>
+      </header>
+
+      <p class="work__abstract">
+        Someone facing a divorce or an inheritance split in Indonesia usually
+        starts with a search engine, which will answer confidently from the
+        wrong law. This assistant answers only from the regulations, Qur'an and
+        hadith in its corpus, cites the article it used, and refuses when it has
+        no basis. Inheritance shares come from a rule engine in exact
+        fractions. The language model explains them and never produces a
+        number.
+      </p>
+
+      <ul class="chips" aria-label="Key figures">
+        <li><span class="figure">2,491</span> source passages</li>
+        <li><span class="figure">104</span> inheritance test cases</li>
+        <li><span class="figure">395</span> tests passing in CI</li>
+      </ul>
+
+      <details class="deep">
+        <summary
+          ><span>How it decides, and where the numbers flatter it</span></summary
+        >
+        <Pipeline name="law-pipeline" steps={lawPipeline} />
+      </details>
+    </article>
+
+    <article class="work rise">
+      <header class="work__head">
         <h3>Automated practicum grading</h3>
         <p class="figure work__meta">
           Personal project, approved by the head of department · Python, Gemini
-          2.5 Flash
+          2.5 Flash, Google Classroom API ·{" "}
+          <a
+            class="figure--verified"
+            href="https://github.com/Dwiyuda/llm-practicum-grader"
+            rel="noopener">Repository</a
+          >
         </p>
       </header>
 
       <p class="work__abstract">
         Marking practicum submissions by hand across eight sessions is slow and
-        drifts between the first script and the fortieth. This reads the
-        question, the answer key, and the lecturer's rubric, scores each
-        submission against it, and writes an Excel recap with per-student
-        feedback. Phase one passed after its marks were calibrated against
-        manual grading.
+        drifts between the first script and the fortieth. This pulls
+        submissions straight from Google Classroom, scores each one against the
+        lecturer's rubric, and writes an Excel recap with feedback for every
+        submission. Nothing it is unsure of counts until a person has looked.
+        Phase one was accepted after its marks were checked against manual
+        grading on 21 real submissions.
       </p>
 
       <ul class="chips" aria-label="Key figures">
-        <li><span class="figure">8</span> sessions</li>
-        <li><span class="figure">3</span> Excel sheets per run</li>
-        <li><span class="figure">no</span> RAG</li>
+        <li><span class="figure">21</span> real submissions graded</li>
+        <li><span class="figure">2 of 8</span> sessions on the Classroom API</li>
+        <li><span class="figure">4</span> kinds of file read</li>
       </ul>
+
+      <details class="deep">
+        <summary><span>How a submission moves through it</span></summary>
+        <Pipeline name="grader-pipeline" steps={graderPipeline} />
+      </details>
 
       <details class="deep">
         <summary><span>Design decisions, and one that went wrong</span></summary>
         <div class="measure deep__body">
           <p>
-            No retrieval layer. The whole context fits in one prompt, so RAG
-            would have been machinery with nothing to do. Every output carries a
-            confidence label, and anything below high confidence goes to a human
-            before it counts. Answer keys drafted by the model are validated by
-            the lecturer before they grade anything. Student code is read, never
-            executed.
+            No retrieval layer. The question, the key, the rubric and one
+            submission always fit in a single prompt, so RAG would have been
+            machinery with nothing to do.
           </p>
           <p>
             The one that went wrong is worth more than the ones that went right.
@@ -300,98 +490,60 @@ const pipeline = [
             Only the column layout is shown. The real workbooks hold student
             names, email addresses, and marks, so none of it belongs here.
           </p>
-        </div>
-      </details>
-    </article>
 
-    <article class="work rise">
-      <header class="work__head">
-        <h3>Hening, a reminder service that mostly stays quiet</h3>
-        <p class="figure work__meta">
-          Personal project · Cloudflare Workers, KV, OpenRouter, ntfy
-        </p>
-      </header>
-
-      <p class="work__abstract">
-        Reminder apps fail because the content never changes: drink water at
-        ten, at twelve, at two, whether or not you are in a meeting. Hening asks
-        a model once an hour whether interrupting is worth it at all. Out of
-        sixteen chances a day it says yes six to eight times. The silence is the
-        feature.
-      </p>
-
-      <ul class="chips" aria-label="Key figures">
-        <li><span class="figure">16</span> checks a day</li>
-        <li><span class="figure">6–8</span> actually sent</li>
-        <li><span class="figure">&lt;$1</span> a month</li>
-      </ul>
-
-      <details class="deep">
-        <summary><span>What the prompt has to get right</span></summary>
-        <div class="measure deep__body">
           <p>
-            The hard part is not the code, it is telling the model that saying
-            nothing is a valid answer and that the daily quota is not a target
-            to hit. Three rules keep it from collapsing. A notification whose
-            button was never pressed is logged as no response rather than
-            ignored, because a busy person is not a refusal, and treating it as
-            one makes the system go mute within days. Context older than ninety
-            minutes is flagged as stale so it never tells someone they have been
-            sitting for eight hours when their phone spent the night on a table.
-            And the model returns structured JSON with a reason field, which is
-            what makes calibration possible: you can read why it chose to stay
-            quiet.
+            Not built yet: similarity checking between students, and running the
+            whole thing unattended on a server with n8n. Both are designed and
+            written up in the repository. Neither has shipped.
           </p>
           <p>
-            The README lists what it cannot do, and that list matters. The band
-            is output only, since Huawei exposes no open API. What gets detected
-            is the state of a phone, not the state of a person. Motorbikes are
-            regularly classified as bicycles.
+            The public repository is a clean snapshot with a synthetic example,
+            because the working one holds real class data and stays private. On
+            that example the grader gave the correct submission 100 and the
+            flawed one 49.5, which is exactly the rubric's ceiling for its three
+            mistakes.
           </p>
         </div>
       </details>
     </article>
 
-    <article class="work rise">
-      <header class="work__head">
-        <h3>Cohort payment tracker</h3>
-        <p class="figure work__meta">
-          Built for my year group · Google Apps Script, Sheets
-        </p>
-      </header>
-
-      <p class="work__abstract">
-        Nineteen of us owed each other money on a rotating schedule: every time
-        one person defends, the other eighteen contribute. Tracking that in a
-        chat thread does not survive contact with reality. This is a 19×19
-        matrix in Sheets with a small web form for updating from a phone, and a
-        dashboard that recalculates itself because every column is a formula.
-      </p>
-
-      <ul class="chips" aria-label="Key figures">
-        <li><span class="figure">19×19</span> matrix</li>
-        <li><span class="figure">3</span> live charts</li>
-      </ul>
-
-      <details class="deep">
-        <summary><span>Why a spreadsheet and not an app</span></summary>
-        <div class="measure deep__body">
-          <p>
-            The people using it already lived in Sheets, and the whole thing had
-            to be maintainable by someone who is not me after I graduate. Apps
-            Script meant no hosting, no database, and no account for anyone to
-            forget the password to. Duplicate entries are rejected at the form
-            rather than cleaned up later, and the diagonal of the matrix is
-            protected so nobody can pay themselves.
-          </p>
-          <p>
-            The repository stays private on purpose. The deployment URL is a
-            write endpoint with no authentication, which is fine for a group of
-            nineteen with the link and not fine in public.
-          </p>
-        </div>
-      </details>
-    </article>
+    {/* Tingkat dua. Dikelompokkan per fokus, AI paling atas, atas keputusan
+        pemilik situs. Kartu memakai kisi .bento dari global.css. */}
+    <div class="brief">
+      <h3 class="brief__title rise">In brief</h3>
+      {
+        brief.map((g) => (
+          <div class="brief__group">
+            <h4 class="brief__heading">{g.heading}</h4>
+            <div class="bento brief__grid rise-group">
+              {g.items.map((p) => (
+                <article class="brief__card">
+                  <h5 class="brief__name">{p.title}</h5>
+                  <p class="brief__text">{p.text}</p>
+                  <ul class="chips" aria-label="Key figures">
+                    {p.chips.map(([n, label]) => (
+                      <li>
+                        <span class="figure">{n}</span>
+                        {" "}
+                        {label}
+                      </li>
+                    ))}
+                  </ul>
+                  <p class="brief__stack">{p.stack}</p>
+                  <a
+                    class="figure figure--verified brief__repo"
+                    href={p.repo}
+                    rel="noopener"
+                  >
+                    Repository
+                  </a>
+                </article>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
   </div>
 </section>
 
@@ -571,83 +723,76 @@ const pipeline = [
     }
   }
 
-  .pipeline {
-    list-style: none;
-    margin: 1.1rem 0 0;
-    padding: 0;
-    border: 1px solid var(--rule);
-    border-radius: 3px;
-    overflow: hidden;
-  }
+  /* Gaya .pipeline pindah ke Pipeline.astro bersama markup-nya. */
 
-  .pipeline__step + .pipeline__step {
+  /* Tingkat dua. Pembuka dibatasi garis, seperti pemisah antarproyek. */
+  .brief {
+    margin-top: 4.5rem;
+    padding-top: 3rem;
     border-top: 1px solid var(--rule);
   }
 
-  .pipeline summary {
-    display: grid;
-    grid-template-columns: 2.25rem minmax(0, 11rem) 1fr;
-    align-items: baseline;
-    gap: 0.35rem 0.75rem;
-    padding: 0.95rem 1.1rem;
-    cursor: pointer;
-    list-style: none;
-    background: var(--paper-raised);
-    transition: background var(--t-fast) var(--ease-out);
+  .brief__title {
+    font-size: var(--size-subhead);
   }
 
-  .pipeline summary::-webkit-details-marker {
-    display: none;
+  .brief__group {
+    margin-top: 2.25rem;
   }
 
-  .pipeline summary:hover {
-    background: color-mix(in srgb, var(--verified) 7%, var(--paper-raised));
-  }
-
-  @media (max-width: 44rem) {
-    .pipeline summary {
-      grid-template-columns: 2.25rem 1fr;
-    }
-    .pipeline__role {
-      grid-column: 2;
-    }
-  }
-
-  .pipeline__no {
-    color: var(--ink-soft);
-    font-size: 0.75rem;
-  }
-
-  .pipeline__stage {
-    color: var(--verified);
-  }
-
-  .pipeline__role {
+  /* Label kelompok meniru .kit__heading di Skills: mono, kapital, redup. */
+  .brief__heading {
+    font-family: var(--font-mono);
     font-size: var(--size-caption);
-    line-height: 1.5;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--ink-soft);
   }
 
-  /* Latar dipasang di <details>, bukan di paragrafnya. Paragraf dibatasi
-     lebar bacanya, jadi kalau latar ikut menempel di sana sisa barisnya
-     menembus ke latar bagian dan terbaca sebagai kotak kosong. */
-  .pipeline details {
-    background: var(--paper-raised);
+  /* Kolom lebih lebar dari bawaan .bento, karena isinya paragraf, bukan
+     angka pendek. */
+  .brief__grid {
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    margin-top: 0.9rem;
   }
 
-  .pipeline__detail {
-    max-width: var(--measure);
+  .brief__card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brief__name {
     margin: 0;
-    padding: 0 1.1rem 1.15rem calc(2.25rem + 1.85rem);
+    font-size: 1.05rem;
+    line-height: 1.3;
+  }
+
+  .brief__text {
+    max-width: var(--measure);
+    margin-top: 0.7rem;
     font-size: var(--size-figure);
     line-height: 1.65;
     color: var(--ink-soft);
   }
 
-  @media (max-width: 44rem) {
-    .pipeline__detail {
-      padding-left: 1.1rem;
-    }
+  .brief__card .chips {
+    margin-top: 1rem;
+  }
+
+  .brief__stack {
+    margin-top: 0.9rem;
+    font-family: var(--font-mono);
+    font-size: var(--size-caption);
+    color: var(--ink-soft);
+  }
+
+  /* margin-top: auto mendorong tautan ke dasar kartu, jadi tautan di kartu
+     sebaris selalu sejajar walau panjang teksnya berbeda. */
+  .brief__repo {
+    margin-top: auto;
+    padding-top: 0.9rem;
+    font-size: var(--size-caption);
   }
 
   /* Satu-satunya tempat terakota dipakai di seluruh halaman. Sisipan

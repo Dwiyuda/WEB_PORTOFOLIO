@@ -4,8 +4,9 @@ Source for my portfolio site. **[Live here](https://dwiyuda.is-a.dev)**
 (also at [dwiyuda.pages.dev](https://dwiyuda.pages.dev))
 
 A single scrolling page covering the years from enrolment in September 2022 to
-finishing in July 2026: who I am, a timeline, four projects, two jobs, student
-organisation work, one publication, the academic record, and how to reach me.
+finishing in July 2026: who I am, a timeline, three projects in depth and six
+more in brief, two jobs, student organisation work, one publication, a
+certification, and how to reach me.
 
 I am Dwi Yuda, an informatics graduate from Universitas Islam Riau working on
 computer vision and LLM applications.
@@ -103,11 +104,11 @@ examination record, a metrics file or a published article. Nothing is rounded
 up and nothing is estimated. If a number cannot be traced, it does not go on
 the page.
 
-The accuracy figures in the projects section deserve a note. The model that
-ships scores 1.0000 on a group-aware split at 1024×474. The lower range, 0.9606
-to 0.9774, comes from a resolution ablation at each architecture's native input
-size. Those are two different experiments and the page says so. The 29% leak
-that was found and fixed did **not** change the accuracy — the ablation did.
+The accuracy figures in the projects section deserve a note. The reported model
+is EfficientNet-B0 at its native 224×224 input: 97.74% accuracy, ROC-AUC 0.9912,
+on a group-aware split. An earlier version at 1024×474 scored 1.0000 and was set
+aside. The 29% leak that was found and fixed did **not** change that 1.0000 —
+moving to native resolution did.
 
 ## To do
 

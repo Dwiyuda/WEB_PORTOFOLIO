@@ -45,6 +45,21 @@ seconds reaches the strongest evidence before their attention runs out.
 A closing section was added because the page previously stopped dead at a
 contact list.
 
+### Projects in two tiers (21 October 2026)
+
+Three projects get full abstract-first cards: the ID card detector, the Islamic
+family law assistant, and the practicum grader. Six more sit in a compact grid
+grouped by focus, AI first, then data, then web, each with its problem, what was
+built, three figures, the stack and a repository link. Hening and the cohort
+payment tracker were removed. The pipeline disclosure is now a shared component,
+`Pipeline.astro`.
+
+Two figures in the grid would mislead without a sentence beside them, so the
+sentence ships with them: the housing-aid R² is high because its target is
+derived from the decree's own formula, and the village-aid consistency ratio
+describes template weights still awaiting the social affairs office. The family
+law test count is the CI figure (395), not a local run.
+
 ### Projects are abstract-first
 
 Each project opens with two or three sentences naming the problem, the role and
@@ -69,9 +84,12 @@ be traced, it does not go on the page.
 
 The accuracy figures need care, because the obvious reading of them is wrong.
 
-- The model that **ships** scores **1.0000** on a group-aware split at 1024×474.
-- The range **0.9606 to 0.9774** comes from a **resolution ablation** at each
-  architecture's native input size.
+- The **reported** model is EfficientNet-B0 at its native **224×224** input:
+  **97.74%** accuracy, ROC-AUC **0.9912**. The range **0.9606 to 0.9774** covers
+  the architectures run at their native input sizes.
+- An **earlier** version at 1024×474 scored **1.0000** and was set aside. It is
+  not the shipped model. (Corrected 21 October 2026; this file used to call it
+  the model that ships.)
 
 Those are two different experiments.
 

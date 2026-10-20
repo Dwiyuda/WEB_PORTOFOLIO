@@ -1,17 +1,30 @@
 ---
 // Bagian 9. Aturan PRD: tanpa persentase, dan tiap tool disebut dipakai di
 // mana. Kalau sebuah tool tidak bisa ditautkan ke pekerjaan nyata, tool itu
-// tidak masuk daftar. TensorFlow/Keras, React, dan Streamlit ada di CV tapi
-// belum ada proyek yang bisa disebut, jadi sengaja tidak dicantumkan.
+// tidak masuk daftar. TensorFlow/Keras dan React ada di CV tapi belum ada
+// proyek di halaman ini yang bisa disebut, jadi sengaja tidak dicantumkan.
+// Diperbarui 21 Okt 2026 mengikuti proyek baru di bagian Projects.
 const groups = [
   {
     heading: "Modelling",
     items: [
-      ["PyTorch", "Both training phases of the detection model"],
-      ["Hugging Face Transformers", "Qwen3-VL and Florence-2 in the pipeline"],
-      ["Scikit-learn", "Metrics and StratifiedGroupKFold on the thesis data"],
+      ["PyTorch", "The ID card detector and the plant-disease classifier"],
+      ["Hugging Face Transformers", "Qwen3-VL and Florence-2 in the detector"],
+      ["Ultralytics YOLO", "Locating lesions on eggplant leaves"],
+      ["XGBoost", "Ranking eligible houses by urgency"],
+      ["Scikit-learn", "Group-aware splits, and K-Means for village aid"],
       ["OpenCV", "Canny edge detection and deskewing before classification"],
       ["Grad-CAM", "Checking which region drove each decision"],
+    ],
+  },
+  {
+    heading: "Retrieval and LLMs",
+    items: [
+      ["BM25, BGE-M3, reranker", "Hybrid retrieval in the family law assistant"],
+      ["Qdrant", "Vector store for the family law corpus"],
+      ["Neo4j, Graph RAG", "The knowledge graph behind plant-disease advice"],
+      ["Gemini, Groq, OpenRouter", "Grading, grounded answers, the LVLM study"],
+      ["Prompt engineering", "Five prompt designs across four vision models"],
     ],
   },
   {
@@ -21,15 +34,21 @@ const groups = [
       ["ROC-AUC, confusion matrix", "Reported per model and per split"],
       ["Ablation study", "Resolution ablation that broke the 1.0 ceiling"],
       ["Robustness benchmark", "JPEG, blur, occlusion, rotation, noise"],
+      ["RAGAS", "Faithfulness and recall for two RAG systems"],
+      ["McNemar with Holm", "Comparing models on the same test images"],
       ["LLM-as-a-judge", "Independent check on the semantic gate"],
     ],
   },
   {
     heading: "Building",
     items: [
-      ["Python", "The detection pipeline and the grading system"],
-      ["FastAPI", "Serving the detection model"],
-      ["Next.js 14, JavaScript", "The detection frontend"],
+      ["Python", "Every project on this page"],
+      ["FastAPI", "The detector and the family law API"],
+      ["Next.js", "The detector (JavaScript) and the assistant (TypeScript)"],
+      ["Flask, Streamlit, Gradio", "Demo apps for the four brief projects"],
+      ["Docker Compose, GitHub Actions", "Containers and CI for the assistant"],
+      ["Google Classroom API", "Pulling submissions for the grader"],
+      ["Astro", "This site and the Mandarin course site"],
       ["PHP, CodeIgniter, MariaDB", "OpenSID at Pulau Gadang"],
       ["SQL, MySQL", "Lab modules I wrote for the database course"],
       ["Git", "Everything above"],
