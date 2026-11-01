@@ -13,6 +13,120 @@ import Compare from "./Compare.astro";
 //
 // Bentuknya sengaja dibedakan dari bagian Organisasi: di sini kolom kiri
 // menempel berisi angka jabatan, kanan mengalir. Di sana berupa lajur.
+const lang = Astro.currentLocale === "en" ? "en" : "id";
+const t = {
+  id: {
+    label: "Pengalaman",
+    heading: "Dua pekerjaan, keduanya rampung",
+    ta: {
+      role: "Asisten Dosen",
+      org: "Universitas Islam Riau",
+      when: "Nov 2024 – Jun 2026",
+      spec: [
+        ["Mata kuliah", "6"],
+        ["Semester", "4"],
+        ["Kelas", "9"],
+        ["Mahasiswa", "~300"],
+      ],
+      points: [
+        "Memandu sesi praktikum untuk enam mata kuliah selama empat semester, dari Pengantar Pemrograman sampai Statistika dan Probabilitas.",
+        "Menulis sendiri praktikum Statistika dan Probabilitas dan mengajarkannya: uji Z, uji T, ANOVA, selang kepercayaan.",
+        "Membangun modul praktikum SQL tentang subquery, view, dan kontrol konkurensi. Query mahasiswa di-debug langsung, di tengah sesi.",
+        "Mereview enam tugas akhir di bidang object detection, time series, clustering, dan retrieval-augmented generation. Penyiapan model, metode evaluasi, laporan tertulis.",
+      ],
+      labAlt:
+        "Sebuah lab komputer di penghujung sesi praktikum. Sekitar tiga puluh lima mahasiswa berdiri dan duduk di antara dua baris monitor, menghadap kamera.",
+      labCap: "Salah satu dari sembilan kelas praktikum. Foto dipakai dengan izin.",
+    },
+    web: {
+      role: "Magang Pengembangan Web",
+      org: "Pemerintah Desa Pulau Gadang, Kampar",
+      when: "Mar – Agu 2025",
+      spec: [
+        ["Penduduk tercatat", "1.794"],
+        ["Kepala keluarga", "517"],
+        ["Artikel tersimpan", "570"],
+        ["Dusun terpetakan", "4"],
+      ],
+      points: [
+        "Menerapkan OpenSID v22.10 di atas PHP, CodeIgniter, dan MariaDB sebagai sistem informasi resmi desa.",
+        "Membuka modul User Group Management, yang dikunci bawaan OpenSID. Setelah itu perangkat desa bisa mengatur peran aksesnya sendiri alih-alih berbagi satu akun administrator.",
+        "Menggali kebutuhan bersama perangkat desa, lalu mencocokkan setiap angka dengan bendahara sebelum menulis kode.",
+        "Menjaga 77 daftar UMKM dan peta batas wilayah tetap mutakhir, dengan backup terjadwal.",
+      ],
+      beforeAlt:
+        "Halaman anggaran desa sebelum dibangun ulang: tiga kolom tabel polos berisi angka anggaran dan realisasi untuk pendapatan, belanja, dan pembiayaan.",
+      afterAlt:
+        "Halaman yang sama setelah dibangun ulang: satu diagram donat menampilkan total anggaran dengan tiga segmen berlabel dan jumlahnya tertera di sampingnya.",
+      beforeLabel: "Sebelum",
+      afterLabel: "Sesudah",
+      compareCap:
+        "Geser gagangnya. Tiga tabel angka mentah di kiri, satu diagram donat anggaran terhadap realisasi di kanan. Kepala desa meminta proporsi yang terbaca sekilas.",
+      financeAlt:
+        "Berdiri bersama seorang perangkat desa di kantor pelayanan terpadu Pulau Gadang, di bawah papan nama kantor.",
+      financeCap:
+        "Mencocokkan angka di kantor desa sebelum menulis satu baris kode pun.",
+      presentAlt:
+        "Mempresentasikan website desa yang dibangun ulang di ruang pertemuan desa, dengan situs diproyeksikan ke layar.",
+      presentCap: "Mempresentasikan hasilnya kepada perangkat desa, 28 Mei 2025.",
+    },
+  },
+  en: {
+    label: "Experience",
+    heading: "Two jobs, both finished",
+    ta: {
+      role: "Teaching Assistant",
+      org: "Universitas Islam Riau",
+      when: "Nov 2024 – Jun 2026",
+      spec: [
+        ["Courses", "6"],
+        ["Semesters", "4"],
+        ["Classes", "9"],
+        ["Undergraduates", "~300"],
+      ],
+      points: [
+        "Ran lab sections for six courses over four semesters, from Introduction to Programming through to Statistics and Probability.",
+        "Wrote the Statistics and Probability practicum myself and taught it: Z-test, T-test, ANOVA, confidence intervals.",
+        "Built the SQL lab modules on subqueries, views, and concurrency control. Student queries got debugged live, mid-session.",
+        "Reviewed six final-year projects across object detection, time series, clustering, and retrieval-augmented generation. Model setup, evaluation method, written report.",
+      ],
+      labAlt:
+        "A computer lab at the end of a practicum session. Around thirty-five undergraduates stand and sit between two rows of monitors, facing the camera.",
+      labCap: "One of nine lab classes. Photograph used with permission.",
+    },
+    web: {
+      role: "Web Development Intern",
+      org: "Pulau Gadang Village Government, Kampar",
+      when: "Mar – Aug 2025",
+      spec: [
+        ["Residents on file", "1,794"],
+        ["Households", "517"],
+        ["Articles kept", "570"],
+        ["Hamlets mapped", "4"],
+      ],
+      points: [
+        "Deployed OpenSID v22.10 on PHP, CodeIgniter, and MariaDB as the village's official information system.",
+        "Unlocked the User Group Management module, which OpenSID ships locked. Staff could then set their own access roles instead of sharing one administrator account.",
+        "Gathered requirements with village staff, then checked every figure with the finance officer before writing code.",
+        "Kept 77 MSME listings and the boundary maps current, on a scheduled backup.",
+      ],
+      beforeAlt:
+        "The village budget page before the rebuild: three columns of plain tables listing budget and realisation figures for revenue, spending, and financing.",
+      afterAlt:
+        "The same page after the rebuild: a single donut chart showing total budget with three labelled segments and their amounts listed beside it.",
+      beforeLabel: "Before",
+      afterLabel: "After",
+      compareCap:
+        "Drag the handle. Three tables of raw figures on the left, one donut chart of budget against realisation on the right. The village head asked for proportion at a glance.",
+      financeAlt:
+        "Standing with a member of village staff in the Pulau Gadang integrated service office, under the office's name board.",
+      financeCap: "Checking figures at the village office before writing any code.",
+      presentAlt:
+        "Presenting the rebuilt village website in the village meeting room, with the site projected on screen.",
+      presentCap: "Presenting the result to village staff, 28 May 2025.",
+    },
+  },
+}[lang];
 ---
 
 {/* data-no-drift: dua pelat .post__meta di bawah menempel. Transform di
@@ -25,112 +139,74 @@ import Compare from "./Compare.astro";
   aria-labelledby="experience-title"
 >
   <div class="shell shell--wide">
-    <span class="section__label">Experience</span>
-    <h2 id="experience-title" class="rise">Two jobs, both finished</h2>
+    <span class="section__label">{t.label}</span>
+    <h2 id="experience-title" class="rise">{t.heading}</h2>
 
     <article class="post rise">
       <div class="post__meta">
-        <h3 class="post__role">Teaching Assistant</h3>
-        <p class="post__org figure">Universitas Islam Riau</p>
-        <p class="post__when figure">Nov 2024 – Jun 2026</p>
+        <h3 class="post__role">{t.ta.role}</h3>
+        <p class="post__org figure">{t.ta.org}</p>
+        <p class="post__when figure">{t.ta.when}</p>
 
         <dl class="spec">
-          <div><dt>Courses</dt><dd class="figure">6</dd></div>
-          <div><dt>Semesters</dt><dd class="figure">4</dd></div>
-          <div><dt>Classes</dt><dd class="figure">9</dd></div>
-          <div><dt>Undergraduates</dt><dd class="figure">~300</dd></div>
+          {t.ta.spec.map(([k, v]) => (
+            <div>
+              <dt>{k}</dt>
+              <dd class="figure">{v}</dd>
+            </div>
+          ))}
         </dl>
       </div>
 
       <div class="post__body">
         <ul class="post__points">
-          <li>
-            Ran lab sections for six courses over four semesters, from
-            Introduction to Programming through to Statistics and Probability.
-          </li>
-          <li>
-            Wrote the Statistics and Probability practicum myself and taught it:
-            Z-test, T-test, ANOVA, confidence intervals.
-          </li>
-          <li>
-            Built the SQL lab modules on subqueries, views, and concurrency
-            control. Student queries got debugged live, mid-session.
-          </li>
-          <li>
-            Reviewed six final-year projects across object detection, time
-            series, clustering, and retrieval-augmented generation. Model setup,
-            evaluation method, written report.
-          </li>
+          {t.ta.points.map((p) => <li>{p}</li>)}
         </ul>
 
         <figure class="shot">
           <Image
             src={labClass}
-            alt="A computer lab at the end of a practicum session. Around
-              thirty-five undergraduates stand and sit between two rows of
-              monitors, facing the camera."
+            alt={t.ta.labAlt}
             widths={[720, 1200]}
             sizes="(min-width: 58rem) 46vw, 92vw"
             format="webp"
             quality={58}
             loading="lazy"
           />
-          <figcaption class="caption">
-            One of nine lab classes. Photograph used with permission.
-          </figcaption>
+          <figcaption class="caption">{t.ta.labCap}</figcaption>
         </figure>
       </div>
     </article>
 
     <article class="post rise">
       <div class="post__meta">
-        <h3 class="post__role">Web Development Intern</h3>
-        <p class="post__org figure">Pulau Gadang Village Government, Kampar</p>
-        <p class="post__when figure">Mar – Aug 2025</p>
+        <h3 class="post__role">{t.web.role}</h3>
+        <p class="post__org figure">{t.web.org}</p>
+        <p class="post__when figure">{t.web.when}</p>
 
         <dl class="spec">
-          <div><dt>Residents on file</dt><dd class="figure">1,794</dd></div>
-          <div><dt>Households</dt><dd class="figure">517</dd></div>
-          <div><dt>Articles kept</dt><dd class="figure">570</dd></div>
-          <div><dt>Hamlets mapped</dt><dd class="figure">4</dd></div>
+          {t.web.spec.map(([k, v]) => (
+            <div>
+              <dt>{k}</dt>
+              <dd class="figure">{v}</dd>
+            </div>
+          ))}
         </dl>
       </div>
 
       <div class="post__body">
         <ul class="post__points">
-          <li>
-            Deployed OpenSID v22.10 on PHP, CodeIgniter, and MariaDB as the
-            village's official information system.
-          </li>
-          <li>
-            Unlocked the User Group Management module, which OpenSID ships
-            locked. Staff could then set their own access roles instead of
-            sharing one administrator account.
-          </li>
-          <li>
-            Gathered requirements with village staff, then checked every figure
-            with the finance officer before writing code.
-          </li>
-          <li>
-            Kept 77 MSME listings and the boundary maps current, on a scheduled
-            backup.
-          </li>
+          {t.web.points.map((p) => <li>{p}</li>)}
         </ul>
 
         <Compare
           before={apbdesBefore}
           after={apbdesAfter}
-          beforeAlt="The village budget page before the rebuild: three columns
-            of plain tables listing budget and realisation figures for revenue,
-            spending, and financing."
-          afterAlt="The same page after the rebuild: a single donut chart
-            showing total budget with three labelled segments and their amounts
-            listed beside it."
-          beforeLabel="Before"
-          afterLabel="After"
-          caption="Drag the handle. Three tables of raw figures on the left, one
-            donut chart of budget against realisation on the right. The village
-            head asked for proportion at a glance."
+          beforeAlt={t.web.beforeAlt}
+          afterAlt={t.web.afterAlt}
+          beforeLabel={t.web.beforeLabel}
+          afterLabel={t.web.afterLabel}
+          caption={t.web.compareCap}
         />
 
         {/* Harus tetap di dalam .post__body. Sebagai anak langsung .post
@@ -140,33 +216,27 @@ import Compare from "./Compare.astro";
           <figure class="shot">
             <Image
               src={villageFinance}
-              alt="Standing with a member of village staff in the Pulau Gadang
-                integrated service office, under the office's name board."
+              alt={t.web.financeAlt}
               widths={[520, 1000]}
               sizes="(min-width: 46rem) 45vw, 92vw"
               format="webp"
               quality={70}
               loading="lazy"
             />
-            <figcaption class="caption">
-              Checking figures at the village office before writing any code.
-            </figcaption>
+            <figcaption class="caption">{t.web.financeCap}</figcaption>
           </figure>
 
           <figure class="shot">
             <Image
               src={villagePresentation}
-              alt="Presenting the rebuilt village website in the village meeting
-                room, with the site projected on screen."
+              alt={t.web.presentAlt}
               widths={[520, 1000]}
               sizes="(min-width: 46rem) 45vw, 92vw"
               format="webp"
               quality={70}
               loading="lazy"
             />
-            <figcaption class="caption">
-              Presenting the result to village staff, 28 May 2025.
-            </figcaption>
+            <figcaption class="caption">{t.web.presentCap}</figcaption>
           </figure>
         </div>
       </div>

@@ -1,45 +1,11 @@
 ---
 import Base from "../layouts/Base.astro";
-import Hero from "../components/Hero.astro";
-import About from "../components/About.astro";
-import Timeline from "../components/Timeline.astro";
-import Projects from "../components/Projects.astro";
-import Experience from "../components/Experience.astro";
-import Organisation from "../components/Organisation.astro";
-import Publication from "../components/Publication.astro";
-import Achievements from "../components/Achievements.astro";
-import Skills from "../components/Skills.astro";
-import Closing from "../components/Closing.astro";
+import Body from "../components/Body.astro";
 
-// Urutan sengaja: perkenalan lalu linimasa lebih dulu, karena situs ini
-// menceritakan perjalanan dan bukan hanya menumpuk proyek. Tapi Proyek
-// ditaruh sebelum Pengalaman, karena pembaca yang menilai dalam sepuluh
-// detik harus sampai ke bukti terkuat sebelum perhatiannya habis.
+// Versi Indonesia, di akar (/). Judul dan deskripsi diisi Base dari
+// Astro.currentLocale, jadi halaman ini tidak perlu meneruskan apa pun.
 ---
 
-<Base
-  title="Dwi Yuda Portfolio"
-  description="Informatics graduate from Universitas Islam Riau. Computer vision and LLM systems, with the evaluation work that decides whether they hold."
->
-  <div class="room" data-rung="1">
-    <Hero />
-    <About />
-    <Timeline />
-  </div>
-
-  <div class="room" data-rung="2">
-    <Projects />
-  </div>
-
-  <div class="room" data-rung="3">
-    <Experience />
-    <Organisation />
-    <Publication />
-    <Achievements />
-  </div>
-
-  <div class="room" data-rung="4">
-    <Skills />
-    <Closing />
-  </div>
+<Base>
+  <Body />
 </Base>

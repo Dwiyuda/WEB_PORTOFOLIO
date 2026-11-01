@@ -13,11 +13,167 @@ import shotGradcam from "../assets/detector-gradcam.jpg";
 // Keluaran LLM Grading tidak ditampilkan sebagai data. Berkas Excel-nya
 // memuat nama, alamat surel, dan nilai mahasiswa. Yang ditayangkan hanya
 // susunan kolomnya.
-const sheets = [
-  { name: "Rekap", cols: "NIM, name, status, total, confidence, needs review" },
-  { name: "Detail", cols: "NIM, name, criterion, score, feedback" },
-  { name: "Flag", cols: "NIM, name, status, reason for review" },
-];
+const lang = Astro.currentLocale === "en" ? "en" : "id";
+
+// Teks antarmuka dan prosa tiga proyek unggulan. Nama model, angka, dan tautan
+// tetap sama di kedua bahasa; yang berganti hanya kalimatnya.
+const t = {
+  id: {
+    label: "Proyek",
+    heading: "Tiga mendalam, sisanya ringkas",
+    repository: "Repositori",
+    keyFigures: "Angka kunci",
+    briefTitle: "Sekilas",
+    ktm: {
+      title: "Deteksi pemalsuan Kartu Tanda Mahasiswa",
+      meta: "Tugas akhir · PyTorch, FastAPI, Next.js 14, OpenCV ·",
+      abstract:
+        "Pemeriksaan kartu di perpustakaan kampus hanyalah orang yang menatap kartu, dan kode QR yang tercetak tak pernah tersambung ke basis data mana pun. Ini pipeline empat tahap yang memutuskan sebagai gantinya, dan menunjukkan alasannya. Ia mencapai akurasi 97,74% dan ROC-AUC 0,9912 pada resolusi native, dan berjalan dalam 4 GB VRAM.",
+      chips: [
+        ["1.645", "citra"],
+        ["5", "skenario pemalsuan"],
+        ["4 GB", "VRAM"],
+      ],
+      acceptedAlt:
+        "Panel hasil detektor menampilkan ASLI, dengan keyakinan 91,26% dan satu bilah probabilitas untuk tiap kelas.",
+      acceptedCap: "Diterima. Keyakinan 91,26%, di atas ambang.",
+      rejectedAlt:
+        "Panel yang sama menampilkan TIDAK DIKENALI, karena keyakinan model 83,19% jatuh di bawah ambang 85%.",
+      rejectedCap:
+        "Ditolak di 83,19%, di bawah ambang 85%. Ia memilih menolak alih-alih menebak.",
+      gradcamAlt:
+        "Tampilan Grad-CAM: input model di samping peta panas wilayah yang menggerakkan prediksi, dengan legenda warna dari rendah ke tinggi.",
+      gradcamCap:
+        "Grad-CAM pada kartu yang sama. Rincian kartu diburamkan di sini karena kartu itu milik orang lain; pola panasnya yang jadi intinya.",
+      pipelineSummary: "Cara pipeline bekerja",
+      auditLabel: "Audit",
+      auditGist:
+        "Empat model mencetak 1,0000 sempurna. Saya mencari kebocoran data, menemukan satu yang mengontaminasi 29,1% set uji, memperbaikinya, dan akurasinya tak bergerak. Kebocorannya nyata dan ia tidak menjelaskan apa pun.",
+      auditSummary: "Baca apa yang terjadi selanjutnya",
+    },
+    law: {
+      title: "Asisten hukum keluarga Islam",
+      meta: "Proyek pribadi · Python, FastAPI, BGE-M3, Qdrant, Next.js, Docker ·",
+      abstract:
+        "Seseorang yang menghadapi perceraian atau pembagian waris di Indonesia biasanya mulai dari mesin pencari, yang akan menjawab dengan percaya diri dari hukum yang salah. Asisten ini hanya menjawab dari peraturan, Al-Qur'an, dan hadis dalam korpusnya, menyebutkan pasal yang dipakainya, dan menolak ketika tak punya dasar. Bagian waris datang dari rule engine dalam pecahan yang persis. Model bahasa menjelaskannya dan tak pernah menghasilkan angka.",
+      chips: [
+        ["2.491", "bagian sumber"],
+        ["104", "kasus uji waris"],
+        ["395", "tes lulus di CI"],
+      ],
+      summary: "Cara ia memutuskan, dan di mana angkanya terlalu memuji",
+    },
+    grader: {
+      title: "Penilaian praktikum otomatis",
+      meta: "Proyek pribadi, disetujui ketua jurusan · Python, Gemini 2.5 Flash, Google Classroom API ·",
+      abstract:
+        "Mengoreksi pengumpulan praktikum dengan tangan di delapan sesi itu lambat dan melenceng antara lembar pertama dan yang keempat puluh. Ini menarik pengumpulan langsung dari Google Classroom, menilai tiap satunya terhadap rubrik dosen, dan menulis rekap Excel dengan umpan balik untuk setiap pengumpulan. Apa pun yang ia ragukan tak dihitung sampai seseorang memeriksanya. Fase satu diterima setelah nilainya dicocokkan dengan penilaian manual atas 21 pengumpulan nyata.",
+      chips: [
+        ["21", "pengumpulan nyata dinilai"],
+        ["2 dari 8", "sesi di Classroom API"],
+        ["4", "jenis berkas dibaca"],
+      ],
+      pipelineSummary: "Bagaimana satu pengumpulan bergerak melaluinya",
+      designSummary: "Keputusan desain, dan satu yang keliru",
+      designTop: [
+        "Tanpa lapisan retrieval. Soal, kunci, rubrik, dan satu pengumpulan selalu muat dalam satu prompt, jadi RAG hanya akan jadi mesin tanpa pekerjaan.",
+        "Yang keliru itu lebih berharga daripada yang benar. Satu kuis SQL dikirim ke model tanpa skema tabelnya, jadi model menebak nama kolom, dan mahasiswa yang memakai nama yang sebenarnya justru dikurangi nilainya. Satu naik dari 7 ke 34,4 setelah skemanya ditambahkan dan rubrik diberi tahu untuk menerima alias. Yang lain naik dari 44 ke 46,4. Rubrik di sesi lain juga ternyata berjumlah 105%.",
+        "Keduanya tertangkap dengan mencocokkan nilai mesin terhadap nilai yang diberi tangan, dan itulah satu-satunya alasan saya memercayai sisanya. Penilai ini memang membayar tempatnya: ia menangkap sebuah foreign key yang menunjuk tabel yang salah murni dari membaca, tanpa menjalankan satu baris pun.",
+      ],
+      sheetsIntro: "Setiap jalannya menulis satu workbook dengan tiga lembar:",
+      sheetsNote:
+        "Hanya susunan kolomnya yang ditampilkan. Workbook sebenarnya memuat nama mahasiswa, alamat surel, dan nilai, jadi tak satu pun pantas ada di sini.",
+      designBottom: [
+        "Belum dibangun: pengecekan kemiripan antarmahasiswa, dan menjalankan semuanya tanpa pengawasan di server dengan n8n. Keduanya sudah dirancang dan ditulis di repository. Belum satu pun yang rilis.",
+        "Repository publiknya snapshot bersih dengan contoh sintetis, karena yang dipakai memuat data kelas asli dan tetap privat. Pada contoh itu penilai memberi 100 untuk pengumpulan yang benar dan 49,5 untuk yang cacat, persis langit-langit rubrik untuk tiga kesalahannya.",
+      ],
+    },
+  },
+  en: {
+    label: "Projects",
+    heading: "Three in depth, the rest in brief",
+    repository: "Repository",
+    keyFigures: "Key figures",
+    briefTitle: "In brief",
+    ktm: {
+      title: "Student ID card forgery detection",
+      meta: "Final year project · PyTorch, FastAPI, Next.js 14, OpenCV ·",
+      abstract:
+        "Card checks at the university library were a person looking at a card, and the printed QR code was never wired to any database. This is a four-stage pipeline that decides instead, and shows its reasoning. It reaches 97.74% accuracy and a 0.9912 ROC-AUC at native resolution, and runs in 4 GB of VRAM.",
+      chips: [
+        ["1,645", "images"],
+        ["5", "forgery scenarios"],
+        ["4 GB", "VRAM"],
+      ],
+      acceptedAlt:
+        "The detector's result panel reading ASLI, meaning genuine, with 91.26% confidence and a probability bar for each class.",
+      acceptedCap: "Accepted. 91.26% confidence, above the gate.",
+      rejectedAlt:
+        "The same panel reading TIDAK DIKENALI, meaning unrecognised, because model confidence of 83.19% fell below the 85% threshold.",
+      rejectedCap:
+        "Refused at 83.19%, below the 85% gate. It declines rather than guesses.",
+      gradcamAlt:
+        "Grad-CAM view: the model input beside a heat map of the regions that drove the prediction, with a low-to-high colour legend.",
+      gradcamCap:
+        "Grad-CAM over the same card. Card details are blurred here because the card belongs to someone else; the heat pattern is the point.",
+      pipelineSummary: "How the pipeline works",
+      auditLabel: "The audit",
+      auditGist:
+        "Four models scored a perfect 1.0000. I went looking for a data leak, found one that contaminated 29.1% of the test set, fixed it, and the accuracy did not move. The leak was real and it explained nothing.",
+      auditSummary: "Read what happened next",
+    },
+    law: {
+      title: "Islamic family law assistant",
+      meta: "Personal project · Python, FastAPI, BGE-M3, Qdrant, Next.js, Docker ·",
+      abstract:
+        "Someone facing a divorce or an inheritance split in Indonesia usually starts with a search engine, which will answer confidently from the wrong law. This assistant answers only from the regulations, Qur'an and hadith in its corpus, cites the article it used, and refuses when it has no basis. Inheritance shares come from a rule engine in exact fractions. The language model explains them and never produces a number.",
+      chips: [
+        ["2,491", "source passages"],
+        ["104", "inheritance test cases"],
+        ["395", "tests passing in CI"],
+      ],
+      summary: "How it decides, and where the numbers flatter it",
+    },
+    grader: {
+      title: "Automated practicum grading",
+      meta: "Personal project, approved by the head of department · Python, Gemini 2.5 Flash, Google Classroom API ·",
+      abstract:
+        "Marking practicum submissions by hand across eight sessions is slow and drifts between the first script and the fortieth. This pulls submissions straight from Google Classroom, scores each one against the lecturer's rubric, and writes an Excel recap with feedback for every submission. Nothing it is unsure of counts until a person has looked. Phase one was accepted after its marks were checked against manual grading on 21 real submissions.",
+      chips: [
+        ["21", "real submissions graded"],
+        ["2 of 8", "sessions on the Classroom API"],
+        ["4", "kinds of file read"],
+      ],
+      pipelineSummary: "How a submission moves through it",
+      designSummary: "Design decisions, and one that went wrong",
+      designTop: [
+        "No retrieval layer. The question, the key, the rubric and one submission always fit in a single prompt, so RAG would have been machinery with nothing to do.",
+        "The one that went wrong is worth more than the ones that went right. A quiz on SQL shipped to the model without its table schema, so the model guessed at column names, and students who had used the real ones were marked down for it. One went from 7 to 34.4 after the schema was added and the rubric was told to accept aliases. Another went from 44 to 46.4. A rubric on another session was also summing to 105%.",
+        "Both were caught by checking the machine's marks against marks given by hand, which is the only reason I trust the rest of them. The grader does earn its keep: it caught a foreign key pointing at the wrong table purely from reading, without running a line.",
+      ],
+      sheetsIntro: "Each run writes one workbook with three sheets:",
+      sheetsNote:
+        "Only the column layout is shown. The real workbooks hold student names, email addresses, and marks, so none of it belongs here.",
+      designBottom: [
+        "Not built yet: similarity checking between students, and running the whole thing unattended on a server with n8n. Both are designed and written up in the repository. Neither has shipped.",
+        "The public repository is a clean snapshot with a synthetic example, because the working one holds real class data and stays private. On that example the grader gave the correct submission 100 and the flawed one 49.5, which is exactly the rubric's ceiling for its three mistakes.",
+      ],
+    },
+  },
+}[lang];
+
+const sheets = {
+  id: [
+    { name: "Rekap", cols: "NIM, nama, status, total, confidence, perlu ditinjau" },
+    { name: "Detail", cols: "NIM, nama, kriteria, skor, umpan balik" },
+    { name: "Flag", cols: "NIM, nama, status, alasan ditinjau" },
+  ],
+  en: [
+    { name: "Rekap", cols: "NIM, name, status, total, confidence, needs review" },
+    { name: "Detail", cols: "NIM, name, criterion, score, feedback" },
+    { name: "Flag", cols: "NIM, name, status, reason for review" },
+  ],
+}[lang];
 
 // Bagian 5. Dua tingkat sejak 21 Oktober 2026: tiga proyek unggulan dengan
 // kartu penuh, lalu kisi ringkas yang dikelompokkan per fokus, AI paling atas.
@@ -40,90 +196,174 @@ const sheets = [
 // 97,7% seolah yang satu menyebabkan yang lain.
 //
 // Bentuk tiap proyek unggulan: abstrak terbuka, kedalaman di balik <details>.
-const pipeline = [
-  {
-    stage: "Qwen3-VL",
-    role: "Semantic gate. Rejects anything that is not an ID card, zero-shot.",
-    detail:
-      "It has to throw out a photo of a desk, a hand, a blank wall, before any of that reaches the classifier. Evaluated separately with an LLM-as-a-judge pass over card and non-card images, where it scored perfectly.",
-  },
-  {
-    stage: "Florence-2 + Canny",
-    role: "Phrase grounding locates the card, then edge detection crops and deskews it.",
-    detail:
-      "Florence-2 says where the card is, Canny finds its edges, and the crop straightens it. The classifier never sees the desk it was lying on, so background stops being a feature it can cheat with.",
-  },
-  {
-    stage: "EfficientNet-B0",
-    role: "Binary classifier, genuine against forged.",
-    detail:
-      "Two-phase transfer learning from ImageNet: the head trains first with the backbone frozen, then the whole network fine-tunes. Mixup at alpha 0.4, AdamW, seed 42. The reported model runs at its native 224×224 input and fits in 4 GB of VRAM.",
-  },
-  {
-    stage: "Grad-CAM",
-    role: "Heatmap over the region that drove the decision.",
-    detail:
-      "This is the part that keeps the rest honest. On a font forgery the heat sits on the text block; on a face swap it sits on the portrait. If it had lit up the background instead, the accuracy figure would have meant nothing.",
-  },
-];
+const pipeline = {
+  id: [
+    {
+      stage: "Qwen3-VL",
+      role: "Gerbang semantik. Menolak apa pun yang bukan kartu identitas, zero-shot.",
+      detail:
+        "Ia harus membuang foto meja, tangan, tembok kosong, sebelum semua itu sampai ke classifier. Dievaluasi terpisah dengan satu lintasan LLM-as-a-judge atas citra kartu dan non-kartu, dan di sana ia mencetak sempurna.",
+    },
+    {
+      stage: "Florence-2 + Canny",
+      role: "Phrase grounding melokalisasi kartu, lalu deteksi tepi memotong dan meluruskannya.",
+      detail:
+        "Florence-2 menyebut di mana kartunya, Canny menemukan tepinya, dan pemotongan meluruskannya. Classifier tak pernah melihat meja tempat kartu tergeletak, jadi latar berhenti jadi fitur yang bisa dicurangi.",
+    },
+    {
+      stage: "EfficientNet-B0",
+      role: "Classifier biner, asli lawan palsu.",
+      detail:
+        "Transfer learning dua fase dari ImageNet: head dilatih lebih dulu dengan backbone dibekukan, lalu seluruh jaringan di-fine-tune. Mixup pada alpha 0,4, AdamW, seed 42. Model yang dilaporkan berjalan pada input native 224×224 dan muat dalam 4 GB VRAM.",
+    },
+    {
+      stage: "Grad-CAM",
+      role: "Peta panas atas wilayah yang menggerakkan keputusan.",
+      detail:
+        "Inilah bagian yang menjaga sisanya tetap jujur. Pada pemalsuan font panasnya duduk di blok teks; pada face swap ia duduk di potret. Kalau justru latar yang menyala, angka akurasinya tak akan berarti apa-apa.",
+    },
+  ],
+  en: [
+    {
+      stage: "Qwen3-VL",
+      role: "Semantic gate. Rejects anything that is not an ID card, zero-shot.",
+      detail:
+        "It has to throw out a photo of a desk, a hand, a blank wall, before any of that reaches the classifier. Evaluated separately with an LLM-as-a-judge pass over card and non-card images, where it scored perfectly.",
+    },
+    {
+      stage: "Florence-2 + Canny",
+      role: "Phrase grounding locates the card, then edge detection crops and deskews it.",
+      detail:
+        "Florence-2 says where the card is, Canny finds its edges, and the crop straightens it. The classifier never sees the desk it was lying on, so background stops being a feature it can cheat with.",
+    },
+    {
+      stage: "EfficientNet-B0",
+      role: "Binary classifier, genuine against forged.",
+      detail:
+        "Two-phase transfer learning from ImageNet: the head trains first with the backbone frozen, then the whole network fine-tunes. Mixup at alpha 0.4, AdamW, seed 42. The reported model runs at its native 224×224 input and fits in 4 GB of VRAM.",
+    },
+    {
+      stage: "Grad-CAM",
+      role: "Heatmap over the region that drove the decision.",
+      detail:
+        "This is the part that keeps the rest honest. On a font forgery the heat sits on the text block; on a face swap it sits on the portrait. If it had lit up the background instead, the accuracy figure would have meant nothing.",
+    },
+  ],
+}[lang];
 
 // Asisten hukum keluarga Islam. Setiap angka evaluasi yang optimistis ditulis
 // beserta alasannya, sesuai bagian "Honest caveats" di README repo-nya.
-const lawPipeline = [
-  {
-    stage: "BM25 + BGE-M3",
-    role: "Hybrid retrieval: keyword and dense search, fused with reciprocal rank fusion.",
-    detail:
-      "On 80 in-domain questions the full stack reaches Recall@5 0.601 and MRR@10 0.702. The fusion on its own is not what earns that: it scored 0.428, below dense search alone at 0.575, and BM25 alone managed 0.223. The reranker in the next step is what lifts it past both.",
-  },
-  {
-    stage: "Reranker gate",
-    role: "bge-reranker-v2-m3 reorders the results, and a low score means refuse.",
-    detail:
-      "The refusal happens before any language model is called, so an off-topic question costs nothing and cannot be answered from thin air. It refused 95.0% of out-of-domain questions while wrongly refusing 1.2% of real ones. Those thresholds were fitted on the same questions they are scored on, so read the figures as optimistic. On the held-out set the gate alone catches 0.650, and the generation stage brings refusal to 1.000.",
-  },
-  {
-    stage: "Grounded answer",
-    role: "The model may only cite retrieved passages, and its output is validated against a schema.",
-    detail:
-      "Citation precision is 1.000 across every question group. RAGAS faithfulness is 0.827 on 69 samples, below the 0.85 I was aiming for, from a run cut short when the free-tier judge quota ran out. The judge is the same model family as the generator, so that number is generous too.",
-  },
-  {
-    stage: "Faraid engine",
-    role: "Inheritance shares in exact fractions, computed by rules, never by the model.",
-    detail:
-      "It implements Book II of the Compilation of Islamic Law, articles 171 to 193, and checks against 104 textbook cases. Grandparents and substitute heirs need interpretation beyond the literal text, so those results are flagged for review by a qualified fiqh scholar instead of being presented as final.",
-  },
-];
+const lawPipeline = {
+  id: [
+    {
+      stage: "BM25 + BGE-M3",
+      role: "Retrieval hibrida: pencarian kata kunci dan dense, dipadukan dengan reciprocal rank fusion.",
+      detail:
+        "Pada 80 pertanyaan in-domain, stack lengkap mencapai Recall@5 0,601 dan MRR@10 0,702. Fusinya sendiri bukan yang memperolehnya: ia mencetak 0,428, di bawah dense search sendirian di 0,575, dan BM25 sendirian hanya 0,223. Reranker di langkah berikutnya yang mengangkatnya melampaui keduanya.",
+    },
+    {
+      stage: "Gerbang reranker",
+      role: "bge-reranker-v2-m3 menata ulang hasilnya, dan skor rendah berarti menolak.",
+      detail:
+        "Penolakan terjadi sebelum model bahasa mana pun dipanggil, jadi pertanyaan di luar topik tak memakan biaya dan tak bisa dijawab asal-asalan. Ia menolak 95,0% pertanyaan luar-domain sambil keliru menolak 1,2% pertanyaan nyata. Ambang-ambang itu dicocokkan pada pertanyaan yang sama dengan yang dinilai, jadi bacalah angkanya sebagai optimistis. Pada set held-out, gerbangnya sendiri menangkap 0,650, dan tahap generasi membawa penolakan ke 1,000.",
+    },
+    {
+      stage: "Jawaban berdasar sumber",
+      role: "Model hanya boleh mengutip bagian yang ditarik, dan keluarannya divalidasi terhadap sebuah skema.",
+      detail:
+        "Presisi kutipan 1,000 di setiap kelompok pertanyaan. Faithfulness RAGAS 0,827 pada 69 sampel, di bawah 0,85 yang saya targetkan, dari satu run yang terpotong saat kuota judge gratisan habis. Judge-nya satu keluarga model dengan generatornya, jadi angka itu pun murah hati.",
+    },
+    {
+      stage: "Mesin faraid",
+      role: "Bagian waris dalam pecahan yang persis, dihitung oleh aturan, tak pernah oleh model.",
+      detail:
+        "Ia menerapkan Buku II Kompilasi Hukum Islam, pasal 171 sampai 193, dan dicek terhadap 104 kasus buku teks. Kakek-nenek dan ahli waris pengganti butuh penafsiran di luar teks harfiah, jadi hasil itu ditandai untuk ditinjau ahli fikih yang berkompeten alih-alih disajikan sebagai final.",
+    },
+  ],
+  en: [
+    {
+      stage: "BM25 + BGE-M3",
+      role: "Hybrid retrieval: keyword and dense search, fused with reciprocal rank fusion.",
+      detail:
+        "On 80 in-domain questions the full stack reaches Recall@5 0.601 and MRR@10 0.702. The fusion on its own is not what earns that: it scored 0.428, below dense search alone at 0.575, and BM25 alone managed 0.223. The reranker in the next step is what lifts it past both.",
+    },
+    {
+      stage: "Reranker gate",
+      role: "bge-reranker-v2-m3 reorders the results, and a low score means refuse.",
+      detail:
+        "The refusal happens before any language model is called, so an off-topic question costs nothing and cannot be answered from thin air. It refused 95.0% of out-of-domain questions while wrongly refusing 1.2% of real ones. Those thresholds were fitted on the same questions they are scored on, so read the figures as optimistic. On the held-out set the gate alone catches 0.650, and the generation stage brings refusal to 1.000.",
+    },
+    {
+      stage: "Grounded answer",
+      role: "The model may only cite retrieved passages, and its output is validated against a schema.",
+      detail:
+        "Citation precision is 1.000 across every question group. RAGAS faithfulness is 0.827 on 69 samples, below the 0.85 I was aiming for, from a run cut short when the free-tier judge quota ran out. The judge is the same model family as the generator, so that number is generous too.",
+    },
+    {
+      stage: "Faraid engine",
+      role: "Inheritance shares in exact fractions, computed by rules, never by the model.",
+      detail:
+        "It implements Book II of the Compilation of Islamic Law, articles 171 to 193, and checks against 104 textbook cases. Grandparents and substitute heirs need interpretation beyond the literal text, so those results are flagged for review by a qualified fiqh scholar instead of being presented as final.",
+    },
+  ],
+}[lang];
 
 // Grader praktikum. Data mahasiswa asli tidak pernah tampil; repo publiknya
 // adalah snapshot bersih dengan contoh sintetis.
-const graderPipeline = [
-  {
-    stage: "Key maker",
-    role: "Drafts the answer key and a weighted rubric from the question.",
-    detail:
-      "Gemini drafts once per session. The draft stays pending until the lecturer approves it, and the grader refuses to run on a key nobody has approved.",
-  },
-  {
-    stage: "Classroom fetch",
-    role: "Pulls every submission and its official status, with read-only access.",
-    detail:
-      "Deadlines come from Classroom's structured fields, not from the wording of the question. Google Docs and Slides are exported to PDF. A late submission is not graded but still appears in the recap, so there is a record if anyone disputes a mark.",
-  },
-  {
-    stage: "Grader",
-    role: "One submission per request, structured output, resumable.",
-    detail:
-      "PDFs go to the model natively, notebooks as Markdown, Word files through LibreOffice. Code is read, never executed: if the model cannot tell whether it would run, it must say so with low confidence. The model fills only the scoring fields. Identity and status are set by code, so it cannot invent them.",
-  },
-  {
-    stage: "Recap",
-    role: "An Excel workbook with three sheets and a confidence gate.",
-    detail:
-      "Only high-confidence results with no file problems become final on their own. Everything else lands in the Flag sheet with its reason, for a person to check.",
-  },
-];
+const graderPipeline = {
+  id: [
+    {
+      stage: "Pembuat kunci",
+      role: "Menyusun draf kunci jawaban dan rubrik berbobot dari soal.",
+      detail:
+        "Gemini membuat draf sekali per sesi. Drafnya tertahan sampai dosen menyetujuinya, dan penilai menolak berjalan di atas kunci yang belum disetujui siapa pun.",
+    },
+    {
+      stage: "Tarik Classroom",
+      role: "Menarik setiap pengumpulan dan status resminya, dengan akses hanya-baca.",
+      detail:
+        "Tenggat datang dari field terstruktur Classroom, bukan dari kata-kata soal. Google Docs dan Slides diekspor ke PDF. Pengumpulan terlambat tak dinilai tapi tetap muncul di rekap, jadi ada catatan kalau ada yang menyanggah nilai.",
+    },
+    {
+      stage: "Penilai",
+      role: "Satu pengumpulan per permintaan, keluaran terstruktur, bisa dilanjutkan.",
+      detail:
+        "PDF masuk ke model secara native, notebook sebagai Markdown, berkas Word lewat LibreOffice. Kode dibaca, tak pernah dieksekusi: kalau model tak bisa memastikan apakah kode itu jalan, ia wajib mengatakannya dengan keyakinan rendah. Model hanya mengisi field penilaian. Identitas dan status disetel oleh kode, jadi ia tak bisa mengarangnya.",
+    },
+    {
+      stage: "Rekap",
+      role: "Workbook Excel dengan tiga lembar dan gerbang keyakinan.",
+      detail:
+        "Hanya hasil berkeyakinan tinggi tanpa masalah berkas yang jadi final dengan sendirinya. Sisanya mendarat di lembar Flag beserta alasannya, untuk diperiksa seseorang.",
+    },
+  ],
+  en: [
+    {
+      stage: "Key maker",
+      role: "Drafts the answer key and a weighted rubric from the question.",
+      detail:
+        "Gemini drafts once per session. The draft stays pending until the lecturer approves it, and the grader refuses to run on a key nobody has approved.",
+    },
+    {
+      stage: "Classroom fetch",
+      role: "Pulls every submission and its official status, with read-only access.",
+      detail:
+        "Deadlines come from Classroom's structured fields, not from the wording of the question. Google Docs and Slides are exported to PDF. A late submission is not graded but still appears in the recap, so there is a record if anyone disputes a mark.",
+    },
+    {
+      stage: "Grader",
+      role: "One submission per request, structured output, resumable.",
+      detail:
+        "PDFs go to the model natively, notebooks as Markdown, Word files through LibreOffice. Code is read, never executed: if the model cannot tell whether it would run, it must say so with low confidence. The model fills only the scoring fields. Identity and status are set by code, so it cannot invent them.",
+    },
+    {
+      stage: "Recap",
+      role: "An Excel workbook with three sheets and a confidence gate.",
+      detail:
+        "Only high-confidence results with no file problems become final on their own. Everything else lands in the Flag sheet with its reason, for a person to check.",
+    },
+  ],
+}[lang];
 
 // Kisi ringkas. Tanpa label konteks, atas keputusan pemilik situs; tiap kartu
 // menyebut masalahnya, apa yang dibangun, angka, stack, dan tautan repo.
@@ -141,7 +381,112 @@ type BriefItem = {
   demo?: { href: string; label: string };
 };
 
-const brief: { heading: string; items: BriefItem[] }[] = [
+const briefId: { heading: string; items: BriefItem[] }[] = [
+  {
+    heading: "AI dan machine learning",
+    items: [
+      {
+        title: "Deteksi penyakit tanaman dengan penjelasan Graph RAG",
+        text: "Sebuah foto daun mendapat diagnosis dan penjelasan apa yang harus dilakukan, dalam bahasa Indonesia. Saya mem-fine-tune ResNet-50 pada dua belas penyakit di empat komoditas, ditambah kelas unknown eksplisit agar ia bisa menolak, dan membangun lapisan Graph RAG di atas knowledge graph Neo4j agar sarannya datang dari fakta terkurasi, bukan ingatan model. Dievaluasi dengan RAGAS pada golden set 60 pertanyaan.",
+        chips: [
+          ["0,9786", "akurasi uji"],
+          ["0,9554", "faithfulness RAGAS"],
+          ["0,9725", "context recall"],
+        ],
+        stack: "PyTorch, Neo4j, sentence-transformers, Groq, RAGAS, Gradio",
+        repo: gh("plant-disease-cnn-graph-rag"),
+      },
+      {
+        title: "Deteksi penyakit daun terong",
+        text: "Dataset publiknya memberi satu label per foto. Saya membangunnya ulang untuk deteksi, jadi model menunjukkan di mana gejalanya: pelabelan otomatis, audit tingkat-kotak dengan antrean tinjauan berprioritas, koreksi terkalibrasi, lalu pelatihan ulang. Auditnya juga mengukur langit-langitnya: 46% kotak otomatis keliru dan 56% bercak nyata terlewat, itulah sebabnya angka di bawah ini sederhana dan tetap saya laporkan.",
+        chips: [
+          ["0,8037", "macro-F1 per daun"],
+          ["166 / 208", "daun benar"],
+          ["0,6736", "mAP@0.5"],
+        ],
+        stack: "YOLO11 (Ultralytics), OpenCV, SAHI, Flask",
+        repo: gh("eggplant-leaf-disease-detection-yolov11"),
+      },
+      {
+        title: "Diagnosis penyakit bawang merah dengan model vision zero-shot",
+        text: "Bisakah model vision-language mendiagnosis penyakit daun bawang merah tanpa pelatihan sama sekali? Saya menjalankan eksperimen terkontrol: lima rancangan prompt, empat model, split 30 citra untuk memilih prompt dan 80 citra held-out untuk hasilnya. Temuan yang layak disimpan adalah betapa timpangnya pengaruh rancangan prompt: ia menggeser akurasi 5 poin untuk Gemini dan Llama 4, dan 16 sampai 19 poin untuk kedua model Qwen. Dengan 80 citra uji, tiap selang kepercayaan 95% membentang 17 sampai 20 poin, jadi hanya satu dari enam pasang model yang berbeda secara signifikan.",
+        chips: [
+          ["82,5%", "akurasi terbaik"],
+          ["p = 0,0452", "McNemar, Holm"],
+          ["4 × 5", "model × prompt"],
+        ],
+        stack: "OpenRouter, Gemini, Qwen3-VL, Llama 4, Python",
+        repo: gh("shallot-disease-lvlm-zero-shot"),
+      },
+    ],
+  },
+  {
+    heading: "Data dan pendukung keputusan",
+    items: [
+      {
+        title: "Prioritas desa untuk bantuan sosial",
+        text: "Bantuan diputuskan di musyawarah desa, tapi datanya hanya ada per kepala keluarga atau per kabupaten. Saya mengagregasi registri sosial-ekonomi sebuah kabupaten ke tingkat desa, mengelompokkan desa berdasarkan profil kemiskinan dengan K-Means, dan memeringkatnya dengan AHP dan TOPSIS, dicek silang dengan SAW. Aplikasi Flask-nya punya 21 slider berpasangan dan menolak menyimpan bobot begitu rasio konsistensi melewati 0,10. Bobot bawaannya adalah templat yang menunggu dinas sosial, jadi rasio itu menggambarkan templat tersebut, bukan panel pakar.",
+        chips: [
+          ["371", "desa"],
+          ["~142.800", "kepala keluarga"],
+          ["0,0100", "rasio konsistensi"],
+        ],
+        stack: "scikit-learn, pandas, SciPy, Flask, fpdf2",
+        repo: gh("village-aid-priority-kmeans-ahp-topsis"),
+        demo: {
+          href: "https://datastudio.google.com/reporting/caaa607a-7a94-49e2-bc3f-3698f9c8e82a",
+          label: "Dasbor langsung",
+        },
+      },
+      {
+        title: "Prioritas bantuan renovasi rumah",
+        text: "Sebuah dinas perumahan kota memutuskan siapa yang mendapat bantuan renovasi dari lima belas observasi tiap rumah. Kelayakan tertulis dalam peraturan wali kota, jadi saya menghitungnya sebagai aturan alih-alih mempelajarinya, dan XGBoost hanya memeringkat rumah yang layak berdasarkan urgensi. Sebuah penjepit zona menjamin rumah tidak layak tak akan pernah mengungguli rumah yang layak. Target urgensinya diturunkan dari rumus pembobotan peraturan itu, jadi R² model sebesar 0,9989 berarti ia mereproduksi rumus itu, bukan bahwa ia memprediksi sesuatu yang independen.",
+        chips: [
+          ["2", "lapis, aturan lalu model"],
+          ["3", "tingkat prioritas"],
+          ["1.196", "rumah"],
+        ],
+        stack: "XGBoost, scikit-learn, Streamlit, SQLite, ReportLab",
+        repo: gh("housing-aid-priority-xgboost"),
+      },
+    ],
+  },
+  {
+    heading: "Web",
+    items: [
+      {
+        title: "Website untuk agensi kursus Mandarin",
+        text: "Situs dwibahasa dalam bahasa Indonesia dan Mandarin untuk agensi yang mengajar Mandarin dan mengirim siswa belajar ke Tiongkok, dengan CMS berbasis Git agar staf bisa mengubah konten tanpa menyentuh kode. Keluaran Astro statis di Cloudflare Pages. Repository publiknya salinan etalase: kontak, harga, alumni, dan foto diganti dengan data contoh.",
+        chips: [
+          ["2", "bahasa"],
+          ["67", "komponen"],
+          ["11", "content collection"],
+        ],
+        stack: "Astro, TypeScript, Sveltia CMS, Cloudflare Pages",
+        repo: gh("website_easternllcedu"),
+        demo: { href: "https://easternllc.co.id", label: "Situs langsung" },
+      },
+    ],
+  },
+  {
+    heading: "Backend",
+    items: [
+      {
+        title: "API GraphQL nilai praktikum",
+        text: "Pekerjaan penilaian di atas menghasilkan nilai; di sinilah nilai itu akan tinggal. Sebuah API GraphQL kecil dalam Go untuk nilai praktikum dan kehadiran: schema-first dengan gqlgen, Postgres dengan migrasi yang berjalan saat startup, dan penyimpanan in-memory agar saya bisa menguji aturan penilaian tanpa basis data. CI menjalankan go vet, tes di bawah race detector terhadap Postgres sungguhan, pengecekan bahwa kode hasil generate masih mutakhir, dan build Docker. Data demonya sintetis, dan proyeknya memang sengaja kecil.",
+        chips: [
+          ["7", "operasi GraphQL"],
+          ["PostgreSQL 17", "dengan migrasi SQL"],
+          ["CI", "vet · race · build Docker"],
+        ],
+        stack: "Go, gqlgen, pgx, PostgreSQL, Docker, GitHub Actions",
+        repo: gh("practicum-score-graphql"),
+      },
+    ],
+  },
+];
+
+const briefEn: { heading: string; items: BriefItem[] }[] = [
   {
     heading: "AI and machine learning",
     items: [
@@ -245,6 +590,8 @@ const brief: { heading: string; items: BriefItem[] }[] = [
     ],
   },
 ];
+
+const brief = lang === "en" ? briefEn : briefId;
 ---
 
 {/* data-no-drift: AuditDiagram di bawah memasang view-transition-name pada 18
@@ -258,149 +605,190 @@ const brief: { heading: string; items: BriefItem[] }[] = [
   aria-labelledby="projects-title"
 >
   <div class="shell">
-    <span class="section__label">Projects</span>
-    <h2 id="projects-title" class="rise">Three in depth, the rest in brief</h2>
+    <span class="section__label">{t.label}</span>
+    <h2 id="projects-title" class="rise">{t.heading}</h2>
 
     <article class="work rise">
       <header class="work__head">
-        <h3>Student ID card forgery detection</h3>
+        <h3>{t.ktm.title}</h3>
         <p class="figure work__meta">
-          Final year project · PyTorch, FastAPI, Next.js 14, OpenCV ·{" "}
+          {t.ktm.meta}{" "}
           <a
             class="figure--verified"
             href="https://github.com/Dwiyuda/KTM-Detector-UIR-Skripsi_Public"
-            rel="noopener">Repository</a
+            rel="noopener">{t.repository}</a
           >
         </p>
       </header>
 
-      <p class="work__abstract">
-        Card checks at the university library were a person looking at a card,
-        and the printed QR code was never wired to any database. This is a
-        four-stage pipeline that decides instead, and shows its reasoning. It
-        reaches 97.74% accuracy and a 0.9912 ROC-AUC at native resolution, and
-        runs in 4 GB of VRAM.
-      </p>
+      <p class="work__abstract">{t.ktm.abstract}</p>
 
-      <ul class="chips" aria-label="Key figures">
-        <li><span class="figure">1,645</span> images</li>
-        <li><span class="figure">5</span> forgery scenarios</li>
-        <li><span class="figure">4 GB</span> VRAM</li>
+      <ul class="chips" aria-label={t.keyFigures}>
+        {t.ktm.chips.map(([n, label]) => (
+          <li>
+            <span class="figure">{n}</span>
+            {" "}
+            {label}
+          </li>
+        ))}
       </ul>
 
       <div class="screens rise-group">
         <figure class="screen">
           <Image
             src={shotAccepted}
-            alt="The detector's result panel reading ASLI, meaning genuine,
-              with 91.26% confidence and a probability bar for each class."
+            alt={t.ktm.acceptedAlt}
             widths={[520, 1100]}
             sizes="(min-width: 48rem) 46vw, 92vw"
             format="webp"
             loading="lazy"
           />
-          <figcaption class="caption">
-            Accepted. 91.26% confidence, above the gate.
-          </figcaption>
+          <figcaption class="caption">{t.ktm.acceptedCap}</figcaption>
         </figure>
 
         <figure class="screen">
           <Image
             src={shotRejected}
-            alt="The same panel reading TIDAK DIKENALI, meaning unrecognised,
-              because model confidence of 83.19% fell below the 85% threshold."
+            alt={t.ktm.rejectedAlt}
             widths={[520, 1100]}
             sizes="(min-width: 48rem) 46vw, 92vw"
             format="webp"
             loading="lazy"
           />
-          <figcaption class="caption">
-            Refused at 83.19%, below the 85% gate. It declines rather than
-            guesses.
-          </figcaption>
+          <figcaption class="caption">{t.ktm.rejectedCap}</figcaption>
         </figure>
       </div>
 
       <figure class="screen screen--wide">
         <Image
           src={shotGradcam}
-          alt="Grad-CAM view: the model input beside a heat map of the regions
-            that drove the prediction, with a low-to-high colour legend."
+          alt={t.ktm.gradcamAlt}
           widths={[560, 1090]}
           sizes="(min-width: 48rem) 70vw, 92vw"
           format="webp"
           loading="lazy"
         />
-        <figcaption class="caption">
-          Grad-CAM over the same card. Card details are blurred here because
-          the card belongs to someone else; the heat pattern is the point.
-        </figcaption>
+        <figcaption class="caption">{t.ktm.gradcamCap}</figcaption>
       </figure>
 
       <details class="deep">
-        <summary><span>How the pipeline works</span></summary>
+        <summary><span>{t.ktm.pipelineSummary}</span></summary>
         <Pipeline name="ktm-pipeline" steps={pipeline} />
       </details>
 
       <div class="audit">
-        <p class="audit__label figure">The audit</p>
+        <p class="audit__label figure">{t.ktm.auditLabel}</p>
 
-        <p class="measure audit__gist">
-          Four models scored a perfect 1.0000. I went looking for a data leak,
-          found one that contaminated 29.1% of the test set, fixed it, and the
-          accuracy did not move. The leak was real and it explained nothing.
-        </p>
+        <p class="measure audit__gist">{t.ktm.auditGist}</p>
 
         {/* Sticky hold di sini butuh jalur samping dua kolom untuk perjalanan yang berguna; buktinya dan angkanya ada di laporan task 6, 58px tanpa itu tidak sepadan dikirim. */}
         <AuditDiagram />
 
         <details class="deep deep--audit">
-          <summary><span>Read what happened next</span></summary>
+          <summary><span>{t.ktm.auditSummary}</span></summary>
 
           <div class="measure audit__rest">
-            <p>
-              Every forgery was built from a real card and kept its number, so{" "}
-              <code>real_214</code> became <code>fake_214</code>. My split
-              script shuffled the genuine files and the forged files
-              independently, which let two halves of one physical card land on
-              opposite sides of the train-test boundary. I rewrote the split to
-              work on card families. Contamination went to zero.
-            </p>
+            {lang === "id" ? (
+              <Fragment>
+                <p>
+                  Setiap pemalsuan dibuat dari kartu asli dan mempertahankan
+                  nomornya, jadi{" "}
+                  <code>real_214</code> menjadi <code>fake_214</code>. Skrip
+                  split saya mengacak berkas asli dan berkas palsu secara
+                  terpisah, yang membuat dua paruh dari satu kartu fisik mendarat
+                  di sisi berlawanan dari batas latih-uji. Saya menulis ulang
+                  split agar bekerja per keluarga kartu. Kontaminasi turun ke nol.
+                </p>
 
-            <p class="audit__turn">Then I retrained, and it was still 1.0000.</p>
+                <p class="audit__turn">
+                  Lalu saya latih ulang, dan hasilnya tetap 1,0000.
+                </p>
 
-            <p>
-              A five-fold group-aware cross-validation agreed. At 1024×474 the
-              two classes genuinely do separate, and the contamination had been
-              riding along without changing the outcome. I had spent the audit
-              proving my own suspicion wrong, and reported it that way.
-            </p>
+                <p>
+                  Validasi silang lima-lipatan yang sadar-grup sepakat. Pada
+                  1024×474 kedua kelas memang benar-benar terpisah, dan
+                  kontaminasi itu selama ini hanya ikut menumpang tanpa mengubah
+                  hasilnya. Saya menghabiskan audit itu untuk membuktikan
+                  kecurigaan saya sendiri keliru, dan melaporkannya begitu.
+                </p>
 
-            <p>
-              My examiners raised a different objection. If every model scores
-              1.0, there is no basis for saying which one is better. They asked
-              for results that were not perfect.
-            </p>
+                <p>
+                  Penguji saya mengajukan keberatan lain. Kalau setiap model
+                  mencetak 1,0, tidak ada dasar untuk menyebut mana yang lebih
+                  baik. Mereka meminta hasil yang tidak sempurna.
+                </p>
 
-            <p>
-              The quick way to do that is to make the numbers worse. I did not.
-              Instead I ran a resolution ablation, holding every other parameter
-              fixed and dropping the input to each architecture's native size,
-              224×224 for B0 and 300×300 for B3. Accuracy fell to between{" "}
-              <span class="figure">0.9606</span> and{" "}
-              <span class="figure">0.9774</span> on its own, and the fall
-              carried information: the model leans on high-frequency forensic
-              traces that do not survive being shrunk.
-            </p>
+                <p>
+                  Cara cepatnya adalah membuat angkanya memburuk. Saya tidak
+                  melakukannya. Sebagai gantinya saya menjalankan ablasi resolusi,
+                  menahan setiap parameter lain tetap dan menurunkan input ke
+                  ukuran native tiap arsitektur, 224×224 untuk B0 dan 300×300
+                  untuk B3. Akurasi turun ke antara{" "}
+                  <span class="figure">0,9606</span> dan{" "}
+                  <span class="figure">0,9774</span> dengan sendirinya, dan
+                  penurunan itu membawa informasi: model bersandar pada jejak
+                  forensik frekuensi-tinggi yang tidak bertahan saat diperkecil.
+                </p>
 
-            <p>
-              Every false negative in those runs came from one scenario. Font
-              inconsistency. Not a single face swap, recapture, text patch, or
-              hybrid got past. Four files defeated every native-resolution model
-              I trained. Letterforms are the finest detail in the dataset, so
-              they are the first thing to go when a card is squeezed to 224
-              pixels wide.
-            </p>
+                <p>
+                  Setiap false negative di run itu datang dari satu skenario.
+                  Ketidakkonsistenan font. Tidak satu pun face swap, perekaman
+                  ulang, tambalan teks, atau hibrida yang lolos. Empat berkas
+                  mengalahkan setiap model resolusi-native yang saya latih. Bentuk
+                  huruf adalah detail terhalus di dataset, jadi ia yang pertama
+                  hilang saat kartu dipadatkan ke lebar 224 piksel.
+                </p>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <p>
+                  Every forgery was built from a real card and kept its number,
+                  so{" "}
+                  <code>real_214</code> became <code>fake_214</code>. My split
+                  script shuffled the genuine files and the forged files
+                  independently, which let two halves of one physical card land
+                  on opposite sides of the train-test boundary. I rewrote the
+                  split to work on card families. Contamination went to zero.
+                </p>
+
+                <p class="audit__turn">Then I retrained, and it was still 1.0000.</p>
+
+                <p>
+                  A five-fold group-aware cross-validation agreed. At 1024×474
+                  the two classes genuinely do separate, and the contamination
+                  had been riding along without changing the outcome. I had spent
+                  the audit proving my own suspicion wrong, and reported it that
+                  way.
+                </p>
+
+                <p>
+                  My examiners raised a different objection. If every model scores
+                  1.0, there is no basis for saying which one is better. They
+                  asked for results that were not perfect.
+                </p>
+
+                <p>
+                  The quick way to do that is to make the numbers worse. I did
+                  not. Instead I ran a resolution ablation, holding every other
+                  parameter fixed and dropping the input to each architecture's
+                  native size, 224×224 for B0 and 300×300 for B3. Accuracy fell
+                  to between{" "}
+                  <span class="figure">0.9606</span> and{" "}
+                  <span class="figure">0.9774</span> on its own, and the fall
+                  carried information: the model leans on high-frequency forensic
+                  traces that do not survive being shrunk.
+                </p>
+
+                <p>
+                  Every false negative in those runs came from one scenario. Font
+                  inconsistency. Not a single face swap, recapture, text patch, or
+                  hybrid got past. Four files defeated every native-resolution
+                  model I trained. Letterforms are the finest detail in the
+                  dataset, so they are the first thing to go when a card is
+                  squeezed to 224 pixels wide.
+                </p>
+              </Fragment>
+            )}
           </div>
         </details>
       </div>
@@ -408,104 +796,71 @@ const brief: { heading: string; items: BriefItem[] }[] = [
 
     <article class="work rise">
       <header class="work__head">
-        <h3>Islamic family law assistant</h3>
+        <h3>{t.law.title}</h3>
         <p class="figure work__meta">
-          Personal project · Python, FastAPI, BGE-M3, Qdrant, Next.js, Docker
-          ·{" "}
+          {t.law.meta}{" "}
           <a
             class="figure--verified"
             href="https://github.com/Dwiyuda/islamic-family-law-assistant"
-            rel="noopener">Repository</a
+            rel="noopener">{t.repository}</a
           >
         </p>
       </header>
 
-      <p class="work__abstract">
-        Someone facing a divorce or an inheritance split in Indonesia usually
-        starts with a search engine, which will answer confidently from the
-        wrong law. This assistant answers only from the regulations, Qur'an and
-        hadith in its corpus, cites the article it used, and refuses when it has
-        no basis. Inheritance shares come from a rule engine in exact
-        fractions. The language model explains them and never produces a
-        number.
-      </p>
+      <p class="work__abstract">{t.law.abstract}</p>
 
-      <ul class="chips" aria-label="Key figures">
-        <li><span class="figure">2,491</span> source passages</li>
-        <li><span class="figure">104</span> inheritance test cases</li>
-        <li><span class="figure">395</span> tests passing in CI</li>
+      <ul class="chips" aria-label={t.keyFigures}>
+        {t.law.chips.map(([n, label]) => (
+          <li>
+            <span class="figure">{n}</span>
+            {" "}
+            {label}
+          </li>
+        ))}
       </ul>
 
       <details class="deep">
-        <summary
-          ><span>How it decides, and where the numbers flatter it</span></summary
-        >
+        <summary><span>{t.law.summary}</span></summary>
         <Pipeline name="law-pipeline" steps={lawPipeline} />
       </details>
     </article>
 
     <article class="work rise">
       <header class="work__head">
-        <h3>Automated practicum grading</h3>
+        <h3>{t.grader.title}</h3>
         <p class="figure work__meta">
-          Personal project, approved by the head of department · Python, Gemini
-          2.5 Flash, Google Classroom API ·{" "}
+          {t.grader.meta}{" "}
           <a
             class="figure--verified"
             href="https://github.com/Dwiyuda/llm-practicum-grader"
-            rel="noopener">Repository</a
+            rel="noopener">{t.repository}</a
           >
         </p>
       </header>
 
-      <p class="work__abstract">
-        Marking practicum submissions by hand across eight sessions is slow and
-        drifts between the first script and the fortieth. This pulls
-        submissions straight from Google Classroom, scores each one against the
-        lecturer's rubric, and writes an Excel recap with feedback for every
-        submission. Nothing it is unsure of counts until a person has looked.
-        Phase one was accepted after its marks were checked against manual
-        grading on 21 real submissions.
-      </p>
+      <p class="work__abstract">{t.grader.abstract}</p>
 
-      <ul class="chips" aria-label="Key figures">
-        <li><span class="figure">21</span> real submissions graded</li>
-        <li><span class="figure">2 of 8</span> sessions on the Classroom API</li>
-        <li><span class="figure">4</span> kinds of file read</li>
+      <ul class="chips" aria-label={t.keyFigures}>
+        {t.grader.chips.map(([n, label]) => (
+          <li>
+            <span class="figure">{n}</span>
+            {" "}
+            {label}
+          </li>
+        ))}
       </ul>
 
       <details class="deep">
-        <summary><span>How a submission moves through it</span></summary>
+        <summary><span>{t.grader.pipelineSummary}</span></summary>
         <Pipeline name="grader-pipeline" steps={graderPipeline} />
       </details>
 
       <details class="deep">
-        <summary><span>Design decisions, and one that went wrong</span></summary>
+        <summary><span>{t.grader.designSummary}</span></summary>
         <div class="measure deep__body">
-          <p>
-            No retrieval layer. The question, the key, the rubric and one
-            submission always fit in a single prompt, so RAG would have been
-            machinery with nothing to do.
-          </p>
-          <p>
-            The one that went wrong is worth more than the ones that went right.
-            A quiz on SQL shipped to the model without its table schema, so the
-            model guessed at column names, and students who had used the real
-            ones were marked down for it. One went from 7 to 34.4 after the
-            schema was added and the rubric was told to accept aliases. Another
-            went from 44 to 46.4. A rubric on another session was also summing
-            to 105%.
-          </p>
-          <p>
-            Both were caught by checking the machine's marks against marks given
-            by hand, which is the only reason I trust the rest of them. The
-            grader does earn its keep: it caught a foreign key pointing at the
-            wrong table purely from reading, without running a line.
-          </p>
+          {t.grader.designTop.map((para) => <p>{para}</p>)}
 
-          <p class="sheets__intro">
-            Each run writes one workbook with three sheets:
-          </p>
+          <p class="sheets__intro">{t.grader.sheetsIntro}</p>
           <dl class="sheets">
             {
               sheets.map((s) => (
@@ -516,23 +871,9 @@ const brief: { heading: string; items: BriefItem[] }[] = [
               ))
             }
           </dl>
-          <p class="caption sheets__note">
-            Only the column layout is shown. The real workbooks hold student
-            names, email addresses, and marks, so none of it belongs here.
-          </p>
+          <p class="caption sheets__note">{t.grader.sheetsNote}</p>
 
-          <p>
-            Not built yet: similarity checking between students, and running the
-            whole thing unattended on a server with n8n. Both are designed and
-            written up in the repository. Neither has shipped.
-          </p>
-          <p>
-            The public repository is a clean snapshot with a synthetic example,
-            because the working one holds real class data and stays private. On
-            that example the grader gave the correct submission 100 and the
-            flawed one 49.5, which is exactly the rubric's ceiling for its three
-            mistakes.
-          </p>
+          {t.grader.designBottom.map((para) => <p>{para}</p>)}
         </div>
       </details>
     </article>
@@ -540,7 +881,7 @@ const brief: { heading: string; items: BriefItem[] }[] = [
     {/* Tingkat dua. Dikelompokkan per fokus, AI paling atas, atas keputusan
         pemilik situs. Kartu memakai kisi .bento dari global.css. */}
     <div class="brief">
-      <h3 class="brief__title rise">In brief</h3>
+      <h3 class="brief__title rise">{t.briefTitle}</h3>
       {
         brief.map((g) => (
           <div class="brief__group">
@@ -550,7 +891,7 @@ const brief: { heading: string; items: BriefItem[] }[] = [
                 <article class="brief__card">
                   <h5 class="brief__name">{p.title}</h5>
                   <p class="brief__text">{p.text}</p>
-                  <ul class="chips" aria-label="Key figures">
+                  <ul class="chips" aria-label={t.keyFigures}>
                     {p.chips.map(([n, label]) => (
                       <li>
                         <span class="figure">{n}</span>
@@ -566,7 +907,7 @@ const brief: { heading: string; items: BriefItem[] }[] = [
                       href={p.repo}
                       rel="noopener"
                     >
-                      Repository
+                      {t.repository}
                     </a>
                     {p.demo && (
                       <a

@@ -12,40 +12,88 @@ import inductionCamp from "../assets/induction-camp.jpg";
 //
 // Website HIMATIF ditulis "Directed", tidak pernah "Built". Catatan di bawah
 // lajur menyebutkan alasannya terang-terangan. Jangan dihapus.
-const ledger = [
-  {
-    n: "7",
-    text: "Operational divisions supervised, with 50 members under them, reporting to the chair.",
+const ledgerN = ["7", "280", "50"];
+
+const lang = Astro.currentLocale === "en" ? "en" : "id";
+const t = {
+  id: {
+    label: "Organisasi dan pengabdian",
+    heading: "Menjalankan hal yang tidak saya bangun",
+    viceRole: "Wakil Ketua, HIMATIF",
+    viceWhen: "Himpunan Mahasiswa Teknik Informatika, UIR · Feb 2024 – Apr 2025",
+    ledger: [
+      "Divisi operasional diawasi, dengan 50 anggota di bawahnya, bertanggung jawab kepada ketua.",
+      "Peserta di kemah pengaderan mahasiswa, dikoordinasikan bersama panitia 100 orang.",
+      "Siswa SMK di seminar TI dan keamanan siber di SMK Labor, dibawakan bersama dua belas relawan.",
+    ],
+    disclaim:
+      "Judul itu harfiah. Situs profil Next.js himpunan dibangun oleh divisi Riset dan Teknologi, bukan oleh saya. Saya menetapkan lingkupnya dan mereview apa yang kembali. Kodenya milik mereka, dan itulah sebabnya semua di sini berbunyi diarahkan, bukan dibangun.",
+    goesToSchoolAlt:
+      "Sebuah aula di SMK Labor di penghujung seminar. Sekitar lima puluh siswa SMK dan tim relawan berdiri di belakang spanduk bertuliskan HIMATIF Go To School.",
+    goesToSchoolCap: "Go To School di SMK Labor. Foto dipakai dengan izin.",
+    campAlt:
+      "Kemah pengaderan mahasiswa, dengan peserta berkumpul di lapangan terbuka.",
+    campCap: "Kemah pengaderan: 280 peserta, 100 di kepanitiaan.",
+    memberRole: "Anggota tim mahasiswa, Desa Binaan",
+    memberWhen: "Pulau Gadang, Kampar · Okt 2024 – Mar 2025",
+    service: [
+      "Program pemberdayaan masyarakat yang dijalankan tim mahasiswa UIR. Pra-survei turun pada 25 Oktober 2024, dan sesi-sesi yang menyusul diadakan di balai desa bersama kepala desa dan seluruh perangkatnya, tentang hukum desa dan tentang mempublikasikan catatan anggaran.",
+      "Programnya ditulis dan dipublikasikan setelahnya. Ia artikel di bagian berikutnya.",
+    ],
+    handoverAlt:
+      "Serah terima di ruang pertemuan desa. Seorang anggota tim mahasiswa menyerahkan laptop yang menampilkan situs baru kepada kepala desa, dengan empat orang lain berdiri di samping.",
+    handoverCap:
+      "Menyerahkan situs yang selesai kepada kepala desa. Foto dipakai dengan izin.",
   },
-  {
-    n: "280",
-    text: "Participants at the student induction camp, coordinated against a committee of 100.",
+  en: {
+    label: "Organisation and service",
+    heading: "Running things I did not build",
+    viceRole: "Vice Chairman, HIMATIF",
+    viceWhen: "Informatics Student Association, UIR · Feb 2024 – Apr 2025",
+    ledger: [
+      "Operational divisions supervised, with 50 members under them, reporting to the chair.",
+      "Participants at the student induction camp, coordinated against a committee of 100.",
+      "Vocational students at an IT and cyber security seminar at SMK Labor, delivered with twelve volunteers.",
+    ],
+    disclaim:
+      "That heading is literal. The association's Next.js profile site was built by the Research and Technology division, not by me. I set the scope and reviewed what came back. The code is theirs, which is why everything here says directed rather than built.",
+    goesToSchoolAlt:
+      "A hall at SMK Labor at the end of the seminar. Around fifty vocational students and the volunteer team stand behind a banner reading HIMATIF Go To School.",
+    goesToSchoolCap: "Go To School at SMK Labor. Photograph used with permission.",
+    campAlt: "The student induction camp, with participants gathered in an open field.",
+    campCap: "The induction camp: 280 participants, 100 on the committee.",
+    memberRole: "Student team member, Desa Binaan",
+    memberWhen: "Pulau Gadang, Kampar · Oct 2024 – Mar 2025",
+    service: [
+      "A community empowerment programme run by a UIR student team. The pre-survey went out on 25 October 2024, and the sessions that followed were held at the village hall with the village head and every member of staff, on village law and on publishing budget records.",
+      "The programme was written up afterwards and published. It is the article in the next section.",
+    ],
+    handoverAlt:
+      "Handover in the village meeting room. A student team member passes a laptop showing the new site to the village head, with four others standing alongside.",
+    handoverCap:
+      "Handing the finished site to the village head. Photograph used with permission.",
   },
-  {
-    n: "50",
-    text: "Vocational students at an IT and cyber security seminar at SMK Labor, delivered with twelve volunteers.",
-  },
-];
+}[lang];
 ---
 
 <section class="section" id="organisation" aria-labelledby="organisation-title">
   <div class="shell">
-    <span class="section__label">Organisation and service</span>
-    <h2 id="organisation-title" class="rise">Running things I did not build</h2>
+    <span class="section__label">{t.label}</span>
+    <h2 id="organisation-title" class="rise">{t.heading}</h2>
 
     <div class="lede rise">
-      <h3>Vice Chairman, HIMATIF</h3>
+      <h3>{t.viceRole}</h3>
       <p class="figure lede__when">
-        Informatics Student Association, UIR · Feb 2024 – Apr 2025
+        {t.viceWhen}
       </p>
     </div>
 
     <dl class="ledger rise-group">
       {
-        ledger.map((row) => (
+        ledgerN.map((n, i) => (
           <div class="ledger__row">
-            <dt class="ledger__n">{row.n}</dt>
-            <dd class="ledger__text">{row.text}</dd>
+            <dt class="ledger__n">{n}</dt>
+            <dd class="ledger__text">{t.ledger[i]}</dd>
           </div>
         ))
       }
@@ -54,83 +102,57 @@ const ledger = [
     {/* Duduk tepat setelah lajur, bukan setelah galeri. Judul bagian ini
         baru masuk akal begitu paragraf ini terbaca, jadi jaraknya harus
         sedekat mungkin. */}
-    <p class="disclaim rise">
-      That heading is literal. The association's Next.js profile site was built
-      by the Research and Technology division, not by me. I set the scope and
-      reviewed what came back. The code is theirs, which is why everything here
-      says directed rather than built.
-    </p>
+    <p class="disclaim rise">{t.disclaim}</p>
 
     <div class="gallery rise-group">
       <figure class="shot">
         <Image
           src={goesToSchool}
-          alt="A hall at SMK Labor at the end of the seminar. Around fifty
-            vocational students and the volunteer team stand behind a banner
-            reading HIMATIF Go To School."
+          alt={t.goesToSchoolAlt}
           widths={[560, 900]}
           sizes="(min-width: 46rem) 45vw, 92vw"
           format="webp"
           quality={64}
           loading="lazy"
         />
-        <figcaption class="caption">
-          Go To School at SMK Labor. Photograph used with permission.
-        </figcaption>
+        <figcaption class="caption">{t.goesToSchoolCap}</figcaption>
       </figure>
 
       <figure class="shot">
         <Image
           src={inductionCamp}
-          alt="The student induction camp, with participants gathered in an
-            open field."
+          alt={t.campAlt}
           widths={[560, 900]}
           sizes="(min-width: 46rem) 45vw, 92vw"
           format="webp"
           quality={64}
           loading="lazy"
         />
-        <figcaption class="caption">
-          The induction camp: 280 participants, 100 on the committee.
-        </figcaption>
+        <figcaption class="caption">{t.campCap}</figcaption>
       </figure>
     </div>
 
     <div class="lede lede--second rise">
-      <h3>Student team member, Desa Binaan</h3>
-      <p class="figure lede__when">Pulau Gadang, Kampar · Oct 2024 – Mar 2025</p>
+      <h3>{t.memberRole}</h3>
+      <p class="figure lede__when">{t.memberWhen}</p>
     </div>
 
     <div class="service rise">
       <div class="service__text">
-        <p>
-          A community empowerment programme run by a UIR student team. The
-          pre-survey went out on 25 October 2024, and the sessions that followed
-          were held at the village hall with the village head and every member
-          of staff, on village law and on publishing budget records.
-        </p>
-        <p>
-          The programme was written up afterwards and published. It is the
-          article in the next section.
-        </p>
+        {t.service.map((para) => <p>{para}</p>)}
       </div>
 
       <figure class="shot">
         <Image
           src={handover}
-          alt="Handover in the village meeting room. A student team member
-            passes a laptop showing the new site to the village head, with four
-            others standing alongside."
+          alt={t.handoverAlt}
           widths={[560, 900]}
           sizes="(min-width: 50rem) 42vw, 92vw"
           format="webp"
           quality={62}
           loading="lazy"
         />
-        <figcaption class="caption">
-          Handing the finished site to the village head. Photograph used with
-          permission.
-        </figcaption>
+        <figcaption class="caption">{t.handoverCap}</figcaption>
       </figure>
     </div>
   </div>

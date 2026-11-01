@@ -8,12 +8,36 @@
 // ini soal publikasi akademik, jadi konvensinya sendiri yang dipakai.
 const authorCount = 11;
 const authorPosition = 7;
+
+const lang = Astro.currentLocale === "en" ? "en" : "id";
+const t = {
+  id: {
+    label: "Publikasi",
+    heading: "Satu artikel, dan apa yang bukan",
+    byline: `Penulis ke-${authorPosition} dari ${authorCount}`,
+    bylineAria: "Penulis ketujuh dari sebelas",
+    qualify: [
+      "Timnya dipimpin Dr. Heni Susanti dari fakultas hukum, dan artikelnya melaporkan program desa itu, bukan penelitian saya sendiri.",
+      "I-Com adalah jurnal pengabdian masyarakat tingkat nasional. Ia tidak terindeks Scopus dan bukan wadah penelitian. Bacalah sebagai bukti dari luar bahwa kerja desa itu benar terjadi, tidak lebih dari itu.",
+    ],
+  },
+  en: {
+    label: "Publication",
+    heading: "One article, and what it is not",
+    byline: `Author ${authorPosition} of ${authorCount}`,
+    bylineAria: "Seventh author of eleven",
+    qualify: [
+      "The team was led by Dr. Heni Susanti from the law faculty, and the article reports the village programme rather than a study of my own.",
+      "I-Com is a national community-service journal. It is not Scopus-indexed and it is not a research venue. Read it as external evidence that the village work happened, and nothing more than that.",
+    ],
+  },
+}[lang];
 ---
 
 <section class="section" id="publication" aria-labelledby="publication-title">
   <div class="shell">
-    <span class="section__label">Publication</span>
-    <h2 id="publication-title" class="rise">One article, and what it is not</h2>
+    <span class="section__label">{t.label}</span>
+    <h2 id="publication-title" class="rise">{t.heading}</h2>
 
     <div class="entry rise">
       <p class="entry__cite">
@@ -31,13 +55,9 @@ const authorPosition = 7;
 
       <div class="byline">
         <span class="caption byline__label">
-          Author {authorPosition} of {authorCount}
+          {t.byline}
         </span>
-        <ol
-          class="byline__pips"
-          aria-label={`Seventh author of eleven`}
-          role="img"
-        >
+        <ol class="byline__pips" aria-label={t.bylineAria} role="img">
           {
             Array.from({ length: authorCount }, (_, i) => (
               <li
@@ -53,15 +73,7 @@ const authorPosition = 7;
     </div>
 
     <div class="qualify measure rise">
-      <p>
-        The team was led by Dr. Heni Susanti from the law faculty, and the
-        article reports the village programme rather than a study of my own.
-      </p>
-      <p>
-        I-Com is a national community-service journal. It is not Scopus-indexed
-        and it is not a research venue. Read it as external evidence that the
-        village work happened, and nothing more than that.
-      </p>
+      {t.qualify.map((para) => <p>{para}</p>)}
     </div>
   </div>
 </section>

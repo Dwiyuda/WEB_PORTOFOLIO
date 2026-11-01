@@ -16,6 +16,27 @@ import portrait from "../assets/portrait.jpg";
 // Angka-angka itu masih hidup di bagian lain: 1.645 di Proyek, ~300 di
 // Pengalaman. Kartu pratinjau og.png juga masih memuatnya, dan itu disengaja —
 // dia ringkasan untuk pratinjau tautan, bukan cerminan hero.
+const lang = Astro.currentLocale === "en" ? "en" : "id";
+const t = {
+  id: {
+    claim: "Saya mengaudit pekerjaan saya sendiri sebelum orang lain terpaksa melakukannya.",
+    meta: "Lulusan Teknik Informatika Universitas Islam Riau, Pekanbaru. Saya menggeluti computer vision, aplikasi LLM, dan evaluasi yang menentukan apakah keduanya benar-benar mengatakan yang sebenarnya.",
+    cv: "CV (PDF)",
+    portraitAlt:
+      "Dwi Yuda mengenakan jas gelap dan selempang wisuda merun bertuliskan Sarjana Teknik Informatika, Angkatan 2026, di depan papan bertuliskan Pekanbaru.",
+    caption: "Pekanbaru, Juli 2026.",
+    hint: "gulir",
+  },
+  en: {
+    claim: "I audit my own work before someone else has to.",
+    meta: "Informatics graduate from Universitas Islam Riau, Pekanbaru. I work on computer vision, LLM applications, and the evaluation that decides whether either one is telling the truth.",
+    cv: "CV (PDF)",
+    portraitAlt:
+      "Dwi Yuda in a dark suit, wearing a maroon graduation stole reading Bachelor of Informatics Engineering, Class of 2026, in front of a Pekanbaru sign.",
+    caption: "Pekanbaru, July 2026.",
+    hint: "scroll",
+  },
+}[lang];
 ---
 
 <section class="hero" id="top" aria-labelledby="hero-title">
@@ -30,12 +51,10 @@ import portrait from "../assets/portrait.jpg";
     <div class="hero__body">
       <div class="hero__text">
         <p class="hero__claim">
-          I audit my own work before someone else has to.
+          {t.claim}
         </p>
         <p class="hero__meta">
-          Informatics graduate from Universitas Islam Riau, Pekanbaru. I work on
-          computer vision, LLM applications, and the evaluation that decides
-          whether either one is telling the truth.
+          {t.meta}
         </p>
         {/* Tombol CV kembali sejak berkasnya diekspor ulang tanpa nomor
             telepon. Kalau CV diganti, periksa lagi baris kontaknya dulu. */}
@@ -52,7 +71,7 @@ import portrait from "../assets/portrait.jpg";
             target="_blank"
             rel="noopener"
           >
-            CV (PDF)
+            {t.cv}
           </a>
           <a class="hero__link" href="https://www.linkedin.com/in/dwiyuda">
             LinkedIn
@@ -64,22 +83,20 @@ import portrait from "../assets/portrait.jpg";
       <figure class="hero__portrait">
         <Image
           src={portrait}
-          alt="Dwi Yuda in a dark suit, wearing a maroon graduation stole
-            reading Bachelor of Informatics Engineering, Class of 2026, in
-            front of a Pekanbaru sign."
+          alt={t.portraitAlt}
           widths={[360, 467]}
           sizes="(min-width: 52rem) 14rem, 60vw"
           format="webp"
           quality={80}
           loading="eager"
         />
-        <figcaption class="caption">Pekanbaru, July 2026.</figcaption>
+        <figcaption class="caption">{t.caption}</figcaption>
       </figure>
     </div>
 
   </div>
 
-  <span class="hero__hint caption" aria-hidden="true">scroll</span>
+  <span class="hero__hint caption" aria-hidden="true">{t.hint}</span>
 </section>
 
 <style>

@@ -1,0 +1,43 @@
+---
+import Hero from "./Hero.astro";
+import About from "./About.astro";
+import Timeline from "./Timeline.astro";
+import Projects from "./Projects.astro";
+import Experience from "./Experience.astro";
+import Organisation from "./Organisation.astro";
+import Publication from "./Publication.astro";
+import Achievements from "./Achievements.astro";
+import Skills from "./Skills.astro";
+import Closing from "./Closing.astro";
+
+// Isi halaman, dipakai bersama oleh versi Indonesia (/) dan Inggris (/en/).
+// Tiap komponen membaca Astro.currentLocale sendiri untuk memilih bahasanya,
+// jadi struktur ruang di sini sama untuk kedua bahasa.
+//
+// Urutan sengaja: perkenalan lalu linimasa lebih dulu, karena situs ini
+// menceritakan perjalanan dan bukan hanya menumpuk proyek. Tapi Proyek
+// ditaruh sebelum Pengalaman, karena pembaca yang menilai dalam sepuluh
+// detik harus sampai ke bukti terkuat sebelum perhatiannya habis.
+---
+
+<div class="room" data-rung="1">
+  <Hero />
+  <About />
+  <Timeline />
+</div>
+
+<div class="room" data-rung="2">
+  <Projects />
+</div>
+
+<div class="room" data-rung="3">
+  <Experience />
+  <Organisation />
+  <Publication />
+  <Achievements />
+</div>
+
+<div class="room" data-rung="4">
+  <Skills />
+  <Closing />
+</div>

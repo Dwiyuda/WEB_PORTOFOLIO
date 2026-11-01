@@ -7,49 +7,41 @@
 //
 // Tanggal lahir sengaja tidak ditayangkan. Kota kelahiran cukup, tanggal
 // lengkap ditambah nama adalah bahan pencurian identitas.
+const lang = Astro.currentLocale === "en" ? "en" : "id";
+const t = {
+  id: {
+    label: "Tentang",
+    heading: "Dari mana kebiasaan ini bermula",
+    lead: "Saya lahir di Batam dan tinggal di Pekanbaru. Di antara keduanya, saya menghabiskan masa SMP dan SMA di pesantren. Bahasa Arab saya dapat dari tahun-tahun itu, dan saya masih bisa bercakap-cakap dengannya, meski tidak berani mengaku lebih dari itu.",
+    paras: [
+      "Bahasanya memudar lebih cepat daripada hal yang ada di baliknya. Yang bertahan adalah kebiasaan menetap pada satu teks sampai ia menyerah, dan ternyata itulah sebagian besar yang dituntut saat membaca sebuah paper atau sebuah stack trace.",
+      "Sebagian besar yang saya tahu sebagai engineer datang dari persoalan yang bukan milik saya. Sebagai asisten dosen, saya mereview enam tugas akhir di bidang object detection, time series, clustering, dan retrieval-augmented generation. Kode dan laporannya milik orang yang menulisnya. Yang saya simpan adalah jangkauan. Jenis kesalahan yang sama muncul di setiap bidang itu, dan saya sudah belajar di mana ia biasanya bersarang.",
+      "Ketika sebuah tugas jadi berat, refleks saya adalah membuat alat untuknya alih-alih bekerja lebih cepat. Dari situlah sistem penilaian itu bermula: ia pekerjaan mengoreksi yang ingin saya hentikan dari cara manual.",
+      "Begitu juga cara saya akhirnya mengaudit dataset skripsi saya sendiri dan menemukan kebocoran di dalamnya. Auditnya justru membuktikan saya keliru, dan itu berguna dengan caranya sendiri. Saya lebih suka melaporkan angka yang lebih kecil tapi kokoh daripada angka yang lebih besar tapi rapuh, dan saya lebih suka menemukan lubangnya sendiri daripada ada yang menemukannya saat sidang.",
+    ],
+  },
+  en: {
+    label: "About",
+    heading: "Where the habit came from",
+    lead: "I was born in Batam and live in Pekanbaru. Between the two I spent junior and senior high school at a pesantren, an Islamic boarding school. Arabic came from those years, and I can still hold a conversation in it, though I would not claim more than that.",
+    paras: [
+      "The language faded faster than the thing underneath it. What stayed was the practice of staying with one text until it gave way, which turns out to be most of what reading a paper or a stack trace asks of you.",
+      "Most of what I know as an engineer came from problems that were not mine. As a teaching assistant I reviewed six final-year projects across object detection, time series, clustering, and retrieval-augmented generation. The code and the reports belong to the people who wrote them. What I kept is range. The same category of mistake turns up in every one of those domains, and I have learned where it tends to sit.",
+      "When a task gets heavy my reflex is to build a tool for it instead of working faster. That is how the grading system began: it was marking I wanted to stop doing by hand.",
+      "It is also how I ended up auditing my own thesis dataset and finding a leak in it. The audit turned out to prove me wrong, which was its own kind of useful. I would rather report a smaller number that holds than a larger one that does not, and I would rather find the hole myself than have someone find it during a defence.",
+    ],
+  },
+}[lang];
 ---
 
 <section class="section" id="about" aria-labelledby="about-title">
   <div class="shell">
-    <span class="section__label">About</span>
-    <h2 id="about-title" class="rise">Where the habit came from</h2>
+    <span class="section__label">{t.label}</span>
+    <h2 id="about-title" class="rise">{t.heading}</h2>
 
     <div class="about__body measure rise-group">
-      <p class="about__lead">
-        I was born in Batam and live in Pekanbaru. Between the two I spent
-        junior and senior high school at a pesantren, an Islamic boarding
-        school. Arabic came from those years, and I can still hold a
-        conversation in it, though I would not claim more than that.
-      </p>
-
-      <p>
-        The language faded faster than the thing underneath it. What stayed was
-        the practice of staying with one text until it gave way, which turns out
-        to be most of what reading a paper or a stack trace asks of you.
-      </p>
-
-      <p>
-        Most of what I know as an engineer came from problems that were not
-        mine. As a teaching assistant I reviewed six final-year projects across
-        object detection, time series, clustering, and retrieval-augmented
-        generation. The code and the reports belong to the people who wrote
-        them. What I kept is range. The same category of mistake turns up in
-        every one of those domains, and I have learned where it tends to sit.
-      </p>
-
-      <p>
-        When a task gets heavy my reflex is to build a tool for it instead of
-        working faster. That is how the grading system began: it was marking I
-        wanted to stop doing by hand.
-      </p>
-
-      <p>
-        It is also how I ended up auditing my own thesis dataset and finding a
-        leak in it. The audit turned out to prove me wrong, which was its own
-        kind of useful. I would rather report a smaller number that holds than a
-        larger one that does not, and I would rather find the hole myself than
-        have someone find it during a defence.
-      </p>
+      <p class="about__lead">{t.lead}</p>
+      {t.paras.map((para) => <p>{para}</p>)}
     </div>
   </div>
 </section>

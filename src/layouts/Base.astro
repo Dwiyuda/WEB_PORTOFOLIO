@@ -2,16 +2,66 @@
 import "../styles/global.css";
 
 interface Props {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
 }
 
-const { title, description } = Astro.props;
+const lang = Astro.currentLocale === "en" ? "en" : "id";
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const altId = new URL("/", Astro.site);
+const altEn = new URL("/en/", Astro.site);
+const ogLocale = lang === "id" ? "id_ID" : "en_US";
+
+// Teks per bahasa. Judul dan deskripsi default di sini; halaman seperti 404
+// meneruskan miliknya sendiri lewat props. `other` adalah tujuan tombol
+// bahasa: di halaman Indonesia menawarkan Inggris, dan sebaliknya.
+const L = {
+  id: {
+    title: "Dwi Yuda — Portofolio",
+    description:
+      "Lulusan Teknik Informatika Universitas Islam Riau. Sistem computer vision dan LLM, beserta kerja evaluasi yang menentukan apakah keduanya bisa dipegang.",
+    ogAlt:
+      "Dwi Yuda. Saya mengaudit pekerjaan saya sendiri sebelum orang lain terpaksa melakukannya. 1.645 citra, sekitar 300 mahasiswa, empat tahun tanpa mengulang mata kuliah, skripsi nilai A.",
+    skip: "Lewati ke konten",
+    sections: "Bagian",
+    nav: {
+      timeline: "Linimasa",
+      experience: "Pengalaman",
+      projects: "Proyek",
+      contact: "Kontak",
+    },
+    toDark: "Ganti ke tema gelap",
+    toLight: "Ganti ke tema terang",
+    close: "Tutup",
+    other: { href: "/en/", label: "EN", title: "Read in English" },
+  },
+  en: {
+    title: "Dwi Yuda Portfolio",
+    description:
+      "Informatics graduate from Universitas Islam Riau. Computer vision and LLM systems, with the evaluation work that decides whether they hold.",
+    ogAlt:
+      "Dwi Yuda. I audit my own work before someone else has to. 1,645 images, around 300 undergraduates, four years with no repeated course, thesis graded A.",
+    skip: "Skip to content",
+    sections: "Sections",
+    nav: {
+      timeline: "Timeline",
+      experience: "Experience",
+      projects: "Projects",
+      contact: "Contact",
+    },
+    toDark: "Switch to dark theme",
+    toLight: "Switch to light theme",
+    close: "Close",
+    other: { href: "/", label: "ID", title: "Baca dalam Bahasa Indonesia" },
+  },
+}[lang];
+
+const title = Astro.props.title ?? L.title;
+const description = Astro.props.description ?? L.description;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -20,15 +70,21 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="canonical" href={canonical} />
 
+    {/* Dua bahasa untuk satu halaman yang sama. x-default menunjuk Indonesia,
+        bahasa yang tayang di akar. */}
+    <link rel="alternate" hreflang="id" href={altId} />
+    <link rel="alternate" hreflang="en" href={altEn} />
+    <link rel="alternate" hreflang="x-default" href={altId} />
+
     <meta property="og:type" content="profile" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:locale" content="en" />
+    <meta property="og:locale" content={ogLocale} />
     <meta property="og:image" content={new URL("/og.png", Astro.site)} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Dwi Yuda. I audit my own work before someone else has to. 1,645 images, around 300 undergraduates, four years with no repeated course, thesis graded A." />
+    <meta property="og:image:alt" content={L.ogAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="author" content="Dwi Yuda" />
 
@@ -113,27 +169,41 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   </head>
 
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">{L.skip}</a>
     <div class="progress" aria-hidden="true"></div>
 
     <header class="masthead">
       <div class="shell shell--wide masthead__inner">
         <a class="masthead__name" href="#top">Dwi Yuda</a>
 
-        <nav class="masthead__nav" aria-label="Sections">
-          <a href="#timeline">Timeline</a>
-          <a href="#experience">Experience</a>
-          <a href="#projects">Projects</a>
-          <a href="#contact">Contact</a>
+        <nav class="masthead__nav" aria-label={L.sections}>
+          <a href="#timeline">{L.nav.timeline}</a>
+          <a href="#experience">{L.nav.experience}</a>
+          <a href="#projects">{L.nav.projects}</a>
+          <a href="#contact">{L.nav.contact}</a>
         </nav>
 
-        <button
-          type="button"
-          id="theme-toggle"
-          class="masthead__toggle"
-          aria-pressed="false"
-          aria-label="Switch to dark theme"
-        >
+        <div class="masthead__controls">
+          {/* Pengalih bahasa. Tautan biasa ke halaman kembaran, tanpa JS.
+              hreflang memberi tahu peramban dan mesin pencari tujuannya. */}
+          <a
+            class="masthead__lang"
+            href={L.other.href}
+            hreflang={lang === "id" ? "en" : "id"}
+            title={L.other.title}
+          >
+            {L.other.label}
+          </a>
+
+          <button
+            type="button"
+            id="theme-toggle"
+            class="masthead__toggle"
+            aria-pressed="false"
+            aria-label={L.toDark}
+            data-to-dark={L.toDark}
+            data-to-light={L.toLight}
+          >
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
             <path
               d="M13 9.5A5.5 5.5 0 0 1 6.5 3a5.5 5.5 0 1 0 6.5 6.5Z"
@@ -142,7 +212,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
               stroke-width="1.3"
               stroke-linejoin="round"></path>
           </svg>
-        </button>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -154,7 +225,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         <dialog> asli, jadi Esc, fokus, dan latar gelapnya sudah ditangani
         peramban. */}
     <dialog class="lightbox" id="lightbox">
-      <button class="lightbox__close" type="button" aria-label="Close">
+      <button class="lightbox__close" type="button" aria-label={L.close}>
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
           <path
             d="M4 4l8 8M12 4l-8 8"
@@ -175,10 +246,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       const sync = () => {
         const dark = root.dataset.theme === "dark";
         toggle?.setAttribute("aria-pressed", String(dark));
-        toggle?.setAttribute(
-          "aria-label",
-          dark ? "Switch to light theme" : "Switch to dark theme",
-        );
+        // Label disetel server-side per bahasa lewat data-to-dark/-to-light.
+        if (toggle) {
+          toggle.setAttribute(
+            "aria-label",
+            (dark ? toggle.dataset.toLight : toggle.dataset.toDark) ?? "",
+          );
+        }
       };
 
       toggle?.addEventListener("click", () => {
@@ -301,6 +375,38 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 
       .masthead__name:hover {
         color: var(--ink);
+      }
+
+      .masthead__controls {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      /* Pengalih bahasa: huruf mono dalam pil, sebahasa visual dengan tombol
+         tema di sebelahnya. */
+      .masthead__lang {
+        display: grid;
+        place-items: center;
+        min-width: 2rem;
+        height: 2rem;
+        padding: 0 0.5rem;
+        font-family: var(--font-mono);
+        font-size: var(--size-caption);
+        letter-spacing: 0.06em;
+        color: var(--ink-soft);
+        text-decoration: none;
+        background: transparent;
+        border: 1px solid var(--rule);
+        border-radius: 999px;
+        transition:
+          color var(--t-fast) var(--ease-out),
+          border-color var(--t-fast) var(--ease-out);
+      }
+
+      .masthead__lang:hover {
+        color: var(--ink);
+        border-color: var(--ink-soft);
       }
 
       .masthead__nav {

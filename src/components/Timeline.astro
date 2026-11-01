@@ -1,56 +1,106 @@
 ---
 // Bagian 3. Tulang punggung halaman, tujuh titik.
 // Titik teal berarti berkasnya ada. Nov 2026 belum terjadi, jadi kosong.
-const points = [
-  {
-    date: "Sep 2022",
-    title: "Enrolled in Informatics at Universitas Islam Riau",
-    note: "What followed ran four years, without a repeated course.",
-    verified: true,
-  },
-  {
-    date: "Feb 2024",
-    title: "Vice chairman, HIMATIF",
-    note: "Seven operational divisions and 50 members, reporting to the chair.",
-    verified: true,
-  },
-  {
-    date: "Oct 2024",
-    title: "Desa Binaan, Pulau Gadang",
-    note: "Community programme in Kampar. Pre-survey ran on 25 October.",
-    verified: true,
-  },
-  {
-    date: "Nov 2024",
-    title: "Teaching assistant",
-    note: "Six courses and nine classes over the four semesters that followed.",
-    verified: true,
-  },
-  {
-    date: "Mar 2025",
-    title: "Journal article published, village internship begins",
-    note: "I-Com Vol. 5 No. 1 on 10 March. OpenSID deployment starts the same month.",
-    verified: true,
-  },
-  {
-    date: "20 Jul 2026",
-    title: "Thesis defended",
-    note: "Passed outright, scored 82.07, graded A. Six credits, no revision round.",
-    verified: true,
-  },
-  {
-    date: "Nov 2026",
-    title: "Commencement",
-    note: "The degree was finished in July. What is left is the ceremony.",
-    verified: false,
-  },
-];
+const lang = Astro.currentLocale === "en" ? "en" : "id";
+const label = lang === "en" ? "Timeline" : "Linimasa";
+const heading = lang === "en" ? "2022 to 2026" : "2022 sampai 2026";
+
+const points = {
+  id: [
+    {
+      date: "Sep 2022",
+      title: "Masuk Teknik Informatika Universitas Islam Riau",
+      note: "Yang menyusul berjalan empat tahun, tanpa sekali pun mengulang mata kuliah.",
+      verified: true,
+    },
+    {
+      date: "Feb 2024",
+      title: "Wakil Ketua, HIMATIF",
+      note: "Tujuh divisi operasional dan 50 anggota, bertanggung jawab kepada ketua.",
+      verified: true,
+    },
+    {
+      date: "Okt 2024",
+      title: "Desa Binaan, Pulau Gadang",
+      note: "Program pengabdian di Kampar. Pra-survei dilakukan pada 25 Oktober.",
+      verified: true,
+    },
+    {
+      date: "Nov 2024",
+      title: "Asisten dosen",
+      note: "Enam mata kuliah dan sembilan kelas selama empat semester yang menyusul.",
+      verified: true,
+    },
+    {
+      date: "Mar 2025",
+      title: "Artikel jurnal terbit, magang desa dimulai",
+      note: "I-Com Vol. 5 No. 1 pada 10 Maret. Penerapan OpenSID dimulai di bulan yang sama.",
+      verified: true,
+    },
+    {
+      date: "20 Jul 2026",
+      title: "Sidang skripsi",
+      note: "Lulus langsung, nilai 82,07, huruf A. Enam SKS, tanpa babak revisi.",
+      verified: true,
+    },
+    {
+      date: "Nov 2026",
+      title: "Wisuda",
+      note: "Gelarnya rampung pada Juli. Yang tersisa tinggal upacaranya.",
+      verified: false,
+    },
+  ],
+  en: [
+    {
+      date: "Sep 2022",
+      title: "Enrolled in Informatics at Universitas Islam Riau",
+      note: "What followed ran four years, without a repeated course.",
+      verified: true,
+    },
+    {
+      date: "Feb 2024",
+      title: "Vice chairman, HIMATIF",
+      note: "Seven operational divisions and 50 members, reporting to the chair.",
+      verified: true,
+    },
+    {
+      date: "Oct 2024",
+      title: "Desa Binaan, Pulau Gadang",
+      note: "Community programme in Kampar. Pre-survey ran on 25 October.",
+      verified: true,
+    },
+    {
+      date: "Nov 2024",
+      title: "Teaching assistant",
+      note: "Six courses and nine classes over the four semesters that followed.",
+      verified: true,
+    },
+    {
+      date: "Mar 2025",
+      title: "Journal article published, village internship begins",
+      note: "I-Com Vol. 5 No. 1 on 10 March. OpenSID deployment starts the same month.",
+      verified: true,
+    },
+    {
+      date: "20 Jul 2026",
+      title: "Thesis defended",
+      note: "Passed outright, scored 82.07, graded A. Six credits, no revision round.",
+      verified: true,
+    },
+    {
+      date: "Nov 2026",
+      title: "Commencement",
+      note: "The degree was finished in July. What is left is the ceremony.",
+      verified: false,
+    },
+  ],
+}[lang];
 ---
 
 <section class="section" id="timeline" aria-labelledby="timeline-title">
   <div class="shell">
-    <span class="section__label">Timeline</span>
-    <h2 id="timeline-title" class="rise">2022 to 2026</h2>
+    <span class="section__label">{label}</span>
+    <h2 id="timeline-title" class="rise">{heading}</h2>
 
     <ol class="track">
       {

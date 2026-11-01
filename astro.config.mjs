@@ -14,4 +14,15 @@ export default defineConfig({
   //
   // dwiyuda.pages.dev tetap hidup, jadi tautan lama tidak rusak.
   site: 'https://dwiyuda.is-a.dev',
+
+  // Dua bahasa. Indonesia default dan tanpa awalan, jadi dwiyuda.is-a.dev
+  // tetap membuka versi Indonesia — tautan yang sudah ada di CV, GitHub, dan
+  // LinkedIn tidak berubah tujuan. Inggris pindah ke /en/. Tiap komponen baca
+  // Astro.currentLocale untuk memilih teksnya; halaman Inggris ada di
+  // src/pages/en/.
+  i18n: {
+    defaultLocale: 'id',
+    locales: ['id', 'en'],
+    routing: { prefixDefaultLocale: false },
+  },
 });

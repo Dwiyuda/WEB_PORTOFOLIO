@@ -64,14 +64,50 @@ const kaggle = [
   { name: "Intro to SQL", img: "/certs/kaggle-intro-to-sql.png" },
   { name: "Advanced SQL", img: "/certs/kaggle-advanced-sql.png" },
 ];
+
+const lang = Astro.currentLocale === "en" ? "en" : "id";
+// Bulan diterjemahkan saat tampil, jadi sertifikat baru cukup ditulis dengan
+// nama bulan Inggris di array di atas dan ikut benar di versi Indonesia.
+const months: Record<string, string> = {
+  January: "Januari", February: "Februari", March: "Maret", April: "April",
+  May: "Mei", June: "Juni", July: "Juli", August: "Agustus",
+  September: "September", October: "Oktober", November: "November", December: "Desember",
+};
+const localeDate = (d: string) =>
+  lang === "en" ? d : d.replace(/^(\w+)/, (m) => months[m] ?? m);
+
+const t = {
+  id: {
+    label: "Sertifikasi",
+    heading: "Sertifikat, dan siapa yang menerbitkannya",
+    verify: "Verifikasi via Cisco",
+    pdf: "Sertifikat (PDF)",
+    kaggleNote:
+      "Jalur Learn dari Kaggle berisi kursus pendek yang langsung praktik, masing-masing beberapa jam. Kursus-kursus itu dicantumkan karena cakupan SQL, pandas, machine learning, dan visualisasi data yang diajarkannya, bukan sebagai kualifikasi formal. Masing-masing tertaut ke sertifikatnya.",
+    record: [
+      "Ini kredensial kursus Networking Academy, pada tingkat mahasiswa. Ia bukan sertifikasi profesional CCNA, dan badge di atas menyatakannya dengan kata-katanya sendiri.",
+      "Empat tahun, September 2022 sampai Juli 2026, tanpa mengulang mata kuliah.",
+    ],
+  },
+  en: {
+    label: "Certification",
+    heading: "Certifications, and who issued them",
+    verify: "Verify with Cisco",
+    pdf: "Certificate, PDF",
+    kaggleNote:
+      "Kaggle's Learn track is short, hands-on courses, a few hours each. They are listed for the SQL, pandas, machine-learning and data-visualisation ground they cover, not as formal qualifications. Each links to its certificate.",
+    record: [
+      "This is the Networking Academy course credential, at student level. It is not the professional CCNA certification, and the badge above says so in its own words.",
+      "Four years, September 2022 to July 2026, with no repeated course.",
+    ],
+  },
+}[lang];
 ---
 
 <section class="section" id="achievements" aria-labelledby="achievements-title">
   <div class="shell">
-    <span class="section__label">Certification</span>
-    <h2 id="achievements-title" class="rise">
-      Certifications, and who issued them
-    </h2>
+    <span class="section__label">{t.label}</span>
+    <h2 id="achievements-title" class="rise">{t.heading}</h2>
 
     <ol class="certs rise-group">
       {
@@ -79,7 +115,7 @@ const kaggle = [
           <li class="cert">
             <p class="cert__name">{c.name}</p>
             <p class="cert__meta">
-              {c.issuer} · {c.date}
+              {c.issuer} · {localeDate(c.date)}
             </p>
             <p class="cert__links">
               {c.verify && (
@@ -89,7 +125,7 @@ const kaggle = [
                   target="_blank"
                   rel="noopener"
                 >
-                  Verify with Cisco
+                  {t.verify}
                 </a>
               )}
               {c.pdf && (
@@ -99,7 +135,7 @@ const kaggle = [
                   target="_blank"
                   rel="noopener"
                 >
-                  Certificate, PDF
+                  {t.pdf}
                 </a>
               )}
             </p>
@@ -121,21 +157,11 @@ const kaggle = [
           ))
         }
       </ul>
-      <p class="measure caption kaggle__note">
-        Kaggle's Learn track is short, hands-on courses, a few hours each. They
-        are listed for the SQL, pandas, machine-learning and data-visualisation
-        ground they cover, not as formal qualifications. Each links to its
-        certificate.
-      </p>
+      <p class="measure caption kaggle__note">{t.kaggleNote}</p>
     </div>
 
     <div class="measure record__note rise">
-      <p>
-        This is the Networking Academy course credential, at student level. It
-        is not the professional CCNA certification, and the badge above says so
-        in its own words.
-      </p>
-      <p>Four years, September 2022 to July 2026, with no repeated course.</p>
+      {t.record.map((para) => <p>{para}</p>)}
     </div>
   </div>
 </section>

@@ -4,7 +4,14 @@
 // tidak masuk daftar. TensorFlow/Keras dan React ada di CV tapi belum ada
 // proyek di halaman ini yang bisa disebut, jadi sengaja tidak dicantumkan.
 // Diperbarui 21 Okt 2026 mengikuti proyek baru di bagian Projects.
-const groups = [
+const lang = Astro.currentLocale === "en" ? "en" : "id";
+const label = lang === "en" ? "Toolkit" : "Perkakas";
+const heading =
+  lang === "en"
+    ? "What I use, and where I used it"
+    : "Yang saya pakai, dan di mana saya memakainya";
+const groups = {
+  en: [
   {
     heading: "Modelling",
     items: [
@@ -74,13 +81,80 @@ const groups = [
       ["Mandarin", "Beginner, currently learning"],
     ],
   },
-];
+  ],
+  id: [
+    {
+      heading: "Pemodelan",
+      items: [
+        ["PyTorch", "Detektor KTM dan klasifikasi penyakit tanaman"],
+        ["Hugging Face Transformers", "Qwen3-VL dan Florence-2 di detektor"],
+        ["Ultralytics YOLO", "Melokalisasi bercak pada daun terong"],
+        ["XGBoost", "Memeringkat rumah layak berdasarkan tingkat urgensi"],
+        ["Scikit-learn", "Split sadar-grup, dan K-Means untuk bantuan desa"],
+        ["OpenCV", "Deteksi tepi Canny dan pelurusan sebelum klasifikasi"],
+        ["Grad-CAM", "Memeriksa wilayah mana yang menggerakkan tiap keputusan"],
+      ],
+    },
+    {
+      heading: "Retrieval dan LLM",
+      items: [
+        ["BM25, BGE-M3, reranker", "Retrieval hibrida di asisten hukum keluarga"],
+        ["Qdrant", "Vector store untuk korpus hukum keluarga"],
+        ["Neo4j, Graph RAG", "Knowledge graph di balik saran penyakit tanaman"],
+        ["Gemini, Groq, OpenRouter", "Penilaian, jawaban berdasar sumber, dan studi LVLM"],
+        ["Prompt engineering", "Lima rancangan prompt pada empat model vision"],
+      ],
+    },
+    {
+      heading: "Evaluasi",
+      items: [
+        ["Group-aware splitting", "Membangun ulang split skripsi per keluarga kartu"],
+        ["ROC-AUC, confusion matrix", "Dilaporkan per model dan per split"],
+        ["Ablation study", "Ablasi resolusi yang menembus langit-langit 1,0"],
+        ["Robustness benchmark", "JPEG, blur, oklusi, rotasi, noise"],
+        ["RAGAS", "Faithfulness dan recall untuk dua sistem RAG"],
+        ["McNemar with Holm", "Membandingkan model pada citra uji yang sama"],
+        ["LLM-as-a-judge", "Pemeriksaan independen atas gerbang semantik"],
+      ],
+    },
+    {
+      heading: "Backend dan data",
+      items: [
+        ["Python", "Setiap proyek di halaman ini"],
+        ["FastAPI", "Detektor dan API hukum keluarga"],
+        ["Go, gqlgen, PostgreSQL", "API GraphQL nilai praktikum"],
+        ["Google Classroom API", "Menarik pengumpulan tugas untuk penilai"],
+        ["SQL, MySQL", "Modul praktikum yang saya tulis untuk mata kuliah basis data"],
+        ["PHP, CodeIgniter, MariaDB", "OpenSID di Pulau Gadang"],
+      ],
+    },
+    {
+      heading: "Web dan pengiriman",
+      items: [
+        ["Next.js", "Detektor (JavaScript) dan asisten (TypeScript)"],
+        ["Flask, Streamlit, Gradio", "Aplikasi demo untuk empat proyek ringkas"],
+        ["Astro", "Situs ini dan situs kursus Mandarin"],
+        ["Docker Compose, GitHub Actions", "Container dan CI untuk asisten dan API nilai"],
+        ["Git", "Semua yang di atas"],
+      ],
+    },
+    {
+      heading: "Bahasa",
+      items: [
+        ["Indonesia", "Penutur asli"],
+        ["Inggris", "Profesional kerja"],
+        ["Arab", "Dasar, percakapan"],
+        ["Mandarin", "Pemula, sedang belajar"],
+      ],
+    },
+  ],
+}[lang];
 ---
 
 <section class="section" id="skills" aria-labelledby="skills-title">
   <div class="shell">
-    <span class="section__label">Toolkit</span>
-    <h2 id="skills-title" class="rise">What I use, and where I used it</h2>
+    <span class="section__label">{label}</span>
+    <h2 id="skills-title" class="rise">{heading}</h2>
 
     <div class="bento kit rise-group">
       {

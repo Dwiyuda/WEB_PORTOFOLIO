@@ -10,29 +10,44 @@
 // yang diarahkan tapi tidak ditulis sendiri.
 //
 // Nomor telepon tidak ditayangkan.
+const lang = Astro.currentLocale === "en" ? "en" : "id";
+const t = {
+  id: {
+    label: "Penutup",
+    heading: "Benang merahnya",
+    line: "Sebagian besar halaman ini adalah catatan tentang memeriksa berbagai hal.",
+    paras: [
+      "Dataset yang ternyata terkontaminasi. Kunci jawaban yang menilai jawaban benar sebagai salah. Website yang saya arahkan tapi tidak saya tulis sendiri, dan saya nyatakan itu di halaman alih-alih berharap tidak ada yang bertanya.",
+      "Tidak satu pun dari pemeriksaan itu membuat angka jadi lebih besar. Yang mereka lakukan adalah meninggalkan saya dengan angka yang masih bisa saya pertanggungjawabkan ketika seseorang bertanya bagaimana angka itu dihasilkan. Itulah kebiasaan yang saya ingin Anda bawa dari sini, lebih dari hasil mana pun di atasnya.",
+    ],
+    colophonPre:
+      "Dibangun dengan Astro. Tidak memasang cookie dan tidak menjalankan analytics. Setiap angka di halaman ini bisa ditelusuri kembali ke sebuah dokumen, dan kodenya ada",
+    colophonLink: "di GitHub",
+  },
+  en: {
+    label: "In closing",
+    heading: "The through line",
+    line: "Most of this page is a record of checking things.",
+    paras: [
+      "A dataset that turned out to be contaminated. An answer key that marked correct answers wrong. A website I directed but did not write, and said so on the page rather than hoping nobody asked.",
+      "Not one of those checks made a number larger. What they did was leave me with numbers I can still stand behind when someone asks how they were produced. That is the habit I would want you to take from here, more than any single result above it.",
+    ],
+    colophonPre:
+      "Built with Astro. It sets no cookies and runs no analytics. Every figure on this page traces back to a document, and the source is",
+    colophonLink: "on GitHub",
+  },
+}[lang];
 ---
 
 <section class="section close" id="contact" aria-labelledby="closing-title">
   <div class="shell">
-    <span class="section__label">In closing</span>
-    <h2 id="closing-title" class="rise">The through line</h2>
+    <span class="section__label">{t.label}</span>
+    <h2 id="closing-title" class="rise">{t.heading}</h2>
 
     <div class="close__grid">
       <div class="close__text rise">
-        <p class="close__line">
-          Most of this page is a record of checking things.
-        </p>
-        <p>
-          A dataset that turned out to be contaminated. An answer key that
-          marked correct answers wrong. A website I directed but did not write,
-          and said so on the page rather than hoping nobody asked.
-        </p>
-        <p>
-          Not one of those checks made a number larger. What they did was leave
-          me with numbers I can still stand behind when someone asks how they
-          were produced. That is the habit I would want you to take from here,
-          more than any single result above it.
-        </p>
+        <p class="close__line">{t.line}</p>
+        {t.paras.map((para) => <p>{para}</p>)}
       </div>
 
       <div class="close__links rise">
@@ -56,10 +71,9 @@
     </div>
 
     <p class="caption colophon">
-      Built with Astro. It sets no cookies and runs no analytics. Every figure
-      on this page traces back to a document, and the source is{" "}
+      {t.colophonPre}{" "}
       <a href="https://github.com/Dwiyuda/WEB_PORTOFOLIO" rel="noopener"
-        >on GitHub</a
+        >{t.colophonLink}</a
       >.
     </p>
   </div>
