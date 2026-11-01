@@ -44,6 +44,26 @@ const certifications = [
     pdf: "/cisco-ccna-intro-to-networks.pdf",
   },
 ];
+
+// Kaggle Learn. Delapan kursus pendek (beberapa jam tiap kursus), bukan
+// kompetisi atau sertifikasi profesional — ditulis apa adanya di catatan di
+// bawah daftar, aturan yang sama dengan kualifikasi "student level" pada CCNA.
+// Artefaknya berkas sertifikat di public/certs/: hanya nama sendiri, nama
+// kursus, dan tanggal; tidak ada data pihak ketiga, jadi aman ditayangkan.
+// freeCodeCamp sengaja tidak diklaim karena klaimnya dilewati pemilik situs.
+const kaggle = [
+  { name: "Python", img: "/certs/kaggle-python.png" },
+  { name: "Pandas", img: "/certs/kaggle-pandas.png" },
+  { name: "Intro to Machine Learning", img: "/certs/kaggle-intro-to-ml.png" },
+  {
+    name: "Intermediate Machine Learning",
+    img: "/certs/kaggle-intermediate-ml.png",
+  },
+  { name: "Feature Engineering", img: "/certs/kaggle-feature-engineering.png" },
+  { name: "Data Visualization", img: "/certs/kaggle-data-visualization.png" },
+  { name: "Intro to SQL", img: "/certs/kaggle-intro-to-sql.png" },
+  { name: "Advanced SQL", img: "/certs/kaggle-advanced-sql.png" },
+];
 ---
 
 <section class="section" id="achievements" aria-labelledby="achievements-title">
@@ -87,6 +107,27 @@ const certifications = [
         ))
       }
     </ol>
+
+    <div class="kaggle rise">
+      <p class="kaggle__label">Kaggle Learn</p>
+      <ul class="kaggle__list">
+        {
+          kaggle.map((k) => (
+            <li>
+              <a class="cert__link" href={k.img} target="_blank" rel="noopener">
+                {k.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="measure caption kaggle__note">
+        Kaggle's Learn track is short, hands-on courses, a few hours each. They
+        are listed for the SQL, pandas, machine-learning and data-visualisation
+        ground they cover, not as formal qualifications. Each links to its
+        certificate.
+      </p>
+    </div>
 
     <div class="measure record__note rise">
       <p>
@@ -162,6 +203,35 @@ const certifications = [
 
   .cert__link:hover::before {
     transform: translateX(2px);
+  }
+
+  /* Blok Kaggle: lebih ringan dari entri .cert di atasnya, supaya kursus
+     pendek tidak tampil setara kredensial Cisco. Memakai .cert__link yang
+     sama agar "buka berkas" tetap satu bahasa visual. */
+  .kaggle {
+    margin-top: 2.75rem;
+    max-width: var(--measure);
+  }
+
+  .kaggle__label {
+    font-family: var(--font-mono);
+    font-size: var(--size-caption);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .kaggle__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+  }
+
+  .kaggle__note {
+    margin-top: 1.25rem;
   }
 
   .record__note {

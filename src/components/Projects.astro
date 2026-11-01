@@ -132,7 +132,16 @@ const graderPipeline = [
 // bobot AHP masih templat).
 const gh = (repo: string) => `https://github.com/Dwiyuda/${repo}`;
 
-const brief = [
+type BriefItem = {
+  title: string;
+  text: string;
+  chips: [string, string][];
+  stack: string;
+  repo: string;
+  demo?: { href: string; label: string };
+};
+
+const brief: { heading: string; items: BriefItem[] }[] = [
   {
     heading: "AI and machine learning",
     items: [
@@ -184,6 +193,10 @@ const brief = [
         ],
         stack: "scikit-learn, pandas, SciPy, Flask, fpdf2",
         repo: gh("village-aid-priority-kmeans-ahp-topsis"),
+        demo: {
+          href: "https://datastudio.google.com/reporting/caaa607a-7a94-49e2-bc3f-3698f9c8e82a",
+          label: "Live dashboard",
+        },
       },
       {
         title: "Housing renovation aid priority",
@@ -211,6 +224,23 @@ const brief = [
         ],
         stack: "Astro, TypeScript, Sveltia CMS, Cloudflare Pages",
         repo: gh("website_easternllcedu"),
+        demo: { href: "https://easternllc.co.id", label: "Live site" },
+      },
+    ],
+  },
+  {
+    heading: "Backend",
+    items: [
+      {
+        title: "Practicum score GraphQL API",
+        text: "The grading work above produces marks; this is the service that would hold them. A small GraphQL API in Go for practicum scores and attendance: schema-first with gqlgen, PostgreSQL with migrations that run on startup, and an in-memory store so the scoring rules are tested without a database. GitHub Actions vets it, race-tests it against a real Postgres, checks the generated code is current, and builds the Docker image. The demo data is synthetic.",
+        chips: [
+          ["7", "GraphQL operations"],
+          ["PostgreSQL 17", "with SQL migrations"],
+          ["CI", "vet · race · Docker build"],
+        ],
+        stack: "Go, gqlgen, pgx, PostgreSQL, Docker, GitHub Actions",
+        repo: gh("practicum-score-graphql"),
       },
     ],
   },
@@ -530,13 +560,25 @@ const brief = [
                     ))}
                   </ul>
                   <p class="brief__stack">{p.stack}</p>
-                  <a
-                    class="figure figure--verified brief__repo"
-                    href={p.repo}
-                    rel="noopener"
-                  >
-                    Repository
-                  </a>
+                  <p class="brief__links">
+                    <a
+                      class="figure figure--verified"
+                      href={p.repo}
+                      rel="noopener"
+                    >
+                      Repository
+                    </a>
+                    {p.demo && (
+                      <a
+                        class="figure figure--verified"
+                        href={p.demo.href}
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        {p.demo.label}
+                      </a>
+                    )}
+                  </p>
                 </article>
               ))}
             </div>
@@ -789,7 +831,10 @@ const brief = [
 
   /* margin-top: auto mendorong tautan ke dasar kartu, jadi tautan di kartu
      sebaris selalu sejajar walau panjang teksnya berbeda. */
-  .brief__repo {
+  .brief__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
     margin-top: auto;
     padding-top: 0.9rem;
     font-size: var(--size-caption);
