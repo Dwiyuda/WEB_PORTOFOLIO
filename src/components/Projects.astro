@@ -233,7 +233,7 @@ const brief: { heading: string; items: BriefItem[] }[] = [
     items: [
       {
         title: "Practicum score GraphQL API",
-        text: "The grading work above produces marks; this is the service that would hold them. A small GraphQL API in Go for practicum scores and attendance: schema-first with gqlgen, PostgreSQL with migrations that run on startup, and an in-memory store so the scoring rules are tested without a database. GitHub Actions vets it, race-tests it against a real Postgres, checks the generated code is current, and builds the Docker image. The demo data is synthetic.",
+        text: "The grading work above produces marks; this is where they would live. A small GraphQL API in Go for practicum scores and attendance: schema-first with gqlgen, Postgres with migrations that run on startup, and an in-memory store so I can test the scoring rules without a database. CI runs go vet, the tests under the race detector against a real Postgres, a check that the generated code is still current, and a Docker build. The demo data is synthetic, and the project is small on purpose.",
         chips: [
           ["7", "GraphQL operations"],
           ["PostgreSQL 17", "with SQL migrations"],
